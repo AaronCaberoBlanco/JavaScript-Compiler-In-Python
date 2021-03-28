@@ -2,7 +2,7 @@ Axioma = A
 
 NoTerminales = { A D S C C' C'' I M E N }
 
-Terminales = { _ / * ( ) { } ; , ' " - = + & EOF }
+Terminales = { _ / * ( ) { } ; , ' " - = & EOF }
     del = {" " \t \n}
     d = {0 1 2 3 4 5 6 7 8 9}
     l = { a-zA-Z }

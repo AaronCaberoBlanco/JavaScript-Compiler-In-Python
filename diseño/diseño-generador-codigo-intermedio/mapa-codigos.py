@@ -1,0 +1,25 @@
+
+cod_operandos = {'global': 1,
+                 'local': 2,
+                 'valor': 2,
+                 'tmp': 2,
+                 'ent': 3,
+                 'cad': 4,
+                 'log': 5,
+                 'etiq': 6}
+
+cod_operador = {'=-' : 11,
+                'if=' : 12,
+                '=and' : 13,
+                '=EL': 14,
+                '=Cad' : 15,
+                'returnVoid' : 16,
+                'returnValue' : 17,
+                ':' : 17,
+                #'callVoid' : 18,
+                'callValue' : 19,
+                'param' : 20,
+                'goto' : 21,
+                'alert' : 22,
+                'input' : 23
+                }

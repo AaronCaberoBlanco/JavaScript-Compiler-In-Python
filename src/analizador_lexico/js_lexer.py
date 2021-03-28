@@ -199,7 +199,7 @@ class JSLexer(Lexer):
                 self.error(t, 'ID')
             else:
                 id_table, id_pos = self.ts.add_entry(t.value)
-                t.value = (id_table, id_pos)
+                t.value = (id_table, id_pos, False)
 
             self.declaration_scope[0] = False
 
@@ -209,9 +209,11 @@ class JSLexer(Lexer):
                 self.ts.add_attribute(id_table, id_pos, 'Tipo', 'entero')
                 self.ts.add_attribute(id_table, id_pos, 'Despl', self.global_shift[0])
                 self.global_shift[0] += 1
-                t.value = (id_table, id_pos)
+
+                # Bool: True|False en función de si se debe incializar la variable a 0 dinámicamente
+                t.value = (id_table, id_pos, True)
             else:
-                t.value = (id_table, id_pos)
+                t.value = (id_table, id_pos, False)
 
         return t
 
@@ -295,4 +297,3 @@ class JSLexer(Lexer):
             kwargs(Indirect Pointer): the configuration applied to those arguments
         """
         print(*args, file=sys.stderr, **kwargs)
-
