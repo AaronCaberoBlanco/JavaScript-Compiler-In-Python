@@ -4,9 +4,13 @@ from sly import Parser
 
 from src.analizador_lexico.js_lexer import JSLexer
 
+''' Para propagar toda la información del GCI sin dañar a la existente del semántico. Indexamos las cosas del GCI al final
+    dentro de una tupla '''
+
 
 class JSParser(Parser):
     ATTR_TYPE = 'Tipo'
+    ATTR_LEXEM = 'LEXEMA'
     ATTR_DESP = 'Despl'
     ATTR_NUM_PARAMS = 'numParam'
     ATTR_TYPE_PARAMS = 'TipoParam'
@@ -17,9 +21,33 @@ class JSParser(Parser):
     INT_TYPE = 'entero'
     STRING_TYPE = 'cadena'
     VOID_TYPE = 'void'
-
     error_id = [0, 0]
     tokens = JSLexer.tokens
+
+    OPERAND_CODE = {'global': 1,
+                    'local': 2,
+                    'valor': 2,
+                    'tmp': 2,
+                    'ent': 3,
+                    'cad': 4,
+                    'log': 5,
+                    'etiq': 6}
+
+    OPERATOR_CODE = {'=-': 11,
+                     'if=': 12,
+                     '=and': 13,
+                     '=EL': 14,
+                     '=Cad': 15,
+                     'returnVoid': 16,
+                     'returnValue': 17,
+                     ':': 17,
+                     # 'callVoid' : 18,
+                     'callValue': 19,
+                     'param': 20,
+                     'goto': 21,
+                     'alert': 22,
+                     'input': 23
+                     }
 
     def __init__(self, lista_reglas_, TS_, declaration_scope_, declarando_funcion_, global_shift_):
         self.lista_reglas = lista_reglas_
@@ -27,7 +55,8 @@ class JSParser(Parser):
         self.declaration_scope = declaration_scope_
         self.declarando_funcion = declarando_funcion_
         self.global_shift = global_shift_
-
+        self.num_temp = 0
+        self.num_etiq = 0
         self.TS.new_table()
         self.shift = 0
         self.declaration_scope[0] = False
@@ -39,35 +68,50 @@ class JSParser(Parser):
     @_('D')
     def B(self, p):
         self.lista_reglas.append(1)
-        return
+        d_cod = p.D[-1][0]
+        b_cod = d_cod
+        return (b_cod, None, None)
 
     @_('F D')
     def D(self, p):
         self.lista_reglas.append(2)
-        return
+        f_cod = p.F[-1][0]
+        d1_cod = p.D[-1][0]
+        d_cod = (f_cod, d1_cod)
+        return (d_cod, None, None),
 
     @_('G D')
     def D(self, p):
         self.lista_reglas.append(3)
-        return
+        g_cod = p.G[-1][0]
+        d1_cod = p.D[-1][0]
+        d_cod = (g_cod, d1_cod)
+        return (d_cod, None, None),  # ( 'ent', (cod, lugar, codP) )   ( [x,y] + [a,b] )
 
     @_('')
     def D(self, p):
         self.lista_reglas.append(4)
-        return
+        d_cod = None
+        return (d_cod, None, None),
 
     @_('IF ABPAREN E CEPAREN S')
     def G(self, p):
         if p.E != self.LOG_TYPE:
             self.semantic_error(1, p.lineno)
-
+        g_desp = self.nueva_etiq()
+        e_lugar = p.E[-1][1]
+        e_cod = p.E[-1][0]
+        s_cod = p.S[-1][0]
+        g_cod = (e_cod, self.gen('if=', e_lugar, ('ent', 0), ('etiq', g_desp)), s_cod,
+                 self.gen(operator=':', result=('etiq', g_desp)))
         self.lista_reglas.append(5)
-        return
+        return (g_cod, None, None),
 
     @_('S')
     def G(self, p):
         self.lista_reglas.append(6)
-        return
+        s_cod = p.S[-1][0]
+        return (s_cod, None, None),
 
     @_('H PUNTOYCOMA')
     def S(self, p):
@@ -122,7 +166,9 @@ class JSParser(Parser):
     @_('K PUNTOYCOMA')
     def S(self, p):
         self.lista_reglas.append(13)
-        return
+        k_cod = p.K[-1][0]
+        s_cod = k_cod
+        return (s_cod, None, None),
 
     @_('ID OPASIG E')
     def K(self, p):
@@ -131,7 +177,17 @@ class JSParser(Parser):
             self.semantic_error(10, p.lineno)
 
         self.lista_reglas.append(14)
-        return
+
+        id_tipo = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE)
+        id_despl = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_DESP)
+        id_scope_code = self.scope_code(p.ID[0])
+        if id_tipo == self.STRING_TYPE:
+            gen_cod = self.gen(operator='=Cad', operand1=((p.ID[0], p.ID[1]), id_scope_code))
+        else
+            gen_cod = self.gen(operator='=EL')
+        e_cod = p.E[-1][0]
+        k_cod = (e_cod, self.gen(operator='=EL', ))
+        return (k_cod, None, None),
 
     @_('ALERT ABPAREN E CEPAREN PUNTOYCOMA')
     def S(self, p):
@@ -183,12 +239,11 @@ class JSParser(Parser):
         self.declaration_scope[0] = False
 
         self.lista_reglas.append(20)
-        return
+        return (None, None, None),
 
     @_('')
     def M(self, p):
         self.declaration_scope[0] = True
-
         self.lista_reglas.append(21)
         return
 
@@ -439,6 +494,39 @@ class JSParser(Parser):
     def V(self, p):
         self.lista_reglas.append(56)
         return self.LOG_TYPE
+
+    # -----------------------Variables and labels management functions-----------------------
+
+    def nueva_temp(self):
+        res = f'~Temp{self.num_temp}'
+        self.num_temp += 1
+        return res
+
+    def nueva_etiq(self):
+        res = f'~Etiq{self.num_etiq}'
+        self.num_temp += 1
+        return res
+
+    def gen(self, operator, operand1=None, operand2=None, result=None):
+        op = self.OPERATOR_CODE[operator]
+        if operand1 is not None:
+            operand1_ = (self.OPERAND_CODE[operand1[0]], operand1[1])
+        if operand2 is not None:
+            operand2_ = (self.OPERAND_CODE[operand2[0]], operand2[1])
+        if result is not None:
+            result_ = (self.OPERAND_CODE[result[0]], result[1])
+        return op, operand1_, operand2_, result_
+
+    def gci(self):
+        pass
+
+
+    def scope_code(self, var):
+        id_table, id_pos = self.TS.get_pos(var)  # Modularizar en TS
+        if id_table == 0:
+            return 1
+        else:
+            return 2
 
     # -----------------------Error management functions-----------------------
 

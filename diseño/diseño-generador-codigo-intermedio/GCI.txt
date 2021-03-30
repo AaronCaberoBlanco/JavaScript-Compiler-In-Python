@@ -78,7 +78,7 @@ L $#rightarrow$ lambda {
   
   
 G $#rightarrow$ let M T id ; {
-    B.cod = vacio
+    G.cod = vacio
     }
 M $#rightarrow$ lambda { }
 T $#rightarrow$ number { }
@@ -194,6 +194,6 @@ V $#rightarrow$ cad {
     V.cod = gen(V.lugar, =, cad.valor)
     }
 V $#rightarrow$ log {
-    V-lugar = nuevatmp()
+    V.lugar = nuevatmp()
     V.cod = gen(V.lugar, =, log.valor)
     }
