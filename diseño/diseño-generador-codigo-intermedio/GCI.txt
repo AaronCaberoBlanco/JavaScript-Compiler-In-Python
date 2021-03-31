@@ -151,7 +151,10 @@ E $#rightarrow$ R {
     }
   
 R $#rightarrow$ R1 == U {
-    R.cod = R1.cod || U.cod || gen(if, R1.lugar, =, U.lugar, goto, esta + 3) || gen(R.lugar, =, 0) || gen(goto, esta + 2) || gen(R.lugar, =, 1)
+    R.true = nuevaetiq()
+    R.despues = nuevaetiq()
+    R.cod = R1.cod || U.cod || gen(if, R1.lugar, =, U.lugar, goto, R.true) ||
+            gen(R.lugar, =, 0) || gen(goto, R.después) || gen(:, R.true) || gen(R.lugar, =, 1) || gen(:, R.despues)
     }
 R $#rightarrow$ U {
     R.cod = U.cod

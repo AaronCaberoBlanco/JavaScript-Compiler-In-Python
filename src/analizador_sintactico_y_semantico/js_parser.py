@@ -70,7 +70,7 @@ class JSParser(Parser):
         self.lista_reglas.append(1)
         d_cod = p.D[-1][0]
         b_cod = d_cod
-        return (b_cod, None, None)
+        return (b_cod, None, [None])
 
     @_('F D')
     def D(self, p):
@@ -78,7 +78,7 @@ class JSParser(Parser):
         f_cod = p.F[-1][0]
         d1_cod = p.D[-1][0]
         d_cod = f_cod + d1_cod
-        return (d_cod, None, None),
+        return (d_cod, None, [None]),
 
     @_('G D')
     def D(self, p):
@@ -86,13 +86,13 @@ class JSParser(Parser):
         g_cod = p.G[-1][0]
         d1_cod = p.D[-1][0]
         d_cod = g_cod + d1_cod
-        return (d_cod, None, None),  # ( 'ent', (cod, lugar, codP) )   ( [x,y] + [a,b] )
+        return (d_cod, None, [None]),  # ( 'ent', (cod, lugar, codP) )   ( [x,y] + [a,b] )
 
     @_('')
     def D(self, p):
         self.lista_reglas.append(4)
         d_cod = [None]
-        return (d_cod, None, None),
+        return (d_cod, None, [None]),
 
     @_('IF ABPAREN E CEPAREN S')
     def G(self, p):
@@ -105,13 +105,13 @@ class JSParser(Parser):
         g_cod = e_cod + self.gen('if=', e_lugar, ('ent', 0), ('etiq', g_desp)), s_cod,
                  self.gen(operator=':', result=('etiq', g_desp)))
         self.lista_reglas.append(5)
-        return (g_cod, None, None),
+        return (g_cod, None, [None]),
 
     @_('S')
     def G(self, p):
         self.lista_reglas.append(6)
         s_cod = p.S[-1][0]
-        return (s_cod, None, None),
+        return (s_cod, None, [None]),
 
     @_('H PUNTOYCOMA')
     def S(self, p):
@@ -168,7 +168,7 @@ class JSParser(Parser):
         self.lista_reglas.append(13)
         k_cod = p.K[-1][0]
         s_cod = k_cod
-        return (s_cod, None, None),
+        return (s_cod, None, [None]),
 
     @_('ID OPASIG E')
     def K(self, p):
@@ -178,13 +178,11 @@ class JSParser(Parser):
 
         self.lista_reglas.append(14)
 
-        id_tipo = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE)
-        id_despl = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_DESP)
-        id_scope_code = self.scope_code(p.ID[0])
-        if id_tipo == self.STRING_TYPE:
-            gen_cod = self.gen(operator='=Cad', operand1=((p.ID[0], p.ID[1]), id_scope_code))
-        else
-            gen_cod = self.gen(operator='=EL')
+        # id_tipo = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE)
+        # id_despl = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_DESP)
+        # id_scope_code = self.scope_code(p.ID[0])
+        # if id_tipo == self.STRING_TYPE:
+
         e_cod = p.E[-1][0]
         k_cod = (e_cod, self.gen(operator='=EL', ))
         return (k_cod, None, None),
@@ -239,7 +237,9 @@ class JSParser(Parser):
         self.declaration_scope[0] = False
 
         self.lista_reglas.append(20)
-        return (None, None, None),
+
+        g_cod = [None]
+        return (g_cod, None, [None]),
 
     @_('')
     def M(self, p):
@@ -428,10 +428,12 @@ class JSParser(Parser):
     @_('R')
     def E(self, p):
         self.lista_reglas.append(45)
-        return p.R
+        e_cod = p.R[-1][0]
+        e_lugar = p.R[-1][1]
+        return p.R, (e_cod, e_lugar, [None])
 
     @_('R OPREL U')
-    def R(self, p):
+    def R(self, p):  # TODO:Cambiar p.R -> p.R[0]
         if p.R != self.INT_TYPE or p.U != self.INT_TYPE:
             self.semantic_error(13, p.lineno)
 
@@ -441,7 +443,10 @@ class JSParser(Parser):
     @_('U')
     def R(self, p):
         self.lista_reglas.append(47)
-        return p.U
+
+        r_cod = p.U[-1][0]
+        r_lugar = p.U[-1][1]
+        return p.U, (r_cod, r_lugar, [None])
 
     @_('U OPARIT V')
     def U(self, p):
@@ -496,8 +501,7 @@ class JSParser(Parser):
         return self.LOG_TYPE
 
     # -----------------------Variables and labels management functions-----------------------
-
-    def nueva_temp(self):
+    def nueva_temp(self, type):
         res = f'~Temp{self.num_temp}'
         self.num_temp += 1
         return res
@@ -507,15 +511,15 @@ class JSParser(Parser):
         self.num_temp += 1
         return res
 
-    def gen(self, operator, operand1=None, operand2=None, result=None):
-        op = self.OPERATOR_CODE[operator]
-        if operand1 is not None:
-            operand1_ = (self.OPERAND_CODE[operand1[0]], operand1[1])
-        if operand2 is not None:
-            operand2_ = (self.OPERAND_CODE[operand2[0]], operand2[1])
-        if result is not None:
-            result_ = (self.OPERAND_CODE[result[0]], result[1])
-        return op, operand1_, operand2_, result_
+    def gen(self, oper, op1=None, op2=None, res=None):
+        op = self.OPERATOR_CODE[oper]
+        if op1 is not None:
+            op1_ = (self.OPERAND_CODE[op1[0]], op1[1])
+        if op2 is not None:
+            op2_ = (self.OPERAND_CODE[op2[0]], op2[1])
+        if res is not None:
+            res_ = (self.OPERAND_CODE[res[0]], res[1])
+        return op, op1_, op2_, res_
 
     def gci(self):
         pass
