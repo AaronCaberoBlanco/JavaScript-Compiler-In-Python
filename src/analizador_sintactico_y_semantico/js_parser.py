@@ -257,6 +257,8 @@ class JSParser(Parser):
         self.lista_reglas.append(22)
         return self.INT_TYPE, 1
 
+    # Hasta aquí Alex
+
     @_('BOOLEAN')
     def T(self, p):
         self.lista_reglas.append(23)
