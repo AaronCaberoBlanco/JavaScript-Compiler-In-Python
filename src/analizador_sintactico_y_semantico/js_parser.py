@@ -77,7 +77,7 @@ class JSParser(Parser):
         self.lista_reglas.append(2)
         f_cod = p.F[-1][0]
         d1_cod = p.D[-1][0]
-        d_cod = (f_cod, d1_cod)
+        d_cod = f_cod + d1_cod
         return (d_cod, None, None),
 
     @_('G D')
@@ -85,13 +85,13 @@ class JSParser(Parser):
         self.lista_reglas.append(3)
         g_cod = p.G[-1][0]
         d1_cod = p.D[-1][0]
-        d_cod = (g_cod, d1_cod)
+        d_cod = g_cod + d1_cod
         return (d_cod, None, None),  # ( 'ent', (cod, lugar, codP) )   ( [x,y] + [a,b] )
 
     @_('')
     def D(self, p):
         self.lista_reglas.append(4)
-        d_cod = None
+        d_cod = [None]
         return (d_cod, None, None),
 
     @_('IF ABPAREN E CEPAREN S')
@@ -102,7 +102,7 @@ class JSParser(Parser):
         e_lugar = p.E[-1][1]
         e_cod = p.E[-1][0]
         s_cod = p.S[-1][0]
-        g_cod = (e_cod, self.gen('if=', e_lugar, ('ent', 0), ('etiq', g_desp)), s_cod,
+        g_cod = e_cod + self.gen('if=', e_lugar, ('ent', 0), ('etiq', g_desp)), s_cod,
                  self.gen(operator=':', result=('etiq', g_desp)))
         self.lista_reglas.append(5)
         return (g_cod, None, None),
@@ -519,7 +519,6 @@ class JSParser(Parser):
 
     def gci(self):
         pass
-
 
     def scope_code(self, var):
         id_table, id_pos = self.TS.get_pos(var)  # Modularizar en TS
