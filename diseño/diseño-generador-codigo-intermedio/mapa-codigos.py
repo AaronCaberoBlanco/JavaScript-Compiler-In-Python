@@ -5,8 +5,7 @@ cod_operandos = {'global': 1,
                  'tmp': 2,
                  'ent': 3,
                  'cad': 4,
-                 'log': 5,
-                 'etiq': 6}
+                 'etiq': 5}
 
 cod_operador = {'=-' : 11,
                 'if=' : 12,

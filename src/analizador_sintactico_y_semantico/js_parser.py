@@ -68,17 +68,19 @@ class JSParser(Parser):
     @_('D')
     def B(self, p):
         self.lista_reglas.append(1)
+
         d_cod = p.D[-1][0]
         b_cod = d_cod
-        gci = open('GCI.txt','w')
+        gci = open('GCI.txt', 'w')
         for i in b_cod:
             if i is not None:
-                print(i,file=gci)
+                print(i, file=gci)
         return
 
     @_('F D')
     def D(self, p):
         self.lista_reglas.append(2)
+
         f_cod = p.F[-1][0]
         d1_cod = p.D[-1][0]
         d_cod = f_cod + d1_cod
@@ -87,6 +89,7 @@ class JSParser(Parser):
     @_('G D')
     def D(self, p):
         self.lista_reglas.append(3)
+
         g_cod = p.G[-1][0]
         d1_cod = p.D[-1][0]
         d_cod = g_cod + d1_cod
@@ -95,6 +98,7 @@ class JSParser(Parser):
     @_('')
     def D(self, p):
         self.lista_reglas.append(4)
+
         d_cod = [None]
         return (d_cod, None, [None]),
 
@@ -102,13 +106,15 @@ class JSParser(Parser):
     def G(self, p):
         if p.E != self.LOG_TYPE:
             self.semantic_error(1, p.lineno)
+
+        self.lista_reglas.append(5)
+
         g_desp = self.nueva_etiq()
         e_lugar = p.E[-1][1]
         e_cod = p.E[-1][0]
         s_cod = p.S[-1][0]
         g_cod = e_cod + self.gen(oper='if=', op1=e_lugar, op2=('ent', 0), res=('etiq', g_desp)) + s_cod + \
                 self.gen(oper=':', op1=('etiq', g_desp))
-        self.lista_reglas.append(5)
         return (g_cod, None, [None]),
 
     @_('S')
@@ -275,22 +281,32 @@ class JSParser(Parser):
             self.semantic_error(6, p.lineno)
 
         self.lista_reglas.append(25)
-        return
+
+        g_inicio = self.nueva_etiq()
+        g_desp = self.nueva_etiq()
+        g_cod = p.N[1] + self.gen(oper=':', op1=('etiq', g_inicio)) + p.E[1] + \
+                self.gen('if=', p.E[0], 0, g_desp) + p.C[1] + p.O[1] + \
+                self.gen(oper='goto', res=g_inicio) + self.gen(oper=':', op1=g_desp)
+        return (None, g_cod, [None]),
 
     @_('K')
     def N(self, p):
         self.lista_reglas.append(26)
-        return
+
+        n_cod = p.K[1]
+        return (None, n_cod, [None]),
 
     @_('')
     def N(self, p):
         self.lista_reglas.append(27)
-        return
+        return (None, [None], [None]),
 
     @_('K')
     def O(self, p):
         self.lista_reglas.append(28)
-        return
+
+        o_cod = p.K[1]
+        return (None, o_cod, [None]),
 
     @_('OPESP ID')
     def O(self, p):
@@ -299,7 +315,12 @@ class JSParser(Parser):
             self.semantic_error(11, p.lineno)
 
         self.lista_reglas.append(29)
-        return
+
+        o_lugar = self.nueva_etiq()
+        id_lugar = (p.ID[0], p.ID[1])
+        o_cod = self.gen(res=id_lugar, oper='=-', op1=id_lugar, op2=1) + self.gen(res=o_lugar, oper='=',
+                                                                                  op1=id_lugar)
+        return (o_lugar, o_cod, [None]),
 
     @_('')
     def O(self, p):
@@ -502,7 +523,7 @@ class JSParser(Parser):
 
         v_lugar = self.nueva_temp(self.INT_TYPE)
         v_cod = self.gen(res=v_lugar, oper='=', op1=p.CTEENTERA)
-        return self.INT_TYPE, (v_cod, v_lugar, [None])  #TODO: Change order v_cod <-> v_lugar and translation
+        return self.INT_TYPE, (v_cod, v_lugar, [None])  # TODO: Change order v_cod <-> v_lugar and translation
 
     @_('CADENA')
     def V(self, p):
@@ -537,33 +558,36 @@ class JSParser(Parser):
 
     def gen(self, oper, op1=None, op2=None, res=None):
 
-        oper_ = oper; op1_ = op1; op2_ = op2; res_ = res
+        oper_ = oper;
+        op1_ = op1;
+        op2_ = op2;
+        res_ = res
 
-        match oper:
-            case '=':
-                if type(op1) is tuple:
-                    if self.TS.get_attribute(op1[0], op1[1], self.ATTR_TYPE) == self.STRING_TYPE:
-                        oper_ = '=Cad'
-                    else:
-                        oper_ = '=EL'
-                else:
-                    if type(op1) is int:
-                        op1_=('ent', op1)
-                        oper_ = '=EL'
-                    else:
-                        op1_= ('cad', op1)
-                        oper_ = '=CAD'
-            case 'if=' | '=-':
-                if type(op2) is tuple:
-                    if self.TS.get_attribute(op2[0], op2[1], self.ATTR_TYPE) == self.STRING_TYPE:
-                        oper_ = '=Cad'
-                    else:
-                        oper_ = '=EL'
-                else:
-                    if type(op2) is int:
-                        op2_ = ('ent', op2)
-                    else:
-                        op2_ = ('cad', op2)
+        # match oper:
+        #     case '=':
+        #         if type(op1) is tuple:
+        #             if self.TS.get_attribute(op1[0], op1[1], self.ATTR_TYPE) == self.STRING_TYPE:
+        #                 oper_ = '=Cad'
+        #             else:
+        #                 oper_ = '=EL'
+        #         else:
+        #             if type(op1) is int:
+        #                 op1_=('ent', op1)
+        #                 oper_ = '=EL'
+        #             else:
+        #                 op1_= ('cad', op1)
+        #                 oper_ = '=CAD'
+        #     case 'if=' | '=-':
+        #         if type(op2) is tuple:
+        #             if self.TS.get_attribute(op2[0], op2[1], self.ATTR_TYPE) == self.STRING_TYPE:
+        #                 oper_ = '=Cad'
+        #             else:
+        #                 oper_ = '=EL'
+        #         else:
+        #             if type(op2) is int:
+        #                 op2_ = ('ent', op2)
+        #             else:
+        #                 op2_ = ('cad', op2)
 
         return [(oper_, op1_, op2_, res_)]
 
