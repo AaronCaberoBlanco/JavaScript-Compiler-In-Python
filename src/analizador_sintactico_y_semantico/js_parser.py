@@ -572,7 +572,7 @@ class JSParser(Parser):
         #                 oper_ = '=EL'
         #         else:
         #             if type(op1) is int:
-        #                 op1_=('ent', op1)
+        #                 op1_ = ('ent', op1)
         #                 oper_ = '=EL'
         #             else:
         #                 op1_= ('cad', op1)
