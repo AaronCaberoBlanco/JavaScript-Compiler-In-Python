@@ -12,7 +12,7 @@ self.gen(res=v_lugar, oper='=', op1=p.CTEENTERA)
 # gen(param, E.lugar)                             gen(oper='param', oper1=E.lugar)
 #
 # #CallValue
-# gen(H.lugar, =, call, buscaEtiquetaTS(id.pos))  gen(res=H.lugar, oper='callValue', oper1=id.pos)
+# gen(H.lugar, =, call, buscaEtiquetaTS(id.pos))  gen(res=H.lugar, oper='callValue', oper1=etiq(id.pos))
 #
 # #Alert
 # gen(alert)                                      gen(oper='alert')
