@@ -1,3 +1,5 @@
+#gen(string del operador, lugar/valor/etiq, lugar/valor, lugar/etiq)
+#.lugar=(id_table, id_pos)
 
 self.gen(oper='if=', op1=e_lugar, op2=('ent', 0), res=('etiq', g_desp))
 self.gen(oper=':', op1=('etiq', g_desp))

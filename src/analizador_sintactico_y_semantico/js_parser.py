@@ -70,8 +70,10 @@ class JSParser(Parser):
         self.lista_reglas.append(1)
         d_cod = p.D[-1][0]
         b_cod = d_cod
+        gci = open('GCI.txt','w')
         for i in b_cod:
-            print(i)
+            if i is not None:
+                print(i,file=gci)
         return
 
     @_('F D')
@@ -174,7 +176,7 @@ class JSParser(Parser):
 
     @_('ID OPASIG E')
     def K(self, p):
-        if self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE) != p.E:
+        if self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE) != p.E[0]:
             self.error_id = p.ID
             self.semantic_error(10, p.lineno)
 
@@ -385,6 +387,7 @@ class JSParser(Parser):
         self.declarando_funcion[0] = False
 
         self.lista_reglas.append(38)
+
         return
 
     @_('T ID W')
@@ -433,7 +436,7 @@ class JSParser(Parser):
         self.lista_reglas.append(45)
         e_cod = p.R[-1][0]
         e_lugar = p.R[-1][1]
-        return p.R, (e_cod, e_lugar, [None])
+        return p.R[0], (e_cod, e_lugar, [None])
 
     @_('R OPREL U')
     def R(self, p):  # TODO:Cambiar p.R -> p.R[0]
@@ -449,7 +452,7 @@ class JSParser(Parser):
 
         r_cod = p.U[-1][0]
         r_lugar = p.U[-1][1]
-        return p.U, (r_cod, r_lugar, [None])
+        return p.U[0], (r_cod, r_lugar, [None])
 
     @_('U OPARIT V')
     def U(self, p):
@@ -465,7 +468,7 @@ class JSParser(Parser):
 
         u_cod = p.V[-1][0]
         u_lugar = p.V[-1][1]
-        return p.V, (u_cod, u_lugar, [None])
+        return p.V[0], (u_cod, u_lugar, [None])
 
     @_('OPESP ID')
     def V(self, p):
@@ -548,8 +551,7 @@ class JSParser(Parser):
                     else:
                         op1_= ('cad', op1)
                         oper_ = '=CAD'
-
-           case 'if=' | '=-':
+            case 'if=' | '=-':
                 if type(op2) is tuple:
                     if self.TS.get_attribute(op2[0], op2[1], self.ATTR_TYPE) == self.STRING_TYPE:
                         oper_ = '=Cad'

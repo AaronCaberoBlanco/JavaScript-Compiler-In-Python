@@ -9,7 +9,7 @@ from tabla_simbolos.sym_table import SymTable
 tokens_file = open("Tokens.txt", "w")
 parse_file = open("Parse.txt", "w")
 TS_file = open("TS-Output.txt", "w")
-sys.stderr = open("Error.txt", "w")
+#sys.stderr = open("Error.txt", "w")
 
 '''The input where we obtain the program to analize'''
 f = open('Input.txt', 'r')
