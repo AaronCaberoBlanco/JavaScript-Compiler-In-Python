@@ -70,7 +70,9 @@ class JSParser(Parser):
         self.lista_reglas.append(1)
         d_cod = p.D[-1][0]
         b_cod = d_cod
-        return (b_cod, None, [None])
+        for i in b_cod:
+            print(i)
+        return
 
     @_('F D')
     def D(self, p):
@@ -102,8 +104,8 @@ class JSParser(Parser):
         e_lugar = p.E[-1][1]
         e_cod = p.E[-1][0]
         s_cod = p.S[-1][0]
-        g_cod = e_cod + self.gen('if=', e_lugar, ('ent', 0), ('etiq', g_desp)), s_cod,
-                 self.gen(operator=':', result=('etiq', g_desp)))
+        g_cod = e_cod + self.gen(oper='if=', op1=e_lugar, op2=('ent', 0), res=('etiq', g_desp)) + s_cod + \
+                self.gen(oper=':', op1=('etiq', g_desp))
         self.lista_reglas.append(5)
         return (g_cod, None, [None]),
 
@@ -184,7 +186,8 @@ class JSParser(Parser):
         # if id_tipo == self.STRING_TYPE:
 
         e_cod = p.E[-1][0]
-        k_cod = (e_cod, self.gen(operator='=EL', ))
+        e_lugar = p.E[-1][1]
+        k_cod = e_cod + self.gen(oper='=', res=(p.ID[0], p.ID[1]), op1=e_lugar)
         return (k_cod, None, None),
 
     @_('ALERT ABPAREN E CEPAREN PUNTOYCOMA')
@@ -459,7 +462,10 @@ class JSParser(Parser):
     @_('V')
     def U(self, p):
         self.lista_reglas.append(49)
-        return p.V
+
+        u_cod = p.V[-1][0]
+        u_lugar = p.V[-1][1]
+        return p.V, (u_cod, u_lugar, [None])
 
     @_('OPESP ID')
     def V(self, p):
@@ -488,7 +494,10 @@ class JSParser(Parser):
     @_('CTEENTERA')
     def V(self, p):
         self.lista_reglas.append(54)
-        return self.INT_TYPE
+
+        v_lugar = self.nueva_temp(self.INT_TYPE)
+        v_cod = self.gen(res=v_lugar, oper='=', op1=p.CTEENTERA)
+        return self.INT_TYPE, (v_cod, v_lugar, [None])  #TODO: Change order v_cod <-> v_lugar and translation
 
     @_('CADENA')
     def V(self, p):
@@ -504,7 +513,17 @@ class JSParser(Parser):
     def nueva_temp(self, type):
         res = f'~Temp{self.num_temp}'
         self.num_temp += 1
-        return res
+        id = self.TS.add_entry(res)
+        self.TS.add_attribute(id[0], id[1], self.ATTR_DESP, self.shift)
+        self.TS.add_attribute(id[0], id[1], self.ATTR_TYPE, type)
+
+        # match type:
+        #     case self.STRING_TYPE:
+        #         self.shift += 64
+        #     case _:
+        #         self.shift += 1
+
+        return id
 
     def nueva_etiq(self):
         res = f'~Etiq{self.num_etiq}'
@@ -512,14 +531,37 @@ class JSParser(Parser):
         return res
 
     def gen(self, oper, op1=None, op2=None, res=None):
-        op = self.OPERATOR_CODE[oper]
-        if op1 is not None:
-            op1_ = (self.OPERAND_CODE[op1[0]], op1[1])
-        if op2 is not None:
-            op2_ = (self.OPERAND_CODE[op2[0]], op2[1])
-        if res is not None:
-            res_ = (self.OPERAND_CODE[res[0]], res[1])
-        return op, op1_, op2_, res_
+
+        oper_ = oper; op1_ = op1; op2_ = op2; res_ = res
+
+        match oper:
+            case '=':
+                if type(op1) is tuple:
+                    if self.TS.get_attribute(op1[0], op1[1], self.ATTR_TYPE) == self.STRING_TYPE:
+                        oper_ = '=Cad'
+                    else:
+                        oper_ = '=EL'
+                else:
+                    if type(op1) is int:
+                        op1_=('ent', op1)
+                        oper_ = '=EL'
+                    else:
+                        op1_= ('cad', op1)
+                        oper_ = '=CAD'
+
+           case 'if=' | '=-':
+                if type(op2) is tuple:
+                    if self.TS.get_attribute(op2[0], op2[1], self.ATTR_TYPE) == self.STRING_TYPE:
+                        oper_ = '=Cad'
+                    else:
+                        oper_ = '=EL'
+                else:
+                    if type(op2) is int:
+                        op2_ = ('ent', op2)
+                    else:
+                        op2_ = ('cad', op2)
+
+        return [(oper_, op1_, op2_, res_)]
 
     def gci(self):
         pass
