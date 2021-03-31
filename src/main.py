@@ -1,9 +1,9 @@
 import sys
 
 '''Necessary imports to use the PDL-Procesator'''
-from src.analizador_lexico.js_lexer import JSLexer
-from src.analizador_sintactico_y_semantico.js_parser import JSParser
-from src.tabla_simbolos.sym_table import SymTable
+from analizador_lexico.js_lexer import JSLexer
+from analizador_sintactico_y_semantico.js_parser import JSParser
+from tabla_simbolos.sym_table import SymTable
 
 '''Output files where we can see the different results of our input'''
 tokens_file = open("Tokens.txt", "w")
