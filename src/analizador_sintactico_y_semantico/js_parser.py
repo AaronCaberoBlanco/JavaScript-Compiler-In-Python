@@ -330,12 +330,16 @@ class JSParser(Parser):
     @_('G C')
     def C(self, p):
         self.lista_reglas.append(31)
-        return
+        g_cod = p.G[-1][1]
+        c1_cod = p.C[-1][1]
+        c_cod = g_cod + c1_cod
+        return (None, c_cod, [None]),
 
     @_('')
     def C(self, p):
         self.lista_reglas.append(32)
-        return
+        c_cod = [None]
+        return (None, c_cod, [None]),
 
     @_('F1 F2 F3')
     def F(self, p):
