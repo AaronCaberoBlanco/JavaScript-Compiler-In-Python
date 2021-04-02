@@ -8,7 +8,7 @@ cod_operandos = {'global': 1,
                  'etiq': 5}
 
 cod_operador = {'=-' : 11,
-                'if=' : 12,
+                'if=goto' : 12,
                 '=and' : 13,
                 '=EL': 14,
                 '=Cad' : 15,

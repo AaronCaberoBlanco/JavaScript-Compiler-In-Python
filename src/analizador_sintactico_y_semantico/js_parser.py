@@ -103,7 +103,7 @@ class JSParser(Parser):
 
     @_('IF ABPAREN E CEPAREN S')
     def G(self, p):
-        if p.E != self.LOG_TYPE:
+        if p.E[0] != self.LOG_TYPE:
             self.semantic_error(1, p.lineno)
 
         self.lista_reglas.append(5)
@@ -112,7 +112,7 @@ class JSParser(Parser):
         e_lugar = p.E[-1][1]
         e_cod = p.E[-1][0]
         s_cod = p.S[-1][0]
-        g_cod = e_cod + self.gen(oper='if=', op1=e_lugar, op2=('ent', 0), res=('etiq', g_desp)) + s_cod + \
+        g_cod = e_cod + self.gen(oper='if=goto', op1=e_lugar, op2=('ent', 0), res=('etiq', g_desp)) + s_cod + \
                 self.gen(oper=':', op1=('etiq', g_desp))
         return (g_cod, None, [None]),
 
@@ -284,7 +284,7 @@ class JSParser(Parser):
         g_inicio = self.nueva_etiq()
         g_desp = self.nueva_etiq()
         g_cod = p.N[1] + self.gen(oper=':', op1=('etiq', g_inicio)) + p.E[1] + \
-                self.gen('if=', p.E[0], 0, g_desp) + p.C[1] + p.O[1] + \
+                self.gen('if=goto', p.E[0], 0, g_desp) + p.C[1] + p.O[1] + \
                 self.gen(oper='goto', res=g_inicio) + self.gen(oper=':', op1=g_desp)
         return (None, g_cod, [None]),
 
@@ -587,7 +587,7 @@ class JSParser(Parser):
         #             else:
         #                 op1_= ('cad', op1)
         #                 oper_ = '=CAD'
-        #     case 'if=' | '=-':
+        #     case 'if=goto' | '=-':
         #         if type(op2) is tuple:
         #             if self.TS.get_attribute(op2[0], op2[1], self.ATTR_TYPE) == self.STRING_TYPE:
         #                 oper_ = '=Cad'
