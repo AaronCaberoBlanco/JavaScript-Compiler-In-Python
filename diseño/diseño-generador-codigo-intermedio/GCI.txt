@@ -142,7 +142,7 @@ F3 $#rightarrow$ { C } {
   
   
 E $#rightarrow$ E1 && R {
-    E.lugar =  nuevatemp();
+    E.lugar =  nuevatemp()
     E.cod = E1.cod || R.cod || gen(E.lugar, =, E1.lugar, AND, R.lugar)
     }
 E $#rightarrow$ R {
@@ -152,6 +152,7 @@ E $#rightarrow$ R {
   
 R $#rightarrow$ R1 == U {
     R.true = nuevaetiq()
+    R.lugar = nuevatemp()
     R.despues = nuevaetiq()
     R.cod = R1.cod || U.cod || gen(if, R1.lugar, =, U.lugar, goto, R.true) ||
             gen(R.lugar, =, 0) || gen(goto, R.después) || gen(:, R.true) || gen(R.lugar, =, 1) || gen(:, R.despues)
@@ -163,7 +164,7 @@ R $#rightarrow$ U {
   
 U $#rightarrow$ U1 - V {
     U.lugar = nuevatemp()
-    U.cod = gen(U.lugar, =, U1.lugar, -, V.lugar)
+    U.cod = U1.cod || V.cod || gen(U.lugar, =, U1.lugar, -, V.lugar)
     }
 U $#rightarrow$ V {
     U.lugar = V.lugar
@@ -180,8 +181,8 @@ V $#rightarrow$ id {
     V.cod = vacio
     }
 V $#rightarrow$ ( E ) { 
-    V.lugar = H.lugar
-    V.cod = H.cod
+    V.lugar = E.lugar
+    V.cod = E.cod
     }
 V $#rightarrow$ H {
     V.lugar = H.lugar

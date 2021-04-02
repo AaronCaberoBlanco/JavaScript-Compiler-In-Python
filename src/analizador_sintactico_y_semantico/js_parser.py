@@ -70,7 +70,7 @@ class JSParser(Parser):
 
         d_cod = p.D[-1][1]
         b_cod = d_cod
-        gci = open('GCI.txt', 'w')      #TODO: crear función print
+        gci = open('GCI.txt', 'w')  # TODO: crear función print
         for i in b_cod:
             if i is not None:
                 print(i, file=gci)
@@ -234,6 +234,7 @@ class JSParser(Parser):
     def L(self, p):
         self.lista_reglas.append(19)
         return self.VOID_TYPE
+    # Hasta aquí Alex
 
     @_('LET M T ID PUNTOYCOMA')
     def G(self, p):
@@ -262,7 +263,6 @@ class JSParser(Parser):
         self.lista_reglas.append(22)
         return self.INT_TYPE, 1
 
-    # Hasta aquí Alex
 
     @_('BOOLEAN')
     def T(self, p):
@@ -276,15 +276,20 @@ class JSParser(Parser):
 
     @_('FOR ABPAREN N PUNTOYCOMA E PUNTOYCOMA O CEPAREN ABLLAVE C CELLAVE')
     def G(self, p):
-        if p.E != self.LOG_TYPE:
+        if p.E[0] != self.LOG_TYPE:
             self.semantic_error(6, p.lineno)
 
         self.lista_reglas.append(25)
 
         g_inicio = self.nueva_etiq()
         g_desp = self.nueva_etiq()
-        g_cod = p.N[1] + self.gen(oper=':', op1=('etiq', g_inicio)) + p.E[1] + \
-                self.gen('if=goto', p.E[0], 0, g_desp) + p.C[1] + p.O[1] + \
+        n_cod = p.N[-1][1]
+        e_lugar = p.E[-1][0]
+        e_cod = p.E[-1][1]
+        o_cod = p.O[-1][1]
+        c_cod = p.C[-1][1]
+        g_cod = n_cod + self.gen(oper=':', op1=g_inicio) + e_cod + \
+                self.gen(oper='if=goto', op1=e_lugar, op2=0, res=g_desp) + c_cod + o_cod + \
                 self.gen(oper='goto', res=g_inicio) + self.gen(oper=':', op1=g_desp)
         return (None, g_cod, [None]),
 
@@ -292,19 +297,21 @@ class JSParser(Parser):
     def N(self, p):
         self.lista_reglas.append(26)
 
-        n_cod = p.K[1]
+        n_cod = p.K[-1][1]
         return (None, n_cod, [None]),
 
     @_('')
     def N(self, p):
         self.lista_reglas.append(27)
-        return (None, [None], [None]),
+
+        n_cod = [None]
+        return (None, n_cod, [None]),
 
     @_('K')
     def O(self, p):
         self.lista_reglas.append(28)
 
-        o_cod = p.K[1]
+        o_cod = p.K[-1][1]
         return (None, o_cod, [None]),
 
     @_('OPESP ID')
@@ -315,20 +322,23 @@ class JSParser(Parser):
 
         self.lista_reglas.append(29)
 
-        o_lugar = self.nueva_etiq()
         id_lugar = (p.ID[0], p.ID[1])
-        o_cod = self.gen(res=id_lugar, oper='=-', op1=id_lugar, op2=1) + self.gen(res=o_lugar, oper='=',
-                                                                                  op1=id_lugar)
+        o_lugar = self.nueva_temp(self.INT_TYPE)
+        o_cod = self.gen(res=id_lugar, oper='=-', op1=id_lugar, op2=1) + \
+                self.gen(res=o_lugar, oper='=', op1=id_lugar)
         return (o_lugar, o_cod, [None]),
 
     @_('')
     def O(self, p):
         self.lista_reglas.append(30)
-        return
+
+        o_cod = [None]
+        return (None, o_cod, [None]),
 
     @_('G C')
     def C(self, p):
         self.lista_reglas.append(31)
+
         g_cod = p.G[-1][1]
         c1_cod = p.C[-1][1]
         c_cod = g_cod + c1_cod
@@ -337,6 +347,7 @@ class JSParser(Parser):
     @_('')
     def C(self, p):
         self.lista_reglas.append(32)
+
         c_cod = [None]
         return (None, c_cod, [None]),
 
@@ -348,6 +359,7 @@ class JSParser(Parser):
         self.shift = self.global_shift[0]
 
         self.lista_reglas.append(33)
+
         f1_cod = p.F1[-1][1]
         f2_cod = p.F2[-1][1]
         f3_cod = p.F3[-1][1]
@@ -364,7 +376,7 @@ class JSParser(Parser):
 
         self.TS.add_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE, self.FUNCTION_TYPE)
         if p.Q == 'void':
-            self.return_type = p.Q
+            self.return_type = p.Q[0]
             self.TS.add_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE, self.VOID_TYPE)
         else:
             self.return_type = p.Q[0]
@@ -373,6 +385,7 @@ class JSParser(Parser):
                               'Et_Fun_' + str(self.number_function))
 
         self.lista_reglas.append(34)
+
         etiq_fun = self.TS.get_attribute(p.ID[0], p.ID[1], 'EtiqFuncion')
         f1_cod = self.gen(oper=':', op1=etiq_fun)
         return (None, f1_cod, [None]),
@@ -387,18 +400,18 @@ class JSParser(Parser):
         self.declaration_scope[0] = True
 
         self.lista_reglas.append(36)
-        return p.T
+        return p.T[0],
 
     @_('')
     def Q(self, p):
         self.declaration_scope[0] = True
 
         self.lista_reglas.append(37)
-        return self.VOID_TYPE
+        return self.VOID_TYPE,
 
     @_('ABPAREN A CEPAREN')
     def F2(self, p):
-        list = p.A
+        list = p.A[0]
         if list == self.VOID_TYPE:
             self.TS.add_attribute(self.pos_id_fun[0], self.pos_id_fun[1], self.ATTR_NUM_PARAMS, 0)
             self.TS.add_attribute(self.pos_id_fun[0], self.pos_id_fun[1], self.ATTR_TYPE_PARAMS, self.VOID_TYPE)
@@ -419,88 +432,117 @@ class JSParser(Parser):
         self.declarando_funcion[0] = False
 
         self.lista_reglas.append(38)
+
         f2_cod = [None]
         return (None, f2_cod, [None]),
 
     @_('T ID W')
     def A(self, p):
-        list = p.W
+        list = p.W[0]
         list.insert(0, p.ID)
-        list.insert(0, p.T)
+        list.insert(0, p.T[0])
 
         self.lista_reglas.append(39)
-        return list
+        return list,
 
     @_('')
     def A(self, p):
         self.lista_reglas.append(40)
-        return self.VOID_TYPE
+        return self.VOID_TYPE,
 
     @_('COMA T ID W')
     def W(self, p):
-        list = p.W
+        list = p.W[0]
         list.insert(0, p.ID)
-        list.insert(0, p.T)
+        list.insert(0, p.T[0])
 
         self.lista_reglas.append(41)
-        return list
+        return list,
 
     @_('')
     def W(self, p):
         self.lista_reglas.append(42)
-        return []
+        return [],
 
     @_('ABLLAVE C CELLAVE')
     def F3(self, p):
         self.lista_reglas.append(43)
+
         f3_cod = p.C[-1][1]
         return (None, f3_cod, [None]),
 
     @_('E OPLOG R')
     def E(self, p):
-        if p.E != self.LOG_TYPE or p.R != self.LOG_TYPE:
+        if p.E[0] != self.LOG_TYPE or p.R[0] != self.LOG_TYPE:
             self.semantic_error(12, p.lineno)
 
         self.lista_reglas.append(44)
-        return self.LOG_TYPE
+
+        e_lugar = self.nueva_temp(self.LOG_TYPE)
+        e1_lugar = p.E[-1][0]
+        e1_cod = p.E[-1][1]
+        r_lugar = p.R[-1][0]
+        r_cod = p.E[-1][1]
+        e_cod = e1_cod + r_cod + self.gen(res=e_lugar, oper='=and', op1=e1_lugar, op2=r_lugar)
+        return self.LOG_TYPE, (e_lugar, e_cod, [None])
 
     @_('R')
     def E(self, p):
         self.lista_reglas.append(45)
-        e_cod = p.R[-1][1]
+
         e_lugar = p.R[-1][0]
+        e_cod = p.R[-1][1]
         return p.R[0], (e_lugar, e_cod, [None])
 
     @_('R OPREL U')
     def R(self, p):  # TODO:Cambiar p.R -> p.R[0]
-        if p.R != self.INT_TYPE or p.U != self.INT_TYPE:
+        if p.R[0] != self.INT_TYPE or p.U[0] != self.INT_TYPE:
             self.semantic_error(13, p.lineno)
 
         self.lista_reglas.append(46)
-        return self.LOG_TYPE
+
+        r_true = self.nueva_etiq()
+        r_despues = self.nueva_etiq()
+        r1_lugar = p.R[-1][0]
+        r1_cod = p.R[-1][1]
+        u_lugar = p.U[-1][0]
+        u_cod = p.U[-1][1]
+        r_lugar = self.nueva_temp(self.INT_TYPE)
+        r_cod = r1_cod + u_cod + self.gen(oper='if=', op1=r1_lugar, op2=u_lugar, res=r_true) + \
+                self.gen(res=r_lugar, oper='=', op1=0) + self.gen(oper='goto', res=r_despues) + \
+                self.gen(oper=':', op1=r_true) + self.gen(res=r_lugar, oper='=', op1=1) + \
+                self.gen(oper=':', op1=r_despues)
+        return self.LOG_TYPE, (r_lugar, r_cod, [None])
 
     @_('U')
     def R(self, p):
         self.lista_reglas.append(47)
 
-        r_cod = p.U[-1][1]
         r_lugar = p.U[-1][0]
+        r_cod = p.U[-1][1]
         return p.U[0], (r_lugar, r_cod, [None])
 
     @_('U OPARIT V')
     def U(self, p):
-        if p.U != self.INT_TYPE or p.V != self.INT_TYPE:
+        if p.U[0] != self.INT_TYPE or p.V[0] != self.INT_TYPE:
             self.semantic_error(14, p.lineno)
 
         self.lista_reglas.append(48)
-        return self.INT_TYPE
+
+        u_lugar = self.nueva_temp(self.INT_TYPE)
+        u1_lugar = p.U[-1][0]
+        u1_cod = p.U[-1][1]
+        v_lugar = p.V[-1][0]
+        v_cod = p.V[-1][1]
+        u_cod = u1_cod + v_cod + self.gen(res=u_lugar, oper='=-', op1=u1_lugar, op2=v_lugar)
+        return self.INT_TYPE, (u_lugar, u_cod, [None])
 
     @_('V')
     def U(self, p):
         self.lista_reglas.append(49)
 
-        u_cod = p.V[-1][1]
         u_lugar = p.V[-1][0]
+        u_cod = p.V[-1][1]
         return p.V[0], (u_lugar, u_cod, [None])
 
     @_('OPESP ID')
@@ -510,56 +552,72 @@ class JSParser(Parser):
             self.semantic_error(11, p.lineno)
 
         self.lista_reglas.append(50)
-        return self.INT_TYPE
+
+        v_lugar = self.nueva_temp(self.INT_TYPE)
+        id_lugar = (p.ID[0], p.ID[1])
+        v_cod = self.gen(res=id_lugar, oper='=-', op1=id_lugar, op2=1) + \
+                self.gen(res=v_lugar, oper='=', op1=id_lugar)
+        return self.INT_TYPE, (v_lugar, v_cod, [None])
 
     @_('ID')
     def V(self, p):
         self.lista_reglas.append(51)
-        return self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE)
+
+        v_lugar = (p.ID[0], p.ID[1])
+        v_cod = [None]
+        return self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE), (v_lugar, v_cod, [None])
 
     @_('ABPAREN E CEPAREN')
     def V(self, p):
         self.lista_reglas.append(52)
-        return p.E
+
+        v_lugar = p.E[-1][0]
+        v_cod = p.E[-1][1]
+        return p.E[0], (v_lugar, v_cod, [None])
 
     @_('H')
     def V(self, p):
         self.lista_reglas.append(53)
-        return p.H,
+
+        v_lugar = p.H[-1][0]
+        v_cod = p.H[-1][1]
+        return p.H[0], (v_lugar, v_cod, [None])
 
     @_('CTEENTERA')
     def V(self, p):
         self.lista_reglas.append(54)
 
+        # TODO: Change order v_cod <-> v_lugar and translation
         v_lugar = self.nueva_temp(self.INT_TYPE)
         v_cod = self.gen(res=v_lugar, oper='=', op1=p.CTEENTERA)
-        return self.INT_TYPE, (v_lugar, v_cod, [None])  # TODO: Change order v_cod <-> v_lugar and translation
+        return self.INT_TYPE, (v_lugar, v_cod, [None])
 
     @_('CADENA')
     def V(self, p):
         self.lista_reglas.append(55)
-        return self.STRING_TYPE
+
+        v_lugar = self.nueva_temp(self.STRING_TYPE)
+        v_cod = self.gen(res=v_lugar, oper='=', op1=p.CADENA)
+        return self.STRING_TYPE, (v_lugar, v_cod, [None])
 
     @_('CTELOGICA')
     def V(self, p):
         self.lista_reglas.append(56)
-        return self.LOG_TYPE
+
+        v_lugar = self.nueva_temp(self.LOG_TYPE)
+        v_cod = self.gen(res=v_lugar, oper='=', op1=p.CTELOGICA)
+        return self.LOG_TYPE, (v_lugar, v_cod, [None])
 
     # -----------------------Variables and labels management functions-----------------------
     def nueva_temp(self, type):
         res = f'~Temp{self.num_temp}'
         self.num_temp += 1
-        id = self.TS.add_entry(res)
-        self.TS.add_attribute(id[0], id[1], self.ATTR_DESP, self.shift)
-        self.TS.add_attribute(id[0], id[1], self.ATTR_TYPE, type)
+        id_ = self.TS.add_entry(res)
+        self.TS.add_attribute(id_[0], id_[1], self.ATTR_DESP, self.shift)
+        self.TS.add_attribute(id_[0], id_[1], self.ATTR_TYPE, type)
 
-        # match type:
-        #     case self.STRING_TYPE:
-        #         self.shift += 64
-        #     case _:
-        #         self.shift += 1
-
-        return id
+        self.shift += 64 if type == self.STRING_TYPE else 1
+        return id_
 
     def nueva_etiq(self):
         res = f'~Etiq{self.num_etiq}'
