@@ -90,8 +90,7 @@ class JSParser(Parser):
         self.lista_reglas.append(3)
 
         g_cod = p.G[-1][1]
-        d1_cod = p.D[-1][1]
-        d_cod = g_cod + d1_cod
+        d_cod = g_cod + p.D[-1][1]
         return (None, d_cod, [None]),
 
     @_('')
@@ -109,11 +108,11 @@ class JSParser(Parser):
         self.lista_reglas.append(5)
 
         g_desp = self.nueva_etiq()
-        e_lugar = p.E[-1][1]
-        e_cod = p.E[-1][0]
-        s_cod = p.S[-1][0]
-        g_cod = e_cod + self.gen(oper='if=goto', op1=e_lugar, op2=('ent', 0), res=('etiq', g_desp)) + s_cod + \
-                self.gen(oper=':', op1=('etiq', g_desp))
+        e_lugar = p.E[-1][0]
+        e_cod = p.E[-1][1]
+        s_cod = p.S[-1][1]
+        g_cod = e_cod + self.gen(oper='if=goto', op1=e_lugar, op2=0, res=g_desp) + s_cod + \
+                self.gen(oper=':', op1=g_desp)
         return (None, g_cod, [None]),
 
     @_('S')
@@ -128,15 +127,25 @@ class JSParser(Parser):
         self.lista_reglas.append(7)
         g_cod = p.H[-1][1]
         h_cod = g_cod
-        return (h_cod, None, [None]),
+        return (None, h_cod, [None]),
 
     @_('ID ABPAREN I CEPAREN')
     def H(self, p):
+
+        return_value = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE)
+
+        h_lugar = self.nueva_temp(return_value)  # TODO: comprobar si return value es un tipo estilo TIPO_INT
+
+        i_cod_e = p.I[-1][1]
+        i_cod_p = p.I[-1][2]
+
+        h_cod = i_cod_e + i_cod_p + self.gen(res=h_lugar, oper='callValue', op1=(p.ID[0], p.ID[1]))
+
         if self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE) != self.FUNCTION_TYPE:
             self.error_id = p.ID
             self.semantic_error(15, p.lineno)
         elif self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_NUM_PARAMS) == 0 and p.I[0] == self.VOID_TYPE:
-            return self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE)
+            return self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE), (None, h_cod, [None])
         elif self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_NUM_PARAMS) != len(p.I[0]):
             self.error_id = p.ID
             self.semantic_error(2, p.lineno)
@@ -147,15 +156,6 @@ class JSParser(Parser):
                 self.semantic_error(3, p.lineno)
 
         self.lista_reglas.append(8)
-
-        return_value = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE)
-
-        h_lugar = self.nueva_temp(return_value) #TODO: comprobar si return value es un tipo estilo TIPO_INT
-
-        i_cod_e = p.I[-1][1]
-        i_cod_p = p.I[-1][2]
-
-        h_cod = i_cod_e + i_cod_p + self.gen(res=h_lugar, oper='callValue', op1=(p.ID[0],p.ID[1]))
 
         return return_value, (None, h_cod, [None])
 
@@ -680,31 +680,31 @@ class JSParser(Parser):
         op2_ = op2
         res_ = res
 
-        # match oper:
-        #     case '=':
-        #         if type(op1) is tuple:
-        #             if self.TS.get_attribute(op1[0], op1[1], self.ATTR_TYPE) == self.STRING_TYPE:
-        #                 oper_ = '=Cad'
-        #             else:
-        #                 oper_ = '=EL'
-        #         else:
-        #             if type(op1) is int:
-        #                 op1_ = ('ent', op1)
-        #                 oper_ = '=EL'
-        #             else:
-        #                 op1_= ('cad', op1)
-        #                 oper_ = '=CAD'
-        #     case 'if=goto' | '=-':
-        #         if type(op2) is tuple:
-        #             if self.TS.get_attribute(op2[0], op2[1], self.ATTR_TYPE) == self.STRING_TYPE:
-        #                 oper_ = '=Cad'
-        #             else:
-        #                 oper_ = '=EL'
-        #         else:
-        #             if type(op2) is int:
-        #                 op2_ = ('ent', op2)
-        #             else:
-        #                 op2_ = ('cad', op2)
+        match oper:
+             case '=':
+                 if type(op1) is tuple:
+                     if self.TS.get_attribute(op1[0], op1[1], self.ATTR_TYPE) == self.STRING_TYPE:
+                         oper_ = '=Cad'
+                     else:
+                         oper_ = '=EL'
+                 else:
+                     if type(op1) is int:
+                         op1_ = ('ent', op1)
+                         oper_ = '=EL'
+                     else:
+                         op1_= ('cad', op1)
+                         oper_ = '=CAD'
+             case 'if=goto' | '=-':
+                 if type(op2) is tuple:
+                     if self.TS.get_attribute(op2[0], op2[1], self.ATTR_TYPE) == self.STRING_TYPE:
+                         oper_ = '=Cad'
+                     else:
+                         oper_ = '=EL'
+                 else:
+                     if type(op2) is int:
+                         op2_ = ('ent', op2)
+                     else:
+                         op2_ = ('cad', op2)
 
         return [(oper_, op1_, op2_, res_)]
 
