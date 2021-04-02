@@ -659,7 +659,7 @@ class JSParser(Parser):
 
         return [(oper_, op1_, op2_, res_)]
 
-    def gci(self):
+    def gco(self):
         pass
 
     def scope_code(self, var):
