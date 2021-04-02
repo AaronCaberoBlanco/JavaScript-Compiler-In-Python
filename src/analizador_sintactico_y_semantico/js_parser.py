@@ -69,7 +69,7 @@ class JSParser(Parser):
     def B(self, p):
         self.lista_reglas.append(1)
 
-        d_cod = p.D[-1][0]
+        d_cod = p.D[-1][1]
         b_cod = d_cod
         gci = open('GCI.txt', 'w')
         for i in b_cod:
@@ -81,26 +81,26 @@ class JSParser(Parser):
     def D(self, p):
         self.lista_reglas.append(2)
 
-        f_cod = p.F[-1][0]
-        d1_cod = p.D[-1][0]
+        f_cod = p.F[-1][1]
+        d1_cod = p.D[-1][1]
         d_cod = f_cod + d1_cod
-        return (d_cod, None, [None]),
+        return (None, d_cod, [None]),
 
     @_('G D')
     def D(self, p):
         self.lista_reglas.append(3)
 
-        g_cod = p.G[-1][0]
-        d1_cod = p.D[-1][0]
+        g_cod = p.G[-1][1]
+        d1_cod = p.D[-1][1]
         d_cod = g_cod + d1_cod
-        return (d_cod, None, [None]),  # ( 'ent', (cod, lugar, codP) )   ( [x,y] + [a,b] )
+        return (None, d_cod, [None]),  # ( 'ent', (cod, lugar, codP) )   ( [x,y] + [a,b] )
 
     @_('')
     def D(self, p):
         self.lista_reglas.append(4)
 
         d_cod = [None]
-        return (d_cod, None, [None]),
+        return (None, d_cod, [None]),
 
     @_('IF ABPAREN E CEPAREN S')
     def G(self, p):
@@ -120,8 +120,8 @@ class JSParser(Parser):
     @_('S')
     def G(self, p):
         self.lista_reglas.append(6)
-        s_cod = p.S[-1][0]
-        return (s_cod, None, [None]),
+        s_cod = p.S[-1][1]
+        return (None, s_cod, [None]),
 
     @_('H PUNTOYCOMA')
     def S(self, p):
@@ -176,9 +176,9 @@ class JSParser(Parser):
     @_('K PUNTOYCOMA')
     def S(self, p):
         self.lista_reglas.append(13)
-        k_cod = p.K[-1][0]
+        k_cod = p.K[-1][1]
         s_cod = k_cod
-        return (s_cod, None, [None]),
+        return (None, s_cod, [None]),
 
     @_('ID OPASIG E')
     def K(self, p):
@@ -193,10 +193,10 @@ class JSParser(Parser):
         # id_scope_code = self.scope_code(p.ID[0])
         # if id_tipo == self.STRING_TYPE:
 
-        e_cod = p.E[-1][0]
-        e_lugar = p.E[-1][1]
+        e_cod = p.E[-1][1]
+        e_lugar = p.E[-1][0]
         k_cod = e_cod + self.gen(oper='=', res=(p.ID[0], p.ID[1]), op1=e_lugar)
-        return (k_cod, None, None),
+        return (None, k_cod, [None]),
 
     @_('ALERT ABPAREN E CEPAREN PUNTOYCOMA')
     def S(self, p):
@@ -250,7 +250,7 @@ class JSParser(Parser):
         self.lista_reglas.append(20)
 
         g_cod = [None]
-        return (g_cod, None, [None]),
+        return (None, g_cod, [None]),
 
     @_('')
     def M(self, p):
@@ -468,9 +468,9 @@ class JSParser(Parser):
     @_('R')
     def E(self, p):
         self.lista_reglas.append(45)
-        e_cod = p.R[-1][0]
-        e_lugar = p.R[-1][1]
-        return p.R[0], (e_cod, e_lugar, [None])
+        e_cod = p.R[-1][1]
+        e_lugar = p.R[-1][0]
+        return p.R[0], (e_lugar, e_cod, [None])
 
     @_('R OPREL U')
     def R(self, p):  # TODO:Cambiar p.R -> p.R[0]
@@ -484,9 +484,9 @@ class JSParser(Parser):
     def R(self, p):
         self.lista_reglas.append(47)
 
-        r_cod = p.U[-1][0]
-        r_lugar = p.U[-1][1]
-        return p.U[0], (r_cod, r_lugar, [None])
+        r_cod = p.U[-1][1]
+        r_lugar = p.U[-1][0]
+        return p.U[0], (r_lugar, r_cod, [None])
 
     @_('U OPARIT V')
     def U(self, p):
@@ -500,9 +500,9 @@ class JSParser(Parser):
     def U(self, p):
         self.lista_reglas.append(49)
 
-        u_cod = p.V[-1][0]
-        u_lugar = p.V[-1][1]
-        return p.V[0], (u_cod, u_lugar, [None])
+        u_cod = p.V[-1][1]
+        u_lugar = p.V[-1][0]
+        return p.V[0], (u_lugar, u_cod, [None])
 
     @_('OPESP ID')
     def V(self, p):
@@ -534,7 +534,7 @@ class JSParser(Parser):
 
         v_lugar = self.nueva_temp(self.INT_TYPE)
         v_cod = self.gen(res=v_lugar, oper='=', op1=p.CTEENTERA)
-        return self.INT_TYPE, (v_cod, v_lugar, [None])  # TODO: Change order v_cod <-> v_lugar and translation
+        return self.INT_TYPE, (v_lugar, v_cod, [None])  # TODO: Change order v_cod <-> v_lugar and translation
 
     @_('CADENA')
     def V(self, p):
