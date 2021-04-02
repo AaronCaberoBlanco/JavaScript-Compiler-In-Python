@@ -114,63 +114,92 @@ class JSParser(Parser):
         s_cod = p.S[-1][0]
         g_cod = e_cod + self.gen(oper='if=goto', op1=e_lugar, op2=('ent', 0), res=('etiq', g_desp)) + s_cod + \
                 self.gen(oper=':', op1=('etiq', g_desp))
-        return (g_cod, None, [None]),
+        return (None, g_cod, [None]),
 
     @_('S')
     def G(self, p):
         self.lista_reglas.append(6)
         s_cod = p.S[-1][1]
-        return (None, s_cod, [None]),
+        g_cod = s_cod
+        return (None, g_cod, [None]),
 
     @_('H PUNTOYCOMA')
     def S(self, p):
         self.lista_reglas.append(7)
-        return
+        g_cod = p.H[-1][1]
+        h_cod = g_cod
+        return (h_cod, None, [None]),
 
     @_('ID ABPAREN I CEPAREN')
     def H(self, p):
         if self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE) != self.FUNCTION_TYPE:
             self.error_id = p.ID
             self.semantic_error(15, p.lineno)
-        elif self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_NUM_PARAMS) == 0 and p.I == self.VOID_TYPE:
+        elif self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_NUM_PARAMS) == 0 and p.I[0] == self.VOID_TYPE:
             return self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE)
-        elif self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_NUM_PARAMS) != len(p.I):
+        elif self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_NUM_PARAMS) != len(p.I[0]):
             self.error_id = p.ID
             self.semantic_error(2, p.lineno)
 
-        for expected_type, found_type in zip(self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE_PARAMS), p.I):
+        for expected_type, found_type in zip(self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE_PARAMS), p.I[0]):
             if expected_type != found_type:
                 self.error_id = p.ID
                 self.semantic_error(3, p.lineno)
 
         self.lista_reglas.append(8)
-        return self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE)
+
+        return_value = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE)
+
+        h_lugar = self.nueva_temp(return_value) #TODO: comprobar si return value es un tipo estilo TIPO_INT
+
+        i_cod_e = p.I[-1][1]
+        i_cod_p = p.I[-1][2]
+
+        h_cod = i_cod_e + i_cod_p + self.gen(res=h_lugar, oper='callValue', op1=(p.ID[0],p.ID[1]))
+
+        return return_value, (None, h_cod, [None])
 
     @_('E J')
     def I(self, p):
-        list = p.J
-        list.insert(0, p.E)
+        list = p.J[0]
+        list.insert(0, p.E[0])
 
         self.lista_reglas.append(9)
-        return list
+
+        i_cod_p = self.gen(oper='param', op1=p.E[-1][0]) + p.J[-1][2]
+        i_cod_e = p.E[-1][1] + p.J[-1][1]
+
+        return list,(None, i_cod_e, i_cod_p)
 
     @_('COMA E J')
     def J(self, p):
-        list = p.J
-        list.insert(0, p.E)
+        list = p.J[0]
+        list.insert(0, p.E[0])
 
         self.lista_reglas.append(10)
-        return list
+
+        j_cod_p = self.gen(oper='param', op1=p.E[-1][0]) + p.J[-1][2]
+        j_cod_e = p.E[-1][1] + p.J[-1][1]
+
+        return list, (None, j_cod_e, j_cod_p)
 
     @_('')
     def J(self, p):
         self.lista_reglas.append(11)
-        return []
+
+        j_cod_p = [None]
+        j_cod_e = [None]
+
+        return [], (None, j_cod_e, j_cod_p)
 
     @_('')
     def I(self, p):
         self.lista_reglas.append(12)
-        return self.VOID_TYPE
+
+        i_cod_p = [None]
+        i_cod_e = [None]
+
+        return self.VOID_TYPE, (None, i_cod_e, i_cod_p)
 
     @_('K PUNTOYCOMA')
     def S(self, p):
@@ -187,11 +216,6 @@ class JSParser(Parser):
 
         self.lista_reglas.append(14)
 
-        # id_tipo = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE)
-        # id_despl = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_DESP)
-        # id_scope_code = self.scope_code(p.ID[0])
-        # if id_tipo == self.STRING_TYPE:
-
         e_cod = p.E[-1][1]
         e_lugar = p.E[-1][0]
         k_cod = e_cod + self.gen(oper='=', res=(p.ID[0], p.ID[1]), op1=e_lugar)
@@ -199,11 +223,15 @@ class JSParser(Parser):
 
     @_('ALERT ABPAREN E CEPAREN PUNTOYCOMA')
     def S(self, p):
-        if p.E != self.STRING_TYPE and p.E != self.INT_TYPE:
+        if p.E[0] != self.STRING_TYPE and p.E[0] != self.INT_TYPE:
             self.semantic_error(4, p.lineno)
 
         self.lista_reglas.append(15)
-        return
+
+        e_cod = p.E[-1][1]
+        s_cod = e_cod + self.gen(oper='param', op1=p.E[-1][0]) + self.gen('alert')
+
+        return (None, s_cod, [None]),
 
     @_('INPUT ABPAREN ID CEPAREN PUNTOYCOMA')
     def S(self, p):
@@ -213,27 +241,48 @@ class JSParser(Parser):
             self.semantic_error(5, p.lineno)
 
         self.lista_reglas.append(16)
-        return
+
+        s_cod = self.gen(oper='param',  op1=(p.ID[0], p.ID[1])) + self.gen('input')
+
+        return (None, s_cod, [None]),
 
     @_('RETURN L PUNTOYCOMA')
     def S(self, p):
         if not self.function_scope:
             self.semantic_error(7, p.lineno)
-        if p.L != self.return_type:
+        if p.L[0] != self.return_type:
             self.semantic_error(9, p.lineno)
 
         self.lista_reglas.append(17)
-        return
+
+        l_cod = p.L[-1][1]
+        if l_cod is not None:
+            l_lugar = p.L[-1][0]
+            s_cod = l_cod + self.gen(oper='returnValue', op1=l_lugar)
+        else:
+            s_cod = self.gen(oper='returnVoid')
+        return (None, s_cod, [None]),
 
     @_('E')
     def L(self, p):
         self.lista_reglas.append(18)
-        return p.E
+
+        e_cod = p.E[-1][1]
+        e_lugar = p.E[-1][0]
+
+        l_cod = e_cod
+        l_lugar = e_lugar
+
+        return p.E, (l_lugar, l_cod, [None])
 
     @_('')
     def L(self, p):
         self.lista_reglas.append(19)
-        return self.VOID_TYPE
+
+        l_cod = [None]
+
+        return self.VOID_TYPE, (None, l_cod, [None])
+
     # Hasta aquí Alex
 
     @_('LET M T ID PUNTOYCOMA')
