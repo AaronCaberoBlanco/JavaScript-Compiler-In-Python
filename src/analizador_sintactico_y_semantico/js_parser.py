@@ -508,7 +508,7 @@ class JSParser(Parser):
         u_lugar = p.U[-1][0]
         u_cod = p.U[-1][1]
         r_lugar = self.nueva_temp(self.INT_TYPE)
-        r_cod = r1_cod + u_cod + self.gen(oper='if=', op1=r1_lugar, op2=u_lugar, res=r_true) + \
+        r_cod = r1_cod + u_cod + self.gen(oper='if=goto', op1=r1_lugar, op2=u_lugar, res=r_true) + \
                 self.gen(res=r_lugar, oper='=', op1=0) + self.gen(oper='goto', res=r_despues) + \
                 self.gen(oper=':', op1=r_true) + self.gen(res=r_lugar, oper='=', op1=1) + \
                 self.gen(oper=':', op1=r_despues)
