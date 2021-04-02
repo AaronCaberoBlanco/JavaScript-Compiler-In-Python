@@ -34,14 +34,13 @@ class JSParser(Parser):
                     'etiq': 6}
 
     OPERATOR_CODE = {'=-': 11,
-                     'if=': 12,
+                     'if=goto': 12,
                      '=and': 13,
                      '=EL': 14,
                      '=Cad': 15,
                      'returnVoid': 16,
                      'returnValue': 17,
                      ':': 17,
-                     # 'callVoid' : 18,
                      'callValue': 19,
                      'param': 20,
                      'goto': 21,
@@ -71,7 +70,7 @@ class JSParser(Parser):
 
         d_cod = p.D[-1][1]
         b_cod = d_cod
-        gci = open('GCI.txt', 'w')
+        gci = open('GCI.txt', 'w')      #TODO: crear función print
         for i in b_cod:
             if i is not None:
                 print(i, file=gci)
@@ -93,7 +92,7 @@ class JSParser(Parser):
         g_cod = p.G[-1][1]
         d1_cod = p.D[-1][1]
         d_cod = g_cod + d1_cod
-        return (None, d_cod, [None]),  # ( 'ent', (cod, lugar, codP) )   ( [x,y] + [a,b] )
+        return (None, d_cod, [None]),
 
     @_('')
     def D(self, p):
@@ -569,9 +568,9 @@ class JSParser(Parser):
 
     def gen(self, oper, op1=None, op2=None, res=None):
 
-        oper_ = oper;
-        op1_ = op1;
-        op2_ = op2;
+        oper_ = oper
+        op1_ = op1
+        op2_ = op2
         res_ = res
 
         # match oper:
@@ -606,7 +605,7 @@ class JSParser(Parser):
         pass
 
     def scope_code(self, var):
-        id_table, id_pos = self.TS.get_pos(var)  # Modularizar en TS
+        id_table, id_pos = self.TS.get_pos(var)  # TODO: Modularizar en TS
         if id_table == 0:
             return 1
         else:

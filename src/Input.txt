@@ -1,0 +1,2 @@
+let number x;
+x = 2;
