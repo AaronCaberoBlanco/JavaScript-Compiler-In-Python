@@ -489,6 +489,7 @@ class JSParser(Parser):
     def A(self, p):
         list = p.W[0]
         list.insert(0, p.ID)
+        list.insert(0, p.T[1])
         list.insert(0, p.T[0])
 
         self.lista_reglas.append(39)

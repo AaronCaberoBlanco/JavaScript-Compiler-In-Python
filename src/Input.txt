@@ -1,5 +1,5 @@
-/*function Funcion (number a, boolean b, string c){}
-Funcion(); --- FALLA ERROR DE COMPILACIÓN*/
+function Funcion (number a, boolean b, string c){}
+Funcion(); --- FALLA ERROR DE COMPILACIÓN
 
 /*
 let number x; x = 2;
