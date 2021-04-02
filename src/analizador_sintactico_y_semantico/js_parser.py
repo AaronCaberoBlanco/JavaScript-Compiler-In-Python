@@ -345,7 +345,11 @@ class JSParser(Parser):
         self.shift = self.global_shift[0]
 
         self.lista_reglas.append(33)
-        return
+        f1_cod = p.F1[-1][1]
+        f2_cod = p.F2[-1][1]
+        f3_cod = p.F3[-1][1]
+        f_cod = f1_cod + f2_cod + f3_cod + self.gen(oper='returnVoid')
+        return (None, f_cod, [None]),
 
     @_('FUNCTION P Q ID')
     def F1(self, p):
@@ -366,7 +370,9 @@ class JSParser(Parser):
                               'Et_Fun_' + str(self.number_function))
 
         self.lista_reglas.append(34)
-        return
+        etiq_fun = self.TS.get_attribute(p.ID[0], p.ID[1], 'EtiqFuncion')
+        f1_cod = self.gen(oper=':', op1=etiq_fun)
+        return (None, f1_cod, [None]),
 
     @_('')
     def P(self, p):
@@ -410,8 +416,8 @@ class JSParser(Parser):
         self.declarando_funcion[0] = False
 
         self.lista_reglas.append(38)
-
-        return
+        f2_cod = [None]
+        return (None, f2_cod, [None]),
 
     @_('T ID W')
     def A(self, p):
@@ -444,7 +450,8 @@ class JSParser(Parser):
     @_('ABLLAVE C CELLAVE')
     def F3(self, p):
         self.lista_reglas.append(43)
-        return
+        f3_cod = p.C[-1][1]
+        return (None, f3_cod, [None]),
 
     @_('E OPLOG R')
     def E(self, p):
@@ -515,7 +522,7 @@ class JSParser(Parser):
     @_('H')
     def V(self, p):
         self.lista_reglas.append(53)
-        return p.H
+        return p.H,
 
     @_('CTEENTERA')
     def V(self, p):
