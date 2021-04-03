@@ -89,7 +89,7 @@ T $#rightarrow$ string { }
 G $#rightarrow$ for ( N ; E ; O ) { C } {
     G.inicio = nuevaetiq()
     G.desp = nuevaetiq()
-    G.cod = N.cod || gen(:, G.inicio) || E.cod || gen(if, E.lugar, =, 0, goto, G.desp) || C.cod || O.cod || gen(goto, G.inicio) || gen(:, G.desp)
+    G.cod = N.cod || gen(:, G.inicio) || E.cod || gen(if, E.lugar, !=, 0, goto, G.desp) || C.cod || O.cod || gen(goto, G.inicio) || gen(:, G.desp)
     }
 N $#rightarrow$ K {
     N.cod = K.cod

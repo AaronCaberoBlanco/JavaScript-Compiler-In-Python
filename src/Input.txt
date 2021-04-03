@@ -1,12 +1,22 @@
-function Funcion (number a, boolean b, string c){}
-Funcion(); --- FALLA ERROR DE COMPILACIÓN
 
-/*
-let number x; x = 2;
-if (x == 2)
-    alert("Hola"); ---- PASA BIEN*/
+let number a;
+a=7-1;
+let string texto;
+function print (string msg)
+{
+	alert ("Mensage introducido:");
+	alert (msg);
+}
+function pideTexto ()
+{
+	alert ("Introduce un texto");
+	input (texto);
+}
+pideTexto();
+print (texto);
+for(;a==1;--a){
+a=2;
+}
 
-/*function Function(){}
-Function(); ---Pasa BIEN*/
 
 

@@ -12,7 +12,8 @@ class JSParser(Parser):
     ATTR_TYPE = 'Tipo'
     ATTR_LEXEM = 'LEXEMA'
     ATTR_DESP = 'Despl'
-    ATTR_NUM_PARAMS = 'numParam'
+    ATTR_LABEL = 'EtiqFuncion'
+    ATTR_NUM_PARAMS = 'NumParam'
     ATTR_TYPE_PARAMS = 'TipoParam'
     ATTR_RETURN_VALUE = 'TipoRetorno'
 
@@ -41,6 +42,7 @@ class JSParser(Parser):
                      'returnVoid': 16,
                      'returnValue': 17,
                      ':': 17,
+                     'callVoid' : 18,
                      'callValue': 19,
                      'param': 20,
                      'goto': 21,
@@ -138,8 +140,13 @@ class JSParser(Parser):
 
         i_cod_e = p.I[-1][1]
         i_cod_p = p.I[-1][2]
+        etiq = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_LABEL)
 
-        h_cod = i_cod_e + i_cod_p + self.gen(res=h_lugar, oper='callValue', op1=(p.ID[0], p.ID[1]))
+        if return_value != self.VOID_TYPE:
+            h_lugar = self.nueva_temp(return_value)
+            h_cod = i_cod_e + i_cod_p + self.gen(res=h_lugar, oper='CallValue', op1=etiq)
+        else:
+            h_cod = i_cod_e + i_cod_p + self.gen(oper='CallVoid', op1=etiq)
 
         if self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE) != self.FUNCTION_TYPE:
             self.error_id = p.ID
@@ -337,7 +344,7 @@ class JSParser(Parser):
         e_cod = p.E[-1][1]
         o_cod = p.O[-1][1]
         c_cod = p.C[-1][1]
-        g_cod = n_cod + self.gen(oper=':', op1=g_inicio) + e_cod + \
+        g_cod = self.gen(oper='comment', res='\n; Inicio de for') + n_cod + self.gen(oper=':', op1=g_inicio) + e_cod + \
                 self.gen(oper='if=goto', op1=e_lugar, op2=0, res=g_desp) + c_cod + o_cod + \
                 self.gen(oper='goto', res=g_inicio) + self.gen(oper=':', op1=g_desp)
         return (None, g_cod, [None]),
@@ -532,7 +539,7 @@ class JSParser(Parser):
         e1_cod = p.E[-1][1]
         r_lugar = p.R[-1][0]
         r_cod = p.E[-1][1]
-        e_cod = e1_cod + r_cod + self.gen(res=e_lugar, oper='=and', op1=e1_lugar, op2=r_lugar)
+        e_cod = self.gen(oper='comment', res='\n; Inicio de E and R') + e1_cod + r_cod + self.gen(res=e_lugar, oper='=and', op1=e1_lugar, op2=r_lugar)
         return self.LOG_TYPE, (e_lugar, e_cod, [None])
 
     @_('R')
@@ -557,7 +564,7 @@ class JSParser(Parser):
         u_lugar = p.U[-1][0]
         u_cod = p.U[-1][1]
         r_lugar = self.nueva_temp(self.INT_TYPE)
-        r_cod = r1_cod + u_cod + self.gen(oper='if=goto', op1=r1_lugar, op2=u_lugar, res=r_true) + \
+        r_cod = self.gen(oper='comment', res='\n; Inicio de R == U') + r1_cod + u_cod + self.gen(oper='if=goto', op1=r1_lugar, op2=u_lugar, res=r_true) + \
                 self.gen(res=r_lugar, oper='=', op1=0) + self.gen(oper='goto', res=r_despues) + \
                 self.gen(oper=':', op1=r_true) + self.gen(res=r_lugar, oper='=', op1=1) + \
                 self.gen(oper=':', op1=r_despues)
@@ -583,7 +590,7 @@ class JSParser(Parser):
         u1_cod = p.U[-1][1]
         v_lugar = p.V[-1][0]
         v_cod = p.V[-1][1]
-        u_cod = u1_cod + v_cod + self.gen(res=u_lugar, oper='=-', op1=u1_lugar, op2=v_lugar)
+        u_cod = self.gen(oper='comment', res='\n; Inicio de U-V') + u1_cod + v_cod + self.gen(res=u_lugar, oper='=-', op1=u1_lugar, op2=v_lugar)
         return self.INT_TYPE, (u_lugar, u_cod, [None])
 
     @_('V')
@@ -604,8 +611,8 @@ class JSParser(Parser):
 
         v_lugar = self.nueva_temp(self.INT_TYPE)
         id_lugar = (p.ID[0], p.ID[1])
-        v_cod = self.gen(res=id_lugar, oper='=-', op1=id_lugar, op2=1) + \
-                self.gen(res=v_lugar, oper='=', op1=id_lugar)
+        v_cod = self.gen(oper='comment', res='\n; Inicio de --id') + self.gen(res=id_lugar, oper='=-', op1=id_lugar, op2=1) + \
+                self.gen(res=v_lugar, oper='=', op1=id_lugar) + self.gen(oper='comment', res='; Fin de --id\n')
         return self.INT_TYPE, (v_lugar, v_cod, [None])
 
     @_('ID')
@@ -636,7 +643,6 @@ class JSParser(Parser):
     def V(self, p):
         self.lista_reglas.append(54)
 
-        # TODO: Change order v_cod <-> v_lugar and translation
         v_lugar = self.nueva_temp(self.INT_TYPE)
         v_cod = self.gen(res=v_lugar, oper='=', op1=p.CTEENTERA)
         return self.INT_TYPE, (v_lugar, v_cod, [None])
