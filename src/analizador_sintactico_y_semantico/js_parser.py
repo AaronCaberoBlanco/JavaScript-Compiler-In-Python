@@ -310,18 +310,18 @@ class JSParser(Parser):
     @_('NUMBER')
     def T(self, p):
         self.lista_reglas.append(22)
-        return self.INT_TYPE, 1
+        return (self.INT_TYPE, 1),
 
 
     @_('BOOLEAN')
     def T(self, p):
         self.lista_reglas.append(23)
-        return self.LOG_TYPE, 1
+        return (self.LOG_TYPE, 1),
 
     @_('STRING')
     def T(self, p):
         self.lista_reglas.append(24)
-        return self.STRING_TYPE, 64
+        return (self.STRING_TYPE, 64),
 
     @_('FOR ABPAREN N PUNTOYCOMA E PUNTOYCOMA O CEPAREN ABLLAVE C CELLAVE')
     def G(self, p):
@@ -489,7 +489,6 @@ class JSParser(Parser):
     def A(self, p):
         list = p.W[0]
         list.insert(0, p.ID)
-        list.insert(0, p.T[1])
         list.insert(0, p.T[0])
 
         self.lista_reglas.append(39)
