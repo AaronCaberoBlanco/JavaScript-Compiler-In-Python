@@ -1,0 +1,30 @@
+/* Ejemplo de Prueba */
+
+let number number1;
+let string cadena;input(cadena);
+let boolean logico1;let boolean logico2;
+
+number1 = 873;
+
+number2 = 378;
+if (logico1&& logico2) cadena = "hello";
+
+function string ff(string ss)
+{
+	global = 33;
+	logico1 =  logico2;
+	if (logico1) ss = ff (cadena);
+	return ss;
+}
+		
+function string funcion (string logico2)
+{	let number var;
+
+  for (logico2="";number1 == number2;number2 = number1){
+	logico1 = number1 == number2;alert(10000);
+  }
+  
+  return logico2;
+}
+alert(((ff(funcion(cadena)))));
+

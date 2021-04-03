@@ -1,0 +1,27 @@
+let boolean booleano;
+function boolean bisiesto (number a)	
+{			
+	return (a - 4 == 0 && a - 100 == 0 && a - 400 == 0);	
+} 
+function number dias (number m, number a)
+{
+	let number dd;
+	alert ("di cuantos dias tiene el mes ");
+	alert (m);
+	input(dd);
+	if (bisiesto(a)) dd = dd - 1;
+	return dd;
+}
+function boolean esFechaCorrecta (number d, number m, number a)	
+{
+	return m==1 && m==12 && d==1 && d == dias (m, a);
+}
+function demo ()	
+{
+
+	if (esFechaCorrecta(25, 20, 2020)) alert (9999);
+	return;
+}
+demo();
+let string a1b2c3d4e5f6g7h8i9j0;
+
