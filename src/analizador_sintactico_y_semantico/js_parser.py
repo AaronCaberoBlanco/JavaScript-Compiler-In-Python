@@ -65,6 +65,12 @@ class JSParser(Parser):
         self.return_type = None
         self.pos_id_fun = None
         self.number_function = 0
+        self.ci = None
+
+    def parse(self, tokens):
+        super().parse(tokens)
+        self.print_ci_memoria(self.ci)
+        self.print_ci_gco(self.ci)
 
     @_('D')
     def B(self, p):
@@ -72,10 +78,8 @@ class JSParser(Parser):
 
         d_cod = p.D[-1][1]
         b_cod = d_cod
-        gci = open('GCI.txt', 'w')  # TODO: crear función print
-        for i in b_cod:
-            if i is not None:
-                print(i, file=gci)
+
+        self.ci = b_cod
         return
 
     @_('F D')
@@ -135,8 +139,6 @@ class JSParser(Parser):
     def H(self, p):
 
         return_value = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE)
-
-        h_lugar = self.nueva_temp(return_value)  # TODO: comprobar si return value es un tipo estilo TIPO_INT
 
         i_cod_e = p.I[-1][1]
         i_cod_p = p.I[-1][2]
@@ -346,7 +348,8 @@ class JSParser(Parser):
         c_cod = p.C[-1][1]
         g_cod = self.gen(oper='comment', res='\n; Inicio de for') + n_cod + self.gen(oper=':', op1=g_inicio) + e_cod + \
                 self.gen(oper='if=goto', op1=e_lugar, op2=0, res=g_desp) + c_cod + o_cod + \
-                self.gen(oper='goto', res=g_inicio) + self.gen(oper=':', op1=g_desp)
+                self.gen(oper='goto', res=g_inicio) + self.gen(oper=':', op1=g_desp) +\
+                self.gen(oper='comment', res='; Fin de for\n')
         return (None, g_cod, [None]),
 
     @_('K')
@@ -379,10 +382,10 @@ class JSParser(Parser):
         self.lista_reglas.append(29)
 
         id_lugar = (p.ID[0], p.ID[1])
-        o_lugar = self.nueva_temp(self.INT_TYPE)
-        o_cod = self.gen(res=id_lugar, oper='=-', op1=id_lugar, op2=1) + \
-                self.gen(res=o_lugar, oper='=', op1=id_lugar)
-        return (o_lugar, o_cod, [None]),
+        o_cod = self.gen(oper='comment', res='\n; Inicio de --id') \
+                + self.gen(res=id_lugar, oper='=-', op1=id_lugar, op2=1) \
+                + self.gen(oper='comment', res='; Fin de --id\n')
+        return (None, o_cod, [None]),
 
     @_('')
     def O(self, p):
@@ -437,12 +440,12 @@ class JSParser(Parser):
         else:
             self.return_type = p.Q[0]
             self.TS.add_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE, p.Q[0])
-        self.TS.add_attribute(p.ID[0], p.ID[1], 'EtiqFuncion',
-                              'Et_Fun_' + str(self.number_function))
+        self.TS.add_attribute(p.ID[0], p.ID[1], self.ATTR_LABEL,
+                              '#EtiqFun' + str(self.number_function))
 
         self.lista_reglas.append(34)
 
-        etiq_fun = self.TS.get_attribute(p.ID[0], p.ID[1], 'EtiqFuncion')
+        etiq_fun = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_LABEL)
         f1_cod = self.gen(oper=':', op1=etiq_fun)
         return (None, f1_cod, [None]),
 
@@ -652,7 +655,7 @@ class JSParser(Parser):
         self.lista_reglas.append(55)
 
         v_lugar = self.nueva_temp(self.STRING_TYPE)
-        v_cod = self.gen(res=v_lugar, oper='=', op1=p.CADENA)
+        v_cod = self.gen(res=v_lugar, oper='=', op1=p.CADENA[1:-1])
         return self.STRING_TYPE, (v_lugar, v_cod, [None])
 
     @_('CTELOGICA')
@@ -672,11 +675,13 @@ class JSParser(Parser):
         self.TS.add_attribute(id_[0], id_[1], self.ATTR_TYPE, type)
 
         self.shift += 64 if type == self.STRING_TYPE else 1
+        if not self.function_scope:
+            self.global_shift[0] = self.shift
         return id_
 
     def nueva_etiq(self):
-        res = f'~Etiq{self.num_etiq}'
-        self.num_temp += 1
+        res = f'#Etiq{self.num_etiq}'
+        self.num_etiq += 1
         return res
 
     def gen(self, oper, op1=None, op2=None, res=None):
@@ -701,21 +706,46 @@ class JSParser(Parser):
                          op1_= ('cad', op1)
                          oper_ = '=CAD'
              case 'if=goto' | '=-':
-                 if type(op2) is tuple:
-                     if self.TS.get_attribute(op2[0], op2[1], self.ATTR_TYPE) == self.STRING_TYPE:
-                         oper_ = '=Cad'
-                     else:
-                         oper_ = '=EL'
-                 else:
+                 if type(op2) is not tuple:
                      if type(op2) is int:
                          op2_ = ('ent', op2)
                      else:
                          op2_ = ('cad', op2)
+             case 'comment':
+                 return [(f'{res_}',)]
 
         return [(oper_, op1_, op2_, res_)]
 
-    def gco(self):
-        pass
+    def print_ci_memoria(self,cod):
+
+        ci_memoria = open('CI-Memoria.txt', 'w')
+        res = ''
+        for tuple_ in cod:
+            if tuple_ is not None:
+                if len(tuple_) == 1:
+                    res += f'{tuple_[0]}\n'
+                else:
+                    res += self.format_tuple(tuple_)
+
+        print(res, file=ci_memoria)
+
+
+    def format_tuple(self,tuple_):
+        res = '('
+        for elem in tuple_:
+            if elem is None:
+                pass
+            elif type(elem) is tuple and type(elem[0]) is int:
+                res += self.TS.get_lex_entry(elem[0], elem[1])[self.ATTR_LEXEM]
+            elif type(elem) is tuple:
+                res += str(elem[1])
+            else:
+                res += str(elem)
+            res +=', '
+        return f'{res[:-2]})\n'
+
+    def print_ci_gco(self,cod):
+        ci_output = open('CI-Output.txt', 'w')
 
     def scope_code(self, var):
         id_table, id_pos = self.TS.get_pos(var)  # TODO: Modularizar en TS
