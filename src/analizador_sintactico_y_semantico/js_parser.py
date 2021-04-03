@@ -289,9 +289,9 @@ class JSParser(Parser):
     def G(self, p):
         if not self.function_scope:
             self.shift = self.global_shift[0]
-        self.TS.add_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE, p.T[0])
+        self.TS.add_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE, p.T[0][0])
         self.TS.add_attribute(p.ID[0], p.ID[1], self.ATTR_DESP, self.shift)
-        self.shift += p.T[1]
+        self.shift += p.T[0][1]
         if not self.function_scope:
             self.global_shift[0] = self.shift
         self.declaration_scope[0] = False
