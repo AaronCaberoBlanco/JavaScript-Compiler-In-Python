@@ -143,7 +143,7 @@ class JSParser(Parser):
         i_cod_e = p.I[-1][1]
         i_cod_p = p.I[-1][2]
         etiq = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_LABEL)
-
+        h_lugar = None
         if return_value != self.VOID_TYPE:
             h_lugar = self.nueva_temp(return_value)
             h_cod = i_cod_e + i_cod_p + self.gen(res=h_lugar, oper='CallValue', op1=etiq)
@@ -166,7 +166,7 @@ class JSParser(Parser):
 
         self.lista_reglas.append(8)
 
-        return return_value, (None, h_cod, [None])
+        return return_value, (h_lugar, h_cod, [None])
 
     @_('E J')
     def I(self, p):
@@ -422,7 +422,9 @@ class JSParser(Parser):
         f1_cod = p.F1[-1][1]
         f2_cod = p.F2[-1][1]
         f3_cod = p.F3[-1][1]
-        f_cod = f1_cod + f2_cod + f3_cod + self.gen(oper='returnVoid')
+        f_cod = self.gen(oper='comment', res='\n; Inicio de funcion') + \
+                f1_cod + f2_cod + f3_cod + self.gen(oper='returnVoid') + \
+                self.gen(oper='comment', res='\n; Fin de funcion')
         return (None, f_cod, [None]),
 
     @_('FUNCTION P Q ID')
