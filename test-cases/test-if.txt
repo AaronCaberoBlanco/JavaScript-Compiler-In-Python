@@ -4,5 +4,3 @@ function print ()
 }
 let string s;
 input(s);
-
-

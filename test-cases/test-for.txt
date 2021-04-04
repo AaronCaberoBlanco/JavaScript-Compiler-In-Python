@@ -1,0 +1,8 @@
+function print ()
+{
+	for (uno=1;uno==1;--uno)
+	{
+	    alert ("Mensage introducido:");
+	}
+}
+

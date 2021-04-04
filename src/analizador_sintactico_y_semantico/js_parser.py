@@ -117,8 +117,13 @@ class JSParser(Parser):
         e_lugar = p.E[-1][0]
         e_cod = p.E[-1][1]
         s_cod = p.S[-1][1]
-        g_cod = e_cod + self.gen(oper='if=goto', op1=e_lugar, op2=0, res=g_desp) + s_cod + \
-                self.gen(oper=':', op1=g_desp)
+        g_cod = self.gen(oper='comment', res='\n; ---- Inicio de if simple') + \
+                self.gen(oper='comment', res='\n; Inicio de condicion') + e_cod + \
+                self.gen(oper='comment', res='; Fin de condicion\n') + \
+                self.gen(oper='if=goto', op1=e_lugar, op2=0, res=g_desp) + \
+                self.gen(oper='comment', res='\n; Inicio de sentencia') + s_cod + \
+                self.gen(oper='comment', res='; Fin de sentencia\n') + \
+                self.gen(oper=':', op1=g_desp) + self.gen(oper='comment', res='; ---- Fin de if simple\n')
         return (None, g_cod, [None]),
 
     @_('S')
@@ -239,7 +244,9 @@ class JSParser(Parser):
         self.lista_reglas.append(15)
 
         e_cod = p.E[-1][1]
-        s_cod = e_cod + self.gen(oper='param', op1=p.E[-1][0]) + self.gen('alert')
+        s_cod = self.gen(oper='comment', res='\n; Inicio de llamada a alert')+\
+                e_cod  + self.gen(oper='alert', op1=p.E[-1][0]) + \
+                self.gen(oper='comment', res='; Fin de llamada a alert\n')
 
         return (None, s_cod, [None]),
 
@@ -252,7 +259,9 @@ class JSParser(Parser):
 
         self.lista_reglas.append(16)
 
-        s_cod = self.gen(oper='param',  op1=(p.ID[0], p.ID[1])) + self.gen('input')
+        s_cod =  self.gen(oper='comment', res='\n; Inicio de llamada a input')+\
+                 self.gen(oper='input',res=(p.ID[0], p.ID[1]))+ \
+                self.gen(oper='comment', res='; Fin de llamada a input\n')
 
         return (None, s_cod, [None]),
 
@@ -347,10 +356,18 @@ class JSParser(Parser):
         e_cod = p.E[-1][1]
         o_cod = p.O[-1][1]
         c_cod = p.C[-1][1]
-        g_cod = self.gen(oper='comment', res='\n; Inicio de for') + n_cod + self.gen(oper=':', op1=g_inicio) + e_cod + \
-                self.gen(oper='if=goto', op1=e_lugar, op2=0, res=g_desp) + c_cod + o_cod + \
+        g_cod = self.gen(oper='comment', res='\n; ---- Inicio de for') + \
+                self.gen(oper='comment', res='\n;  Inicio de inicializacion') +n_cod + \
+                self.gen(oper='comment', res=';  Fin de inicializacion\n')+self.gen(oper=':', op1=g_inicio) + \
+                self.gen(oper='comment', res='\n;  Inicio de condicion') +e_cod + \
+                self.gen(oper='comment', res=';  Fin de condicion\n')+\
+                self.gen(oper='if=goto', op1=e_lugar, op2=0, res=g_desp) + \
+                self.gen(oper='comment', res='\n;  Inicio del cuerpo')+c_cod +\
+                self.gen(oper='comment', res=';  Fin del cuerpo\n')+\
+                self.gen(oper='comment', res='\n;  Inicio de actualización ') + o_cod +\
+                self.gen(oper='comment', res=';  Fin de actualizacion\n')+\
                 self.gen(oper='goto', res=g_inicio) + self.gen(oper=':', op1=g_desp) +\
-                self.gen(oper='comment', res='; Fin de for\n')
+                self.gen(oper='comment', res='; ---- Fin de for\n')
         return (None, g_cod, [None]),
 
     @_('K')
@@ -423,9 +440,9 @@ class JSParser(Parser):
         f1_cod = p.F1[-1][1]
         f2_cod = p.F2[-1][1]
         f3_cod = p.F3[-1][1]
-        f_cod = self.gen(oper='comment', res='\n; Inicio de funcion') + \
+        f_cod = self.gen(oper='comment', res='\n; -------- Inicio de funcion') + \
                 f1_cod + f2_cod + f3_cod + self.gen(oper='returnVoid') + \
-                self.gen(oper='comment', res='\n; Fin de funcion')
+                self.gen(oper='comment', res='; -------- Fin de funcion\n')
         return (None, f_cod, [None]),
 
     @_('FUNCTION P Q ID')
@@ -545,7 +562,9 @@ class JSParser(Parser):
         e1_cod = p.E[-1][1]
         r_lugar = p.R[-1][0]
         r_cod = p.R[-1][1]
-        e_cod = self.gen(oper='comment', res='\n; Inicio de E and R') + e1_cod + r_cod + self.gen(res=e_lugar, oper='=and', op1=e1_lugar, op2=r_lugar)
+        e_cod = self.gen(oper='comment', res='\n; Inicio de conjuncion logica') + e1_cod + r_cod + \
+                self.gen(res=e_lugar, oper='=and', op1=e1_lugar, op2=r_lugar) + \
+                self.gen(oper='comment', res='; Fin de conjuncion logica\n')
         return self.LOG_TYPE, (e_lugar, e_cod, [None])
 
     @_('R')
@@ -570,10 +589,10 @@ class JSParser(Parser):
         u_lugar = p.U[-1][0]
         u_cod = p.U[-1][1]
         r_lugar = self.nueva_temp(self.INT_TYPE)
-        r_cod = self.gen(oper='comment', res='\n; Inicio de R == U') + r1_cod + u_cod + self.gen(oper='if=goto', op1=r1_lugar, op2=u_lugar, res=r_true) + \
+        r_cod = self.gen(oper='comment', res='\n; Inicio de operador de igualdad') + r1_cod + u_cod + self.gen(oper='if=goto', op1=r1_lugar, op2=u_lugar, res=r_true) + \
                 self.gen(res=r_lugar, oper='=', op1=0) + self.gen(oper='goto', res=r_despues) + \
                 self.gen(oper=':', op1=r_true) + self.gen(res=r_lugar, oper='=', op1=1) + \
-                self.gen(oper=':', op1=r_despues) + self.gen(oper='comment', res='; Inicio de R == U')
+                self.gen(oper=':', op1=r_despues) + self.gen(oper='comment', res='; Inicio de operador de igualdad\n')
         return self.LOG_TYPE, (r_lugar, r_cod, [None])
 
     @_('U')
@@ -596,9 +615,9 @@ class JSParser(Parser):
         u1_cod = p.U[-1][1]
         v_lugar = p.V[-1][0]
         v_cod = p.V[-1][1]
-        u_cod = self.gen(oper='comment', res='\n; Inicio de U-V') + u1_cod + \
+        u_cod = self.gen(oper='comment', res='\n; Inicio de resta aritmetica') + u1_cod + \
                 v_cod + self.gen(res=u_lugar, oper='=-', op1=u1_lugar, op2=v_lugar) + \
-                self.gen(oper='comment', res='; Fin de U - V')
+                self.gen(oper='comment', res='; Fin de resta aritmetica\n')
         return self.INT_TYPE, (u_lugar, u_cod, [None])
 
     @_('V')

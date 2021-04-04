@@ -1,86 +1,42 @@
 CONTENIDO DE LA TABLA # 0 :
 
-*	LEXEMA : 'a'
-	ATRIBUTOS :
-	+ Tipo : 'entero'
-	+ Despl : '0'
----------------- ----------------
-*	LEXEMA : '~Temp0'
-	ATRIBUTOS :
-	+ Despl : '1'
-	+ Tipo : 'entero'
----------------- ----------------
-*	LEXEMA : '~Temp1'
-	ATRIBUTOS :
-	+ Despl : '2'
-	+ Tipo : 'entero'
----------------- ----------------
-*	LEXEMA : '~Temp2'
-	ATRIBUTOS :
-	+ Despl : '3'
-	+ Tipo : 'entero'
----------------- ----------------
-*	LEXEMA : 'texto'
-	ATRIBUTOS :
-	+ Tipo : 'cadena'
-	+ Despl : '4'
----------------- ----------------
 *	LEXEMA : 'print'
 	ATRIBUTOS :
 	+ Tipo : 'funcion'
 	+ TipoRetorno : 'void'
 	+ EtiqFuncion : '#EtiqFun0'
-	+ NumParam : '1'
-	+ TipoParam1 : 'cadena'
-
----------------- ----------------
-*	LEXEMA : 'pideTexto'
-	ATRIBUTOS :
-	+ Tipo : 'funcion'
-	+ TipoRetorno : 'void'
-	+ EtiqFuncion : '#EtiqFun1'
 	+ NumParam : '0'
 	+ TipoParam : 'void'
 ---------------- ----------------
-*	LEXEMA : '~Temp5'
+*	LEXEMA : 's'
 	ATRIBUTOS :
-	+ Despl : '68'
-	+ Tipo : 'entero'
----------------- ----------------
-*	LEXEMA : '~Temp6'
-	ATRIBUTOS :
-	+ Despl : '69'
-	+ Tipo : 'entero'
----------------- ----------------
-*	LEXEMA : '~Temp7'
-	ATRIBUTOS :
-	+ Despl : '70'
-	+ Tipo : 'entero'
+	+ Tipo : 'cadena'
+	+ Despl : '0'
 ---------------- ----------------
 
 
 
 CONTENIDO DE LA TABLA # 1 :
 
-*	LEXEMA : 'msg'
+*	LEXEMA : '~Temp0'
 	ATRIBUTOS :
-	+ Tipo : 'cadena'
 	+ Despl : '0'
+	+ Tipo : 'logico'
+---------------- ----------------
+*	LEXEMA : '~Temp1'
+	ATRIBUTOS :
+	+ Despl : '1'
+	+ Tipo : 'logico'
+---------------- ----------------
+*	LEXEMA : '~Temp2'
+	ATRIBUTOS :
+	+ Despl : '2'
+	+ Tipo : 'logico'
 ---------------- ----------------
 *	LEXEMA : '~Temp3'
 	ATRIBUTOS :
-	+ Despl : '64'
-	+ Tipo : 'cadena'
----------------- ----------------
-
-
-
-CONTENIDO DE LA TABLA # 2 :
-
-*	LEXEMA : '~Temp4'
-	ATRIBUTOS :
-	+ Despl : '0'
-	+ Tipo : 'cadena'
+	+ Despl : '3'
+	+ Tipo : 'entero'
 ---------------- ----------------
 
 
