@@ -149,7 +149,8 @@ class JSParser(Parser):
             h_cod = i_cod_e + i_cod_p + self.gen(res=h_lugar, oper='CallValue', op1=etiq)
         else:
             h_cod = i_cod_e + i_cod_p + self.gen(oper='CallVoid', op1=etiq)
-
+        h_cod=self.gen(oper='comment', res='\n; Inicio de llamada a funcion')+\
+              h_cod + self.gen(oper='comment', res='; Fin de llamada a funcion')
         if self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE) != self.FUNCTION_TYPE:
             self.error_id = p.ID
             self.semantic_error(15, p.lineno)
@@ -543,7 +544,7 @@ class JSParser(Parser):
         e1_lugar = p.E[-1][0]
         e1_cod = p.E[-1][1]
         r_lugar = p.R[-1][0]
-        r_cod = p.E[-1][1]
+        r_cod = p.R[-1][1]
         e_cod = self.gen(oper='comment', res='\n; Inicio de E and R') + e1_cod + r_cod + self.gen(res=e_lugar, oper='=and', op1=e1_lugar, op2=r_lugar)
         return self.LOG_TYPE, (e_lugar, e_cod, [None])
 
@@ -572,7 +573,7 @@ class JSParser(Parser):
         r_cod = self.gen(oper='comment', res='\n; Inicio de R == U') + r1_cod + u_cod + self.gen(oper='if=goto', op1=r1_lugar, op2=u_lugar, res=r_true) + \
                 self.gen(res=r_lugar, oper='=', op1=0) + self.gen(oper='goto', res=r_despues) + \
                 self.gen(oper=':', op1=r_true) + self.gen(res=r_lugar, oper='=', op1=1) + \
-                self.gen(oper=':', op1=r_despues)
+                self.gen(oper=':', op1=r_despues) + self.gen(oper='comment', res='; Inicio de R == U')
         return self.LOG_TYPE, (r_lugar, r_cod, [None])
 
     @_('U')
@@ -595,7 +596,9 @@ class JSParser(Parser):
         u1_cod = p.U[-1][1]
         v_lugar = p.V[-1][0]
         v_cod = p.V[-1][1]
-        u_cod = self.gen(oper='comment', res='\n; Inicio de U-V') + u1_cod + v_cod + self.gen(res=u_lugar, oper='=-', op1=u1_lugar, op2=v_lugar)
+        u_cod = self.gen(oper='comment', res='\n; Inicio de U-V') + u1_cod + \
+                v_cod + self.gen(res=u_lugar, oper='=-', op1=u1_lugar, op2=v_lugar) + \
+                self.gen(oper='comment', res='; Fin de U - V')
         return self.INT_TYPE, (u_lugar, u_cod, [None])
 
     @_('V')
@@ -697,7 +700,7 @@ class JSParser(Parser):
              case '=':
                  if type(op1) is tuple:
                      if self.TS.get_attribute(op1[0], op1[1], self.ATTR_TYPE) == self.STRING_TYPE:
-                         oper_ = '=Cad'
+                         oper_ = '=CAD'
                      else:
                          oper_ = '=EL'
                  else:
