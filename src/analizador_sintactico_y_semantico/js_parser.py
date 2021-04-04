@@ -282,7 +282,7 @@ class JSParser(Parser):
         l_cod = e_cod
         l_lugar = e_lugar
 
-        return p.E, (l_lugar, l_cod, [None])
+        return p.E[0], (l_lugar, l_cod, [None])
 
     @_('')
     def L(self, p):
@@ -434,7 +434,7 @@ class JSParser(Parser):
         self.function_scope = True
 
         self.TS.add_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE, self.FUNCTION_TYPE)
-        if p.Q == 'void':
+        if p.Q[0] == 'void':
             self.return_type = p.Q[0]
             self.TS.add_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE, self.VOID_TYPE)
         else:
@@ -459,7 +459,7 @@ class JSParser(Parser):
         self.declaration_scope[0] = True
 
         self.lista_reglas.append(36)
-        return p.T[0],
+        return p.T[0][0],
 
     @_('')
     def Q(self, p):
