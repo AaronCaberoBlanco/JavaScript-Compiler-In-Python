@@ -679,7 +679,7 @@ class JSParser(Parser):
         self.lista_reglas.append(55)
 
         v_lugar = self.nueva_temp(self.STRING_TYPE)
-        v_cod = self.gen(res=v_lugar, oper='=', op1=p.CADENA[1:-1])
+        v_cod = self.gen(res=v_lugar, oper='=', op1=p.CADENA)
         return self.STRING_TYPE, (v_lugar, v_cod, [None])
 
     @_('CTELOGICA')
