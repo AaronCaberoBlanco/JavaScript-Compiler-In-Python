@@ -155,7 +155,7 @@ class JSParser(Parser):
         else:
             h_cod = i_cod_e + i_cod_p + self.gen(oper='CallVoid', op1=etiq)
         h_cod=self.gen(oper='comment', res='\n; Inicio de llamada a funcion')+\
-              h_cod + self.gen(oper='comment', res='; Fin de llamada a funcion')
+              h_cod + self.gen(oper='comment', res='; Fin de llamada a funcion\n')
         if self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE) != self.FUNCTION_TYPE:
             self.error_id = p.ID
             self.semantic_error(15, p.lineno)
@@ -400,9 +400,9 @@ class JSParser(Parser):
         self.lista_reglas.append(29)
 
         id_lugar = (p.ID[0], p.ID[1])
-        o_cod = self.gen(oper='comment', res='\n; Inicio de --id') \
+        o_cod = self.gen(oper='comment', res='\n; Inicio de --id sin asignacion') \
                 + self.gen(res=id_lugar, oper='=-', op1=id_lugar, op2=1) \
-                + self.gen(oper='comment', res='; Fin de --id\n')
+                + self.gen(oper='comment', res='; Fin de --id sin asignacion\n')
         return (None, o_cod, [None]),
 
     @_('')
@@ -441,8 +441,8 @@ class JSParser(Parser):
         f2_cod = p.F2[-1][1]
         f3_cod = p.F3[-1][1]
         f_cod = self.gen(oper='comment', res='\n; -------- Inicio de funcion') + \
-                f1_cod + f2_cod + f3_cod + self.gen(oper='returnVoid') + \
-                self.gen(oper='comment', res='; -------- Fin de funcion\n')
+                f1_cod + f2_cod + f3_cod + self.gen(oper='comment', res='') + \
+                self.gen(oper='returnVoid') +self.gen(oper='comment', res='; -------- Fin de funcion\n')
         return (None, f_cod, [None]),
 
     @_('FUNCTION P Q ID')
@@ -638,8 +638,10 @@ class JSParser(Parser):
 
         v_lugar = self.nueva_temp(self.INT_TYPE)
         id_lugar = (p.ID[0], p.ID[1])
-        v_cod = self.gen(oper='comment', res='\n; Inicio de --id') + self.gen(res=id_lugar, oper='=-', op1=id_lugar, op2=1) + \
-                self.gen(res=v_lugar, oper='=', op1=id_lugar) + self.gen(oper='comment', res='; Fin de --id\n')
+        v_cod = self.gen(oper='comment', res='\n; Inicio de --id con asignacion') + \
+                self.gen(res=id_lugar, oper='=-', op1=id_lugar, op2=1) + \
+                self.gen(res=v_lugar, oper='=', op1=id_lugar) + \
+                self.gen(oper='comment', res='; Fin de --id con asignacion\n')
         return self.INT_TYPE, (v_lugar, v_cod, [None])
 
     @_('ID')
