@@ -334,8 +334,10 @@ class JSParser(Parser):
         self.declaration_scope[0] = False
 
         self.lista_reglas.append(20)
-
-        g_cod = [None]
+        if p.T[0][0] == self.STRING_TYPE:
+            g_cod = self.gen(oper='=',res=(p.ID[0],p.ID[1]),op1='" "')
+        else:
+            g_cod = g_cod=self.gen(oper='=',res=(p.ID[0],p.ID[1]),op1=0)
         return (None, g_cod, [None]),
 
     @_('')
