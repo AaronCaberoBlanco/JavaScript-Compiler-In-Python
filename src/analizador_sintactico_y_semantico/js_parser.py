@@ -157,12 +157,17 @@ class JSParser(Parser):
         etiq = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_LABEL)
 
         # TODO: mirar any
-        for i in i_cod_e:
-            if i is not None:
-                i_cod_e = self.gen(oper='comment',
-                                   res='\n; Inicio de asignación de literales en temporales') + i_cod_e + \
-                          self.gen(oper='comment', res='; Fin de asignación de literales en temporales\n')
-                break
+        if any(cod is not None for cod in i_cod_e):
+            i_cod_e = self.gen(oper='comment',
+                           res='\n; Inicio de asignación de literales en temporales') + i_cod_e + \
+                           self.gen(oper='comment', res='; Fin de asignación de literales en temporales\n')
+
+        # for i in i_cod_e:
+        #     if i is not None:
+        #         i_cod_e = self.gen(oper='comment',
+        #                            res='\n; Inicio de asignación de literales en temporales') + i_cod_e + \
+        #                   self.gen(oper='comment', res='; Fin de asignación de literales en temporales\n')
+        #         break
 
         for i in i_cod_p:
             if i is not None:
