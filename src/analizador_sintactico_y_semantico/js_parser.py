@@ -70,6 +70,11 @@ class JSParser(Parser):
     #TODO: COMENTAR NUEVOS MÉTODOS AÑADIDOS
     def parse(self, tokens):
         super().parse(tokens)
+
+        init = [self.gen(oper='=',op1=0,res=i)[0] for i in self.initialize_global]
+        self.ci = self.gen(oper='comment',res='\n; Inicializacion variables globales') + init +\
+                  self.gen(oper='comment',res='; Fin de inicializacion variables globales\n') + self.ci
+
         self.print_ci_memoria(self.ci)
         self.print_ci_gco(self.ci)
 
@@ -150,10 +155,12 @@ class JSParser(Parser):
         i_cod_p = p.I[-1][2]
         etiq = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_LABEL)
 
+        # TODO: mirar any
         for i in i_cod_e:
             if i is not None:
-                i_cod_e = self.gen(oper='comment', res='\n; Inicio de asignación de parámetros') + i_cod_e + \
-                          self.gen(oper='comment', res='; Fin de asignación de parámetros\n')
+                i_cod_e = self.gen(oper='comment',
+                                   res='\n; Inicio de asignación de literales en temporales') + i_cod_e + \
+                          self.gen(oper='comment', res='; Fin de asignación de literales en temporales\n')
                 break
 
         for i in i_cod_p  :
@@ -188,6 +195,9 @@ class JSParser(Parser):
 
         self.lista_reglas.append(8)
 
+        if p.ID[2]:
+            self.initialize_global.append(p.ID[:2])
+
         return return_value, (h_lugar, h_cod, [None])
 
     @_('E J')
@@ -200,7 +210,7 @@ class JSParser(Parser):
         i_cod_p = self.gen(oper='param', op1=p.E[-1][0]) + p.J[-1][2]
         i_cod_e = p.E[-1][1] + p.J[-1][1]
 
-        return list,(None, i_cod_e, i_cod_p)
+        return list, (None, i_cod_e, i_cod_p)
 
     @_('COMA E J')
     def J(self, p):
@@ -247,10 +257,13 @@ class JSParser(Parser):
 
         self.lista_reglas.append(14)
 
+        if p.ID[2]:
+            self.initialize_global.append(p.ID[:2])
+
         e_cod = p.E[-1][1]
         e_lugar = p.E[-1][0]
-        k_cod = self.gen(oper='comment', res='\n; Inicio de asignación')+ \
-                e_cod + self.gen(oper='=', res=(p.ID[0], p.ID[1]), op1=e_lugar)+ \
+        k_cod = self.gen(oper='comment', res='\n; Inicio de asignación') + \
+                e_cod + self.gen(oper='=', res=(p.ID[0], p.ID[1]), op1=e_lugar) + \
                 self.gen(oper='comment', res='; Fin de asignación\n')
         return (None, k_cod, [None]),
 
@@ -262,8 +275,8 @@ class JSParser(Parser):
         self.lista_reglas.append(15)
 
         e_cod = p.E[-1][1]
-        s_cod = self.gen(oper='comment', res='\n; Inicio de llamada a alert')+\
-                e_cod  + self.gen(oper='alert', op1=p.E[-1][0]) + \
+        s_cod = self.gen(oper='comment', res='\n; Inicio de llamada a alert') + \
+                e_cod + self.gen(oper='alert', op1=p.E[-1][0]) + \
                 self.gen(oper='comment', res='; Fin de llamada a alert\n')
 
         return (None, s_cod, [None]),
@@ -277,8 +290,11 @@ class JSParser(Parser):
 
         self.lista_reglas.append(16)
 
-        s_cod =  self.gen(oper='comment', res='\n; Inicio de llamada a input')+\
-                 self.gen(oper='input',res=(p.ID[0], p.ID[1]))+ \
+        if p.ID[2]:
+            self.initialize_global.append(p.ID[:2])
+
+        s_cod = self.gen(oper='comment', res='\n; Inicio de llamada a input') + \
+                self.gen(oper='input', res=(p.ID[0], p.ID[1])) + \
                 self.gen(oper='comment', res='; Fin de llamada a input\n')
 
         return (None, s_cod, [None]),
@@ -334,10 +350,14 @@ class JSParser(Parser):
         self.declaration_scope[0] = False
 
         self.lista_reglas.append(20)
+
+        if p.ID[2]:
+            self.initialize_global.append(p.ID[:2])
+
         if p.T[0][0] == self.STRING_TYPE:
-            g_cod = self.gen(oper='=',res=(p.ID[0],p.ID[1]),op1='" "')
+            g_cod = self.gen(oper='=', res=(p.ID[0], p.ID[1]), op1='""')
         else:
-            g_cod = g_cod=self.gen(oper='=',res=(p.ID[0],p.ID[1]),op1=0)
+            g_cod = self.gen(oper='=', res=(p.ID[0], p.ID[1]), op1=0)
         return (None, g_cod, [None]),
 
     @_('')
@@ -350,7 +370,6 @@ class JSParser(Parser):
     def T(self, p):
         self.lista_reglas.append(22)
         return (self.INT_TYPE, 1),
-
 
     @_('BOOLEAN')
     def T(self, p):
@@ -377,16 +396,16 @@ class JSParser(Parser):
         o_cod = p.O[-1][1]
         c_cod = p.C[-1][1]
         g_cod = self.gen(oper='comment', res='\n; ---- Inicio de for') + \
-                self.gen(oper='comment', res='\n;  Inicio de inicializacion') +n_cod + \
-                self.gen(oper='comment', res=';  Fin de inicializacion\n')+self.gen(oper=':', op1=g_inicio) + \
-                self.gen(oper='comment', res='\n;  Inicio de condicion') +e_cod + \
-                self.gen(oper='comment', res=';  Fin de condicion\n')+\
+                self.gen(oper='comment', res='\n;  Inicio de inicializacion') + n_cod + \
+                self.gen(oper='comment', res=';  Fin de inicializacion\n') + self.gen(oper=':', op1=g_inicio) + \
+                self.gen(oper='comment', res='\n;  Inicio de condicion') + e_cod + \
+                self.gen(oper='comment', res=';  Fin de condicion\n') + \
                 self.gen(oper='if=goto', op1=e_lugar, op2=0, res=g_desp) + \
-                self.gen(oper='comment', res='\n;  Inicio del cuerpo')+c_cod +\
-                self.gen(oper='comment', res=';  Fin del cuerpo\n')+\
-                self.gen(oper='comment', res='\n;  Inicio de actualización ') + o_cod +\
-                self.gen(oper='comment', res=';  Fin de actualizacion\n')+\
-                self.gen(oper='goto', res=g_inicio) + self.gen(oper=':', op1=g_desp) +\
+                self.gen(oper='comment', res='\n;  Inicio del cuerpo') + c_cod + \
+                self.gen(oper='comment', res=';  Fin del cuerpo\n') + \
+                self.gen(oper='comment', res='\n;  Inicio de actualización ') + o_cod + \
+                self.gen(oper='comment', res=';  Fin de actualizacion\n') + \
+                self.gen(oper='goto', res=g_inicio) + self.gen(oper=':', op1=g_desp) + \
                 self.gen(oper='comment', res='; ---- Fin de for\n')
         return (None, g_cod, [None]),
 
@@ -418,6 +437,9 @@ class JSParser(Parser):
             self.semantic_error(11, p.lineno)
 
         self.lista_reglas.append(29)
+
+        if p.ID[2]:
+            self.initialize_global.append(p.ID[:2])
 
         id_lugar = (p.ID[0], p.ID[1])
         o_cod = self.gen(oper='comment', res='\n; Inicio de --id sin asignacion') \
@@ -462,7 +484,7 @@ class JSParser(Parser):
         f3_cod = p.F3[-1][1]
         f_cod = self.gen(oper='comment', res='\n; -------- Inicio de funcion') + \
                 f1_cod + f2_cod + f3_cod + self.gen(oper='comment', res='') + \
-                self.gen(oper='returnVoid') +self.gen(oper='comment', res='; -------- Fin de funcion\n')
+                self.gen(oper='returnVoid') + self.gen(oper='comment', res='; -------- Fin de funcion\n')
         return (None, f_cod, [None]),
 
     @_('FUNCTION P Q ID')
@@ -484,6 +506,9 @@ class JSParser(Parser):
                               '#EtiqFun' + str(self.number_function))
 
         self.lista_reglas.append(34)
+
+        if p.ID[2]:
+            self.initialize_global.append(p.ID[:2])
 
         etiq_fun = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_LABEL)
         f1_cod = self.gen(oper=':', op1=etiq_fun)
@@ -542,6 +567,10 @@ class JSParser(Parser):
         list.insert(0, p.T[0])
 
         self.lista_reglas.append(39)
+
+        if p.ID[2]:
+            self.initialize_global.append(p.ID[:2])
+
         return list,
 
     @_('')
@@ -556,6 +585,10 @@ class JSParser(Parser):
         list.insert(0, p.T[0])
 
         self.lista_reglas.append(41)
+
+        if p.ID[2]:
+            self.initialize_global.append(p.ID[:2])
+
         return list,
 
     @_('')
@@ -609,7 +642,8 @@ class JSParser(Parser):
         u_lugar = p.U[-1][0]
         u_cod = p.U[-1][1]
         r_lugar = self.nueva_temp(self.INT_TYPE)
-        r_cod = self.gen(oper='comment', res='\n; Inicio de operador de igualdad') + r1_cod + u_cod + self.gen(oper='if=goto', op1=r1_lugar, op2=u_lugar, res=r_true) + \
+        r_cod = self.gen(oper='comment', res='\n; Inicio de operador de igualdad') + r1_cod + u_cod + self.gen(
+            oper='if=goto', op1=r1_lugar, op2=u_lugar, res=r_true) + \
                 self.gen(res=r_lugar, oper='=', op1=0) + self.gen(oper='goto', res=r_despues) + \
                 self.gen(oper=':', op1=r_true) + self.gen(res=r_lugar, oper='=', op1=1) + \
                 self.gen(oper=':', op1=r_despues) + self.gen(oper='comment', res='; Inicio de operador de igualdad\n')
@@ -656,6 +690,9 @@ class JSParser(Parser):
 
         self.lista_reglas.append(50)
 
+        if p.ID[2]:
+            self.initialize_global.append(p.ID[:2])
+
         v_lugar = self.nueva_temp(self.INT_TYPE)
         id_lugar = (p.ID[0], p.ID[1])
         v_cod = self.gen(oper='comment', res='\n; Inicio de --id con asignacion') + \
@@ -667,6 +704,9 @@ class JSParser(Parser):
     @_('ID')
     def V(self, p):
         self.lista_reglas.append(51)
+
+        if p.ID[2]:
+            self.initialize_global.append(p.ID[:2])
 
         v_lugar = (p.ID[0], p.ID[1])
         v_cod = [None]
@@ -790,8 +830,10 @@ class JSParser(Parser):
             res +=', '
         return f'{res[:-2]})\n'
 
-    def print_ci_gco(self,cod):
-        ci_output = open('CI-Output.txt', 'w')
+    def print_ci_gco(self, cod):
+        ci_output = open('CI-Output.txt', 'w')      #oper -> cod | tupla_var -> (global/local,desp)
+                                                    #
+
 
     def scope_code(self, var):
         id_table, id_pos = self.TS.get_pos(var)  # TODO: Modularizar en TS
