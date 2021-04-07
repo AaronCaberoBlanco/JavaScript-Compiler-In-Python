@@ -67,6 +67,7 @@ class JSParser(Parser):
         self.number_function = 0
         self.ci = None
 
+    #TODO: COMENTAR NUEVOS MÉTODOS AÑADIDOS
     def parse(self, tokens):
         super().parse(tokens)
         self.print_ci_memoria(self.ci)
@@ -148,14 +149,29 @@ class JSParser(Parser):
         i_cod_e = p.I[-1][1]
         i_cod_p = p.I[-1][2]
         etiq = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_LABEL)
+
+        for i in i_cod_e:
+            if i is not None:
+                i_cod_e = self.gen(oper='comment', res='\n; Inicio de asignación de parámetros') + i_cod_e + \
+                          self.gen(oper='comment', res='; Fin de asignación de parámetros\n')
+                break
+
+        for i in i_cod_p  :
+            if i is not None:
+                i_cod_p = self.gen(oper='comment', res='\n; Inicio de paso de parámetros') + i_cod_p + \
+                          self.gen(oper='comment', res='; Fin de paso de parámetros\n')
+                break
+
         h_lugar = None
+        h_cod = self.gen(oper='comment', res='\n; ---- Inicio de llamada a funcion') + i_cod_e + i_cod_p
+
         if return_value != self.VOID_TYPE:
             h_lugar = self.nueva_temp(return_value)
-            h_cod = i_cod_e + i_cod_p + self.gen(res=h_lugar, oper='CallValue', op1=etiq)
+            h_cod = h_cod + self.gen(res=h_lugar, oper='CallValue', op1=etiq)+\
+                    self.gen(oper='comment', res='; ---- Fin de llamada a funcion\n')
         else:
-            h_cod = i_cod_e + i_cod_p + self.gen(oper='CallVoid', op1=etiq)
-        h_cod=self.gen(oper='comment', res='\n; Inicio de llamada a funcion')+\
-              h_cod + self.gen(oper='comment', res='; Fin de llamada a funcion\n')
+            h_cod = h_cod + self.gen(res=h_lugar, oper='CallVoid', op1=etiq)+\
+                    self.gen(oper='comment', res='; ---- Fin de llamada a funcion\n')
         if self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE) != self.FUNCTION_TYPE:
             self.error_id = p.ID
             self.semantic_error(15, p.lineno)
@@ -233,7 +249,9 @@ class JSParser(Parser):
 
         e_cod = p.E[-1][1]
         e_lugar = p.E[-1][0]
-        k_cod = e_cod + self.gen(oper='=', res=(p.ID[0], p.ID[1]), op1=e_lugar)
+        k_cod = self.gen(oper='comment', res='\n; ---- Inicio de asignación')+\
+                e_cod + self.gen(oper='=', res=(p.ID[0], p.ID[1]), op1=e_lugar)+ \
+                self.gen(oper='comment', res='; ---- Fin de asignación\n')
         return (None, k_cod, [None]),
 
     @_('ALERT ABPAREN E CEPAREN PUNTOYCOMA')

@@ -5,38 +5,94 @@ CONTENIDO DE LA TABLA # 0 :
 	+ Tipo : 'funcion'
 	+ TipoRetorno : 'void'
 	+ EtiqFuncion : '#EtiqFun0'
-	+ NumParam : '0'
-	+ TipoParam : 'void'
+	+ NumParam : '6'
+	+ TipoParam1 : 'cadena'
+	+ TipoParam2 : 'entero'
+	+ TipoParam3 : 'logico'
+	+ TipoParam4 : 'logico'
+	+ TipoParam5 : 'entero'
+	+ TipoParam6 : 'cadena'
+
 ---------------- ----------------
-*	LEXEMA : 's'
+*	LEXEMA : 'w'
 	ATRIBUTOS :
 	+ Tipo : 'cadena'
 	+ Despl : '0'
+---------------- ----------------
+*	LEXEMA : '~Temp0'
+	ATRIBUTOS :
+	+ Despl : '64'
+	+ Tipo : 'cadena'
+---------------- ----------------
+*	LEXEMA : 'n'
+	ATRIBUTOS :
+	+ Tipo : 'entero'
+	+ Despl : '128'
+---------------- ----------------
+*	LEXEMA : '~Temp1'
+	ATRIBUTOS :
+	+ Despl : '129'
+	+ Tipo : 'entero'
+---------------- ----------------
+*	LEXEMA : '~Temp2'
+	ATRIBUTOS :
+	+ Despl : '130'
+	+ Tipo : 'entero'
+---------------- ----------------
+*	LEXEMA : '~Temp3'
+	ATRIBUTOS :
+	+ Despl : '131'
+	+ Tipo : 'entero'
+---------------- ----------------
+*	LEXEMA : 'b2'
+	ATRIBUTOS :
+	+ Tipo : 'logico'
+	+ Despl : '132'
+---------------- ----------------
+*	LEXEMA : '~Temp4'
+	ATRIBUTOS :
+	+ Despl : '133'
+	+ Tipo : 'logico'
+---------------- ----------------
+*	LEXEMA : '~Temp5'
+	ATRIBUTOS :
+	+ Despl : '134'
+	+ Tipo : 'logico'
 ---------------- ----------------
 
 
 
 CONTENIDO DE LA TABLA # 1 :
 
-*	LEXEMA : '~Temp0'
+*	LEXEMA : 's'
 	ATRIBUTOS :
+	+ Tipo : 'cadena'
 	+ Despl : '0'
-	+ Tipo : 'logico'
 ---------------- ----------------
-*	LEXEMA : '~Temp1'
+*	LEXEMA : 'l'
 	ATRIBUTOS :
-	+ Despl : '1'
-	+ Tipo : 'logico'
----------------- ----------------
-*	LEXEMA : '~Temp2'
-	ATRIBUTOS :
-	+ Despl : '2'
-	+ Tipo : 'logico'
----------------- ----------------
-*	LEXEMA : '~Temp3'
-	ATRIBUTOS :
-	+ Despl : '3'
 	+ Tipo : 'entero'
+	+ Despl : '64'
+---------------- ----------------
+*	LEXEMA : 'b'
+	ATRIBUTOS :
+	+ Tipo : 'logico'
+	+ Despl : '65'
+---------------- ----------------
+*	LEXEMA : 'b1'
+	ATRIBUTOS :
+	+ Tipo : 'logico'
+	+ Despl : '66'
+---------------- ----------------
+*	LEXEMA : 'n1'
+	ATRIBUTOS :
+	+ Tipo : 'entero'
+	+ Despl : '67'
+---------------- ----------------
+*	LEXEMA : 'hola'
+	ATRIBUTOS :
+	+ Tipo : 'cadena'
+	+ Despl : '68'
 ---------------- ----------------
 
 

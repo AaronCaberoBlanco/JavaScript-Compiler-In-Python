@@ -1,8 +1,13 @@
-function print ()
+function print (string s, number l, boolean b, boolean b1, number n1, string hola)
 {
-	if (true && false) alert (9999);
+
 }
-let string s;
-input(s);
+let string w;
+w = "hola";
+let number n;
+n = 2-1;
+let boolean b2;
+b2 = false;
+print(w,n,b2, true, n, w);
 
 
