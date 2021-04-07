@@ -249,9 +249,9 @@ class JSParser(Parser):
 
         e_cod = p.E[-1][1]
         e_lugar = p.E[-1][0]
-        k_cod = self.gen(oper='comment', res='\n; ---- Inicio de asignación')+\
+        k_cod = self.gen(oper='comment', res='\n; Inicio de asignación')+ \
                 e_cod + self.gen(oper='=', res=(p.ID[0], p.ID[1]), op1=e_lugar)+ \
-                self.gen(oper='comment', res='; ---- Fin de asignación\n')
+                self.gen(oper='comment', res='; Fin de asignación\n')
         return (None, k_cod, [None]),
 
     @_('ALERT ABPAREN E CEPAREN PUNTOYCOMA')
