@@ -68,13 +68,18 @@ class JSParser(Parser):
         self.ci = None
         self.initialize_global = []
 
+    def initialize(self, p_ID):
+        if p_ID[2]:
+            self.initialize_global.append(p_ID[:2])
+
     # TODO: COMENTAR NUEVOS MÉTODOS AÑADIDOS
     def parse(self, tokens):
         super().parse(tokens)
 
-        init = [self.gen(oper='=',op1=0,res=i)[0] for i in self.initialize_global]
-        self.ci = self.gen(oper='comment',res='\n; Inicializacion variables globales') + init +\
-                  self.gen(oper='comment',res='; Fin de inicializacion variables globales\n') + self.ci
+        if self.initialize_global:
+            init = [self.gen(oper='=',op1=0,res=i)[0] for i in self.initialize_global]
+            self.ci = self.gen(oper='comment',res='\n; Inicializacion variables globales') + init +\
+                      self.gen(oper='comment',res='; Fin de inicializacion variables globales\n') + self.ci
 
         self.print_ci_memoria(self.ci)
         self.print_ci_gco(self.ci)
@@ -201,9 +206,7 @@ class JSParser(Parser):
 
         self.lista_reglas.append(8)
 
-        if p.ID[2]:
-            self.initialize_global.append(p.ID[:2])
-
+        self.initialize(p.ID)
         return return_value, (h_lugar, h_cod, [None])
 
     @_('E J')
@@ -263,9 +266,7 @@ class JSParser(Parser):
 
         self.lista_reglas.append(14)
 
-        if p.ID[2]:
-            self.initialize_global.append(p.ID[:2])
-
+        self.initialize(p.ID)
         e_cod = p.E[-1][1]
         e_lugar = p.E[-1][0]
         k_cod = self.gen(oper='comment', res='\n; Inicio de asignación') + \
@@ -296,9 +297,7 @@ class JSParser(Parser):
 
         self.lista_reglas.append(16)
 
-        if p.ID[2]:
-            self.initialize_global.append(p.ID[:2])
-
+        self.initialize(p.ID)
         s_cod = self.gen(oper='comment', res='\n; Inicio de llamada a input') + \
                 self.gen(oper='input', res=(p.ID[0], p.ID[1])) + \
                 self.gen(oper='comment', res='; Fin de llamada a input\n')
@@ -357,9 +356,7 @@ class JSParser(Parser):
 
         self.lista_reglas.append(20)
 
-        if p.ID[2]:
-            self.initialize_global.append(p.ID[:2])
-
+        self.initialize(p.ID)
         if p.T[0][0] == self.STRING_TYPE:
             g_cod = self.gen(oper='=', res=(p.ID[0], p.ID[1]), op1='""')
         else:
@@ -444,9 +441,7 @@ class JSParser(Parser):
 
         self.lista_reglas.append(29)
 
-        if p.ID[2]:
-            self.initialize_global.append(p.ID[:2])
-
+        self.initialize(p.ID)
         id_lugar = (p.ID[0], p.ID[1])
         o_cod = self.gen(oper='comment', res='\n; Inicio de --id sin asignacion') \
                 + self.gen(res=id_lugar, oper='=-', op1=id_lugar, op2=1) \
@@ -513,9 +508,7 @@ class JSParser(Parser):
 
         self.lista_reglas.append(34)
 
-        if p.ID[2]:
-            self.initialize_global.append(p.ID[:2])
-
+        self.initialize(p.ID)
         etiq_fun = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_LABEL)
         f1_cod = self.gen(oper=':', op1=etiq_fun)
         return (None, f1_cod, [None]),
@@ -574,9 +567,7 @@ class JSParser(Parser):
 
         self.lista_reglas.append(39)
 
-        if p.ID[2]:
-            self.initialize_global.append(p.ID[:2])
-
+        self.initialize(p.ID)
         return list,
 
     @_('')
@@ -592,9 +583,7 @@ class JSParser(Parser):
 
         self.lista_reglas.append(41)
 
-        if p.ID[2]:
-            self.initialize_global.append(p.ID[:2])
-
+        self.initialize(p.ID)
         return list,
 
     @_('')
@@ -635,7 +624,7 @@ class JSParser(Parser):
         return p.R[0], (e_lugar, e_cod, [None])
 
     @_('R OPREL U')
-    def R(self, p):  # TODO:Cambiar p.R -> p.R[0]
+    def R(self, p):
         if p.R[0] != self.INT_TYPE or p.U[0] != self.INT_TYPE:
             self.semantic_error(13, p.lineno)
 
@@ -696,9 +685,7 @@ class JSParser(Parser):
 
         self.lista_reglas.append(50)
 
-        if p.ID[2]:
-            self.initialize_global.append(p.ID[:2])
-
+        self.initialize(p.ID)
         v_lugar = self.nueva_temp(self.INT_TYPE)
         id_lugar = (p.ID[0], p.ID[1])
         v_cod = self.gen(oper='comment', res='\n; Inicio de --id con asignacion') + \
@@ -711,9 +698,7 @@ class JSParser(Parser):
     def V(self, p):
         self.lista_reglas.append(51)
 
-        if p.ID[2]:
-            self.initialize_global.append(p.ID[:2])
-
+        self.initialize(p.ID)
         v_lugar = (p.ID[0], p.ID[1])
         v_cod = [None]
         return self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE), (v_lugar, v_cod, [None])
@@ -850,7 +835,7 @@ class JSParser(Parser):
 
 
     def scope_code(self, var):
-        id_table, id_pos = self.TS.get_pos(var)  # TODO: Modularizar en TS
+        id_table, id_pos = self.TS.get_pos(var)  # TODO: Modularizar en TS is_global()
         if id_table == 0:
             return 1
         else:
