@@ -42,7 +42,7 @@ class JSParser(Parser):
                      'returnVoid': 16,
                      'returnValue': 17,
                      ':': 17,
-                     'callVoid' : 18,
+                     'callVoid': 18,
                      'callValue': 19,
                      'param': 20,
                      'goto': 21,
@@ -66,8 +66,9 @@ class JSParser(Parser):
         self.pos_id_fun = None
         self.number_function = 0
         self.ci = None
+        self.initialize_global = []
 
-    #TODO: COMENTAR NUEVOS MÉTODOS AÑADIDOS
+    # TODO: COMENTAR NUEVOS MÉTODOS AÑADIDOS
     def parse(self, tokens):
         super().parse(tokens)
 
@@ -163,7 +164,7 @@ class JSParser(Parser):
                           self.gen(oper='comment', res='; Fin de asignación de literales en temporales\n')
                 break
 
-        for i in i_cod_p  :
+        for i in i_cod_p:
             if i is not None:
                 i_cod_p = self.gen(oper='comment', res='\n; Inicio de paso de parámetros') + i_cod_p + \
                           self.gen(oper='comment', res='; Fin de paso de parámetros\n')
@@ -174,10 +175,10 @@ class JSParser(Parser):
 
         if return_value != self.VOID_TYPE:
             h_lugar = self.nueva_temp(return_value)
-            h_cod = h_cod + self.gen(res=h_lugar, oper='CallValue', op1=etiq)+\
+            h_cod = h_cod + self.gen(res=h_lugar, oper='CallValue', op1=etiq) + \
                     self.gen(oper='comment', res='; ---- Fin de llamada a funcion\n')
         else:
-            h_cod = h_cod + self.gen(res=h_lugar, oper='CallVoid', op1=etiq)+\
+            h_cod = h_cod + self.gen(res=h_lugar, oper='CallVoid', op1=etiq) + \
                     self.gen(oper='comment', res='; ---- Fin de llamada a funcion\n')
         if self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE) != self.FUNCTION_TYPE:
             self.error_id = p.ID
@@ -800,23 +801,22 @@ class JSParser(Parser):
              case 'comment':
                  return [(f'{res_}',)]
 
+
         return [(oper_, op1_, op2_, res_)]
 
-    def print_ci_memoria(self,cod):
-
+    def print_ci_memoria(self, cod):
         ci_memoria = open('CI-Memoria.txt', 'w')
         res = ''
         for tuple_ in cod:
             if tuple_ is not None:
-                if len(tuple_) == 1:
+                if len(tuple_) == 1: # Comments
                     res += f'{tuple_[0]}\n'
                 else:
                     res += self.format_tuple(tuple_)
 
         print(res, file=ci_memoria)
 
-
-    def format_tuple(self,tuple_):
+    def format_tuple(self, tuple_):
         res = '('
         for elem in tuple_:
             if elem is None:
@@ -827,7 +827,7 @@ class JSParser(Parser):
                 res += str(elem[1])
             else:
                 res += str(elem)
-            res +=', '
+            res += ', '
         return f'{res[:-2]})\n'
 
     def print_ci_gco(self, cod):
