@@ -25,30 +25,32 @@ class JSParser(Parser):
     error_id = [0, 0]
     tokens = JSLexer.tokens
 
-    OPERAND_CODE = {'global': 1,
-                    'local': 2,
-                    'valor': 2,
-                    'tmp': 2,
-                    'ent': 3,
-                    'cad': 4,
-                    'log': 5,
-                    'etiq': 6}
-
-    OPERATOR_CODE = {'=-': 11,
-                     'if=goto': 12,
-                     '=and': 13,
-                     '=EL': 14,
-                     '=Cad': 15,
-                     'returnVoid': 16,
-                     'returnValue': 17,
-                     ':': 17,
-                     'callVoid': 18,
-                     'callValue': 19,
-                     'param': 20,
-                     'goto': 21,
-                     'alert': 22,
-                     'input': 23
-                     }
+    OPERAND_CODE = {
+        'global': 1,
+        'local': 2,
+        'valor': 2,
+        'tmp': 2,
+        'ent': 3,
+        'cad': 4,
+        'etiq': 5
+    }
+    OPERATOR_CODE = {
+        '=EL': 10,
+        '=Cad': 11,
+        '=and': 12,
+        '=-': 13,
+        ':': 14,
+        'goto': 15,
+        'if=goto': 16,
+        'param': 17,
+        'callValue': 18,
+        'returnVoid': 19,
+        'returnValue': 20,
+        'alertEnt': 21,
+        'alertCad': 22,
+        'inputEnt': 23,
+        'inputCad': 24
+    }
 
     def __init__(self, lista_reglas_, TS_, declaration_scope_, declarando_funcion_, global_shift_):
         self.lista_reglas = lista_reglas_
@@ -772,7 +774,7 @@ class JSParser(Parser):
              case '=':
                  if type(op1) is tuple:
                      if self.TS.get_attribute(op1[0], op1[1], self.ATTR_TYPE) == self.STRING_TYPE:
-                         oper_ = '=CAD'
+                         oper_ = '=Cad'
                      else:
                          oper_ = '=EL'
                  else:
@@ -781,7 +783,7 @@ class JSParser(Parser):
                          oper_ = '=EL'
                      else:
                          op1_= ('cad', op1)
-                         oper_ = '=CAD'
+                         oper_ = '=Cad'
              case 'if=goto' | '=-':
                  if type(op2) is not tuple:
                      if type(op2) is int:
