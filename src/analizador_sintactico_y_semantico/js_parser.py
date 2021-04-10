@@ -1,4 +1,5 @@
 import sys
+import builtins
 
 from sly import Parser
 
@@ -819,18 +820,27 @@ class JSParser(Parser):
         for elem in tuple_[1:]:
             if elem is not None:
                 match type(elem):
-                    case tuple:
-                        match type(elem[0]):
-                            case int: # (0,1) corresponde a variable
-                                cod = self.scope_code(elem)
-                                desp = self.get_attribute(elem[0], elem[1], self.ATTR_DESP)
-                                elem = (cod, desp)
-                            case string:    # ('ent',2) | ('cad',"hola")
-                                cod = self.OPERAND_CODE(elem[0])
-                                elem = (cod, elem[1])
-                    case string:    # ('#Etiq2')
-                        cod = self.OPERAND_CODE('etiq')
+                    case builtins.str:  # ('#Etiq2')
+                        cod = self.OPERAND_CODE['etiq']
                         elem = (cod, elem)
+                    case builtins.tuple:
+                        if type(elem[0]) == int: # (0,1) corresponde a variable
+                            cod = self.scope_code(elem)
+                            desp = self.TS.get_attribute(elem[0], elem[1], self.ATTR_DESP)
+                            elem = (cod, desp)
+                        elif type(elem[0]) == str:  # ('ent',2) | ('cad',"hola")
+                            cod = self.OPERAND_CODE[elem[0]]
+                            elem = (cod, elem[1])
+
+                        # match type(elem[0]):  # match anidado innecesario
+                        #     case type_ if type_ == int: # (0,1) corresponde a variable
+                        #         cod = self.scope_code(elem)
+                        #         desp = self.TS.get_attribute(elem[0], elem[1], self.ATTR_DESP)
+                        #         elem = (cod, desp)
+                        #     case type_ if type_ == str:    # ('ent',2) | ('cad',"hola")
+                        #         cod = self.OPERAND_CODE[elem[0]]
+                        #         elem = (cod, elem[1])
+
             cod_3d.append(elem)
         tuple_ = tuple(cod_3d)
 
@@ -842,7 +852,7 @@ class JSParser(Parser):
 
     def print_ci(self, cod, out, format_function): # TODO: refactorizar cod por ci
         out_fd = open(out, 'w')
-        res = format_ci(cod,format_function)
+        res = self.format_ci(cod,format_function)
         print(res, file=out_fd)
 
     def format_ci(self, cod, format_function):
@@ -872,9 +882,9 @@ class JSParser(Parser):
     def format_tuple_gco(self, tuple_):  # oper -> cod | tupla_var -> (global/local,desp)
         res = '('
         for elem in tuple_:
-            if elem is None:
-                pass
-            res += f'{str(elem)}, '
+            if elem is not None:
+                res += f'{str(elem)}, '
+            res += ', '
         return f'{res[:-2]})\n'
 
     # -----------------------Error management functions-----------------------
