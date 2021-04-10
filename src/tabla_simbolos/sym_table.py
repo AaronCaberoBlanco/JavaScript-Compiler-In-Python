@@ -199,6 +199,10 @@ class SymTable:
 
         return self.tables[table_index].get_lex_entry(pos_lex)
 
+    #TODO: Comment method
+    def is_global(self, var):
+        return True if var[0] == 0 else False
+
     def write_table(self, file):
         """Prints the content of all the tables to the specified file.
             Prints the tables using the format in FormatoImpresiónTablaDeSímbolos.txt
