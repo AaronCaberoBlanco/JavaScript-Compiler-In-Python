@@ -1,23 +1,23 @@
 CONTENIDO DE LA TABLA # 0 :
 
-*	LEXEMA : 'x'
+*	LEXEMA : 'n'
 	ATRIBUTOS :
 	+ Tipo : 'entero'
 	+ Despl : '0'
 ---------------- ----------------
-*	LEXEMA : 'a'
+*	LEXEMA : 's'
 	ATRIBUTOS :
-	+ Tipo : 'entero'
+	+ Tipo : 'cadena'
 	+ Despl : '1'
----------------- ----------------
-*	LEXEMA : 'b'
-	ATRIBUTOS :
-	+ Tipo : 'entero'
-	+ Despl : '2'
 ---------------- ----------------
 *	LEXEMA : '~Temp0'
 	ATRIBUTOS :
-	+ Despl : '0'
+	+ Despl : '65'
+	+ Tipo : 'entero'
+---------------- ----------------
+*	LEXEMA : '~Temp1'
+	ATRIBUTOS :
+	+ Despl : '66'
 	+ Tipo : 'entero'
 ---------------- ----------------
 

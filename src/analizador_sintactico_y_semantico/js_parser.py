@@ -83,9 +83,11 @@ class JSParser(Parser):
             self.ci = self.gen(oper='comment',res='\n; Inicializacion variables globales') + init +\
                       self.gen(oper='comment',res='; Fin de inicializacion variables globales\n') + self.ci
 
-        self.print_ci_memoria(self.ci)
-        self.print_ci_gco(self.ci)
-
+        self.print_ci(self.ci,'CI-Memoria.txt',self.format_tuple_memoria) 
+        
+        self.convert_ci(self.ci)
+        self.print_ci(self.ci,'CI-Output.txt',self.format_tuple_gco)
+        
     @_('D')
     def B(self, p):
         self.lista_reglas.append(1)
@@ -805,19 +807,55 @@ class JSParser(Parser):
 
         return [(oper_, op1_, op2_, res_)]
 
-    def print_ci_memoria(self, cod):
-        ci_memoria = open('CI-Memoria.txt', 'w')
+    def convert_ci(self, ci):
+        for tuple_ in ci:
+            if tuple_ is not None:
+                self.convert_tuple(tuple_)
+
+    def convert_tuple(self, tuple_):
+        if len(tuple_) == 1: return # Comment
+        oper = self.OPERATOR_CODE[tuple_[0]]
+        cod_3d = [oper]
+        for elem in tuple_[1:]:
+            if elem is not None:
+                match type(elem):
+                    case tuple:
+                        match type(elem[0]):
+                            case int: # (0,1) corresponde a variable
+                                cod = self.scope_code(elem)
+                                desp = self.get_attribute(elem[0], elem[1], self.ATTR_DESP)
+                                elem = (cod, desp)
+                            case string:    # ('ent',2) | ('cad',"hola")
+                                cod = self.OPERAND_CODE(elem[0])
+                                elem = (cod, elem[1])
+                    case string:    # ('#Etiq2')
+                        cod = self.OPERAND_CODE('etiq')
+                        elem = (cod, elem)
+            cod_3d.append(elem)
+        tuple_ = tuple(cod_3d)
+
+    def scope_code(self, var):
+        if self.TS.is_global(var):
+            return 1
+        else:
+            return 2
+
+    def print_ci(self, cod, out, format_function): # TODO: refactorizar cod por ci
+        out_fd = open(out, 'w')
+        res = format_ci(cod,format_function)
+        print(res, file=out_fd)
+
+    def format_ci(self, cod, format_function):
         res = ''
         for tuple_ in cod:
             if tuple_ is not None:
-                if len(tuple_) == 1: # Comments
+                if len(tuple_) == 1:  # Comments
                     res += f'{tuple_[0]}\n'
                 else:
-                    res += self.format_tuple(tuple_)
+                    res += format_function(tuple_)
+        return res
 
-        print(res, file=ci_memoria)
-
-    def format_tuple(self, tuple_):
+    def format_tuple_memoria(self, tuple_):
         res = '('
         for elem in tuple_:
             if elem is None:
@@ -831,17 +869,13 @@ class JSParser(Parser):
             res += ', '
         return f'{res[:-2]})\n'
 
-    def print_ci_gco(self, cod):
-        ci_output = open('CI-Output.txt', 'w')      #oper -> cod | tupla_var -> (global/local,desp)
-                                                    #
-
-
-    def scope_code(self, var):
-        id_table, id_pos = self.TS.get_pos(var)  # TODO: Modularizar en TS is_global()
-        if id_table == 0:
-            return 1
-        else:
-            return 2
+    def format_tuple_gco(self, tuple_):  # oper -> cod | tupla_var -> (global/local,desp)
+        res = '('
+        for elem in tuple_:
+            if elem is None:
+                pass
+            res += f'{str(elem)}, '
+        return f'{res[:-2]})\n'
 
     # -----------------------Error management functions-----------------------
 
