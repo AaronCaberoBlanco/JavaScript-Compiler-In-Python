@@ -809,9 +809,11 @@ class JSParser(Parser):
         return [(oper_, op1_, op2_, res_)]
 
     def convert_ci(self, ci):
+        list = []
         for tuple_ in ci:
             if tuple_ is not None:
-                self.convert_tuple(tuple_)
+                list.append(self.convert_tuple(tuple_))
+        self.ci = list
 
     def convert_tuple(self, tuple_):
         if len(tuple_) == 1: return # Comment
@@ -842,7 +844,7 @@ class JSParser(Parser):
                         #         elem = (cod, elem[1])
 
             cod_3d.append(elem)
-        tuple_ = tuple(cod_3d)
+        return tuple(cod_3d)
 
     def scope_code(self, var):
         if self.TS.is_global(var):
@@ -884,7 +886,6 @@ class JSParser(Parser):
         for elem in tuple_:
             if elem is not None:
                 res += f'{str(elem)}, '
-            res += ', '
         return f'{res[:-2]})\n'
 
     # -----------------------Error management functions-----------------------
