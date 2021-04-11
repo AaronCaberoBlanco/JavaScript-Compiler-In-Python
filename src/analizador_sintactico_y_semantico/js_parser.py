@@ -885,7 +885,8 @@ class JSParser(Parser):
         res = '('
         for elem in tuple_:
             if elem is not None:
-                res += f'{str(elem)}, '
+                res += f'{str(elem)}'
+            res += ', '
         return f'{res[:-2]})\n'
 
     # -----------------------Error management functions-----------------------
