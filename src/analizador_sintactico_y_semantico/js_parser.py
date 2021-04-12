@@ -816,7 +816,7 @@ class JSParser(Parser):
         self.ci = list
 
     def convert_tuple(self, tuple_):
-        if len(tuple_) == 1: return tuple_# Comment
+        if len(tuple_) == 1 and type(tuple_[0]) is str: return tuple_# Comment
         oper = self.OPERATOR_CODE[tuple_[0]]
         cod_3d = [oper]
         for elem in tuple_[1:]:
@@ -853,22 +853,22 @@ class JSParser(Parser):
             return 2
 
     def print_ci(self, cod, out, format_function): # TODO: refactorizar cod por ci
-        out_fd = open(out, 'w')
-        res = self.format_ci(cod,format_function)
-        print(res, file=out_fd)
+         with open(out, 'w') as out_fd:
+            res = self.format_ci(cod,format_function)
+            print(res, file=out_fd)
 
     def format_ci(self, cod, format_function):
         res = ''
         for tuple_ in cod:
             if tuple_ is not None:
-                if len(tuple_) == 1:  # Comments
+                if len(tuple_) == 1 and type(tuple_[0]) is str:  # Comments
                     res += f'{tuple_[0]}\n'
                 else:
                     res += format_function(tuple_)
         return res
 
     def format_tuple_memoria(self, tuple_):
-        res = '('
+        res = '['
         for elem in tuple_:
             if elem is None:
                 pass
@@ -879,15 +879,18 @@ class JSParser(Parser):
             else:
                 res += str(elem)
             res += ', '
-        return f'{res[:-2]})\n'
+        return f'{res[:-2]}]\n'
 
     def format_tuple_gco(self, tuple_):  # oper -> cod | tupla_var -> (global/local,desp)
-        res = '('
+        res = '['
         for elem in tuple_:
             if elem is not None:
-                res += f'{str(elem)}'
+                if type(elem) is tuple:
+                    res += f"({', '.join([str(i) for i in elem])})"
+                else:
+                    res += f'{elem}'
             res += ', '
-        return f'{res[:-2]})\n'
+        return f'{res[:-2]}]\n'
 
     # -----------------------Error management functions-----------------------
 

@@ -12,8 +12,8 @@ TS_file = open("TS-Output.txt", "w")
 #sys.stderr = open("Error.txt", "w")
 
 '''The input where we obtain the program to analize'''
-f = open('Input.txt', 'r')
-data = f.read()
+with open('Input.txt', 'r') as f:
+    data = f.read()
 
 '''Global variables to share between the lexer and the parser'''
 symbol_table = SymTable()
