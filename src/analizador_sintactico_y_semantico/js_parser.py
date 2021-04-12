@@ -81,7 +81,7 @@ class JSParser(Parser):
 
         if self.initialize_global:
             init = [self.gen(oper='=',op1=0,res=i)[0] for i in self.initialize_global]
-            self.ci = self.gen(oper='comment',res='\n; Inicializacion variables globales') + init +\
+            self.ci = self.gen(oper='comment',res='; Inicializacion variables globales') + init +\
                       self.gen(oper='comment',res='; Fin de inicializacion variables globales\n') + self.ci
 
         self.print_ci(self.ci,'CI-Memoria.txt',self.format_tuple_memoria) 
