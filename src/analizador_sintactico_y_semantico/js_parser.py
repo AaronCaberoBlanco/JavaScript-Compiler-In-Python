@@ -816,7 +816,7 @@ class JSParser(Parser):
         self.ci = list
 
     def convert_tuple(self, tuple_):
-        if len(tuple_) == 1: return # Comment
+        if len(tuple_) == 1: return tuple_# Comment
         oper = self.OPERATOR_CODE[tuple_[0]]
         cod_3d = [oper]
         for elem in tuple_[1:]:
