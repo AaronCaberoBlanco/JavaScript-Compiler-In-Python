@@ -793,8 +793,6 @@ class JSParser(Parser):
                          op2_ = ('ent', op2)
                      else:
                          op2_ = ('cad', op2)
-             case 'comment':
-                 return [(f'{res_}',)]
              case 'input':
                  if self.TS.get_attribute(res[0], res[1], self.ATTR_TYPE) == self.STRING_TYPE:
                      oper_ = 'inputCad'
@@ -805,6 +803,8 @@ class JSParser(Parser):
                      oper_ = 'alertCad'
                  else:
                      oper_ = 'alertEnt'
+             case 'comment':
+                 return [(f'{res_}',)]
 
         return [(oper_, op1_, op2_, res_)]
 
