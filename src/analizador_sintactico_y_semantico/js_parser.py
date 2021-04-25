@@ -43,14 +43,17 @@ class JSParser(Parser):
         ':': 14,
         'goto': 15,
         'if=goto': 16,
-        'param': 17,
-        'callValue': 18,
-        'returnVoid': 19,
-        'returnValue': 20,
-        'alertEnt': 21,
-        'alertCad': 22,
-        'inputEnt': 23,
-        'inputCad': 24
+        'paramEL': 17,
+        'paramCad': 18,
+        'callValue': 19, #Deberiamos hacer un CallEL y un CallCad
+        'callVoid': 20,
+        'returnVoid': 21,
+        'returnEL': 22,
+        'returnCAD': 23,
+        'alertEnt': 24,
+        'alertCad': 25,
+        'inputEnt': 26,
+        'inputCad': 27
     }
 
     def __init__(self, lista_reglas_, TS_, declaration_scope_, declarando_funcion_, global_shift_):
@@ -70,6 +73,8 @@ class JSParser(Parser):
         self.number_function = 0
         self.ci = None
         self.initialize_global = []
+        self.code_function = []
+        self.size_RAs = {}
 
     def initialize(self, p_ID):
         if p_ID[2]:
@@ -78,12 +83,15 @@ class JSParser(Parser):
     # TODO: COMENTAR NUEVOS MÉTODOS AÑADIDOS
     def parse(self, tokens):
         super().parse(tokens)
+        if self.code_function:
+            self.ci = self.gen(oper='comment',res='; ---------- Codigos de las funciones -------------') + self.code_function +\
+                      self.gen(oper='comment',res='; ---------- Fin de codigos de las funciones---------------------\n') + self.ci
 
         if self.initialize_global:
             init = [self.gen(oper='=',op1=0,res=i)[0] for i in self.initialize_global]
             self.ci = self.gen(oper='comment',res='; ---------- Inicializacion variables globales -------------') + init +\
-                      self.gen(oper='comment',res='; ----------------------------------------------------------\n') + self.ci
-
+                      self.gen(oper='comment',res='; ---------- Fin de inicializacion de variables globales -------------\n') + self.ci
+        # print(self.size_RAs)
         self.print_ci(self.ci,'CI-Memoria.txt',self.format_tuple_memoria) 
         
         self.convert_ci(self.ci)
@@ -190,10 +198,10 @@ class JSParser(Parser):
 
         if return_value != self.VOID_TYPE:
             h_lugar = self.nueva_temp(return_value)
-            h_cod = h_cod + self.gen(res=h_lugar, oper='CallValue', op1=etiq) + \
+            h_cod = h_cod + self.gen(res=h_lugar, oper='callValue', op1=etiq) + \
                     self.gen(oper='comment', res='; ---- Fin de llamada a funcion\n')
         else:
-            h_cod = h_cod + self.gen(res=h_lugar, oper='CallVoid', op1=etiq) + \
+            h_cod = h_cod + self.gen(res=h_lugar, oper='callVoid', op1=etiq) + \
                     self.gen(oper='comment', res='; ---- Fin de llamada a funcion\n')
         if self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_TYPE) != self.FUNCTION_TYPE:
             self.error_id = p.ID
@@ -481,6 +489,7 @@ class JSParser(Parser):
         self.TS.destroy_table(len(self.TS.tables) - 1)
         self.function_scope = False
         self.return_type = None
+        self.size_RAs[self.TS.get_attribute(self.pos_id_fun[0],self.pos_id_fun[1],self.ATTR_LEXEM)] = self.calc_size_RA()
         self.shift = self.global_shift[0]
 
         self.lista_reglas.append(33)
@@ -491,7 +500,8 @@ class JSParser(Parser):
         f_cod = self.gen(oper='comment', res='\n; -------- Inicio de funcion') + \
                 f1_cod + f2_cod + f3_cod + self.gen(oper='comment', res='') + \
                 self.gen(oper='returnVoid') + self.gen(oper='comment', res='; -------- Fin de funcion\n')
-        return (None, f_cod, [None]),
+        self.code_function += f_cod
+        return (None, [None], [None]),
 
     @_('FUNCTION P Q ID')
     def F1(self, p):
@@ -766,6 +776,16 @@ class JSParser(Parser):
         self.num_etiq += 1
         return res
 
+    def calc_size_RA(self):
+        match self.return_type:
+            case self.STRING_TYPE:
+                size_ret = 64
+            case self.VOID_TYPE:
+                size_ret = 0
+            case _:
+                size_ret = 1
+        return 1 + self.shift + size_ret
+
     def gen(self, oper, op1=None, op2=None, res=None):
 
         oper_ = oper
@@ -803,6 +823,16 @@ class JSParser(Parser):
                      oper_ = 'alertCad'
                  else:
                      oper_ = 'alertEnt'
+             case 'param':
+                 if self.TS.get_attribute(op1[0], op1[1], self.ATTR_TYPE) == self.STRING_TYPE:
+                     oper_ = 'paramCad'
+                 else:
+                     oper_ = 'paramEL'
+             case 'returnValue':
+                 if self.TS.get_attribute(op1[0], op1[1], self.ATTR_TYPE) == self.STRING_TYPE:
+                     oper_ = 'returnCad'
+                 else:
+                     oper_ = 'returnEL'
              case 'comment':
                  return [(f'{res_}',)]
 
