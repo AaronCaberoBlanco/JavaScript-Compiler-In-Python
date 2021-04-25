@@ -49,7 +49,7 @@ class JSParser(Parser):
         'callVoid': 20,
         'returnVoid': 21,
         'returnEL': 22,
-        'returnCAD': 23,
+        'returnCad': 23,
         'alertEnt': 24,
         'alertCad': 25,
         'inputEnt': 26,
