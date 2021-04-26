@@ -91,16 +91,16 @@ class JSParser(Parser):
 
         if self.initialize_global:
             init = [self.gen(oper='=',op1=0,res=i)[0] for i in self.initialize_global]
-            self.ci = self.gen(oper='comment',res='; ---------- Inicializacion variables globales -------------') + init +\
-                      self.gen(oper='comment',res='; ---------- Fin de inicializacion de variables globales -------------\n') + self.ci
+            self.ci = self.gen(oper='comment',res='; ---------- Inicializacion variables globales no inicializadas -------------') + init +\
+                      self.gen(oper='comment',res='; ---------- Fin de inicializacion de variables globales no inicianilizadas -------------\n') + self.ci
 
         self.print_ci(self.ci,'CI-Memoria.txt',self.format_tuple_memoria)
         
         self.convert_ci(self.ci)
         self.print_ci(self.ci,'CI-Output.txt',self.format_tuple_gco)
 
-        gco = GCO('CO-Output.txt',self.ci,self.size_RAs, self.TS)
-        gco.print_co(gco.generate_co())
+        gco = GCO('CO-Output.txt',self.ci,self.size_RAs, self.TS)  # ci and else to shared file
+        gco.print_co(gco.convert_co())
         
     @_('D')
     def B(self, p):
@@ -846,7 +846,7 @@ class JSParser(Parser):
         self.ci = list
 
     def convert_tuple(self, tuple_):
-        if len(tuple_) == 1 and type(tuple_[0]) is str: return tuple_
+        if len(tuple_) == 1 and type(tuple_[0]) is str: return tuple_  # Comment in ens
         oper = self.OPERATOR_CODE[tuple_[0]]
         cod_3d = [oper]
         for elem in tuple_[1:]:
