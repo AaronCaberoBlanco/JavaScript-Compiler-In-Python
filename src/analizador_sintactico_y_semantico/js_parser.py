@@ -174,24 +174,14 @@ class JSParser(Parser):
         i_cod_p = p.I[-1][2]
         etiq = self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_LABEL)
 
-        # TODO: mirar any
         if any(cod is not None for cod in i_cod_e):
             i_cod_e = self.gen(oper='comment',
                            res='\n; Inicio de asignación de literales en temporales') + i_cod_e + \
                            self.gen(oper='comment', res='; Fin de asignación de literales en temporales\n')
 
-        # for i in i_cod_e:
-        #     if i is not None:
-        #         i_cod_e = self.gen(oper='comment',
-        #                            res='\n; Inicio de asignación de literales en temporales') + i_cod_e + \
-        #                   self.gen(oper='comment', res='; Fin de asignación de literales en temporales\n')
-        #         break
-
-        for i in i_cod_p:
-            if i is not None:
-                i_cod_p = self.gen(oper='comment', res='\n; Inicio de paso de parámetros') + i_cod_p + \
-                          self.gen(oper='comment', res='; Fin de paso de parámetros\n')
-                break
+        if any(cod_p is not None for cod_p in i_cod_p):
+            i_cod_p = self.gen(oper='comment', res='\n; Inicio de paso de parámetros') + i_cod_p + \
+                      self.gen(oper='comment', res='; Fin de paso de parámetros\n')
 
         h_lugar = None
         h_cod = self.gen(oper='comment', res='\n; ---- Inicio de llamada a funcion') + i_cod_e + i_cod_p
