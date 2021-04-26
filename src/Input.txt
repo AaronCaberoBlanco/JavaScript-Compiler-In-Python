@@ -1,6 +1,3 @@
 let number n;
-let string s;
-alert(n-1);
-alert(s);
-input(n);
-input(s);
+n = 2;
+let boolean b;

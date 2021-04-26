@@ -5,20 +5,15 @@ CONTENIDO DE LA TABLA # 0 :
 	+ Tipo : 'entero'
 	+ Despl : '0'
 ---------------- ----------------
-*	LEXEMA : 's'
-	ATRIBUTOS :
-	+ Tipo : 'cadena'
-	+ Despl : '1'
----------------- ----------------
 *	LEXEMA : '~Temp0'
 	ATRIBUTOS :
-	+ Despl : '65'
+	+ Despl : '1'
 	+ Tipo : 'entero'
 ---------------- ----------------
-*	LEXEMA : '~Temp1'
+*	LEXEMA : 'b'
 	ATRIBUTOS :
-	+ Despl : '66'
-	+ Tipo : 'entero'
+	+ Tipo : 'logico'
+	+ Despl : '2'
 ---------------- ----------------
 
 

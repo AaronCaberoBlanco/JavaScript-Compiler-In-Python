@@ -4,6 +4,7 @@ import builtins
 from sly import Parser
 
 from src.analizador_lexico.js_lexer import JSLexer
+from src.generador_codigo_objeto.gco import GCO
 
 ''' Para propagar toda la información del GCI sin dañar a la existente del semántico. Indexamos las cosas del GCI al final
     dentro de una tupla '''
@@ -92,11 +93,14 @@ class JSParser(Parser):
             init = [self.gen(oper='=',op1=0,res=i)[0] for i in self.initialize_global]
             self.ci = self.gen(oper='comment',res='; ---------- Inicializacion variables globales -------------') + init +\
                       self.gen(oper='comment',res='; ---------- Fin de inicializacion de variables globales -------------\n') + self.ci
-        # print(self.size_RAs)
-        self.print_ci(self.ci,'CI-Memoria.txt',self.format_tuple_memoria) 
+
+        self.print_ci(self.ci,'CI-Memoria.txt',self.format_tuple_memoria)
         
         self.convert_ci(self.ci)
         self.print_ci(self.ci,'CI-Output.txt',self.format_tuple_gco)
+
+        gco = GCO('CO-Output.txt',self.ci,self.size_RAs, self.TS)
+        gco.print_co(gco.generate_co())
         
     @_('D')
     def B(self, p):
@@ -842,7 +846,7 @@ class JSParser(Parser):
         self.ci = list
 
     def convert_tuple(self, tuple_):
-        if len(tuple_) == 1 and type(tuple_[0]) is str: return tuple_# Comment
+        if len(tuple_) == 1 and type(tuple_[0]) is str: return tuple_
         oper = self.OPERATOR_CODE[tuple_[0]]
         cod_3d = [oper]
         for elem in tuple_[1:]:
@@ -860,15 +864,6 @@ class JSParser(Parser):
                             cod = self.OPERAND_CODE[elem[0]]
                             elem = (cod, elem[1])
 
-                        # match type(elem[0]):  # match anidado innecesario
-                        #     case type_ if type_ == int: # (0,1) corresponde a variable
-                        #         cod = self.scope_code(elem)
-                        #         desp = self.TS.get_attribute(elem[0], elem[1], self.ATTR_DESP)
-                        #         elem = (cod, desp)
-                        #     case type_ if type_ == str:    # ('ent',2) | ('cad',"hola")
-                        #         cod = self.OPERAND_CODE[elem[0]]
-                        #         elem = (cod, elem[1])
-
             cod_3d.append(elem)
         return tuple(cod_3d)
 
@@ -878,7 +873,7 @@ class JSParser(Parser):
         else:
             return 2
 
-    def print_ci(self, cod, out, format_function): # TODO: refactorizar cod por ci
+    def print_ci(self, cod, out, format_function):
          with open(out, 'w') as out_fd:
             res = self.format_ci(cod,format_function)
             print(res, file=out_fd)
