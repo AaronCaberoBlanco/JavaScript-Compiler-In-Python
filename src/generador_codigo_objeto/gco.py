@@ -33,18 +33,24 @@ class GCO:
         return res
 
     def convert_quartet(self, quartet):
+        oper = quartet[0]
+        op1 = quartet[1]
+        op2 = quartet[2]
+        res = quartet[3]
+
         res = []
-        match quartet[0]:
+
+        match oper:
             case 10:  # (10, (3,1), None, (2,3)) --- (10, (1,1), None
-                res += self.set_registry(quartet[1], '.R1', 'Value')
-                res += self.set_registry(quartet[3], '.R3', 'Dir')
+                res += self.set_registry(op1, '.R1', 'Value')
+                res += self.set_registry(res, '.R3', 'Dir')
                 res += [(None, 'MOVE', '.R1', '[.R3]', '\n')]
             case 11:  # (11, (4, "Hola"), None, (1, 2)) --- (11, (2,4), None, (1, 2))
                 ...    #etiq DATA 123
             case 12:  # (12, (1,2), (1,3), (1,4))
-                res += self.set_registry(quartet[1], '.R1', 'Value')
-                res += self.set_registry(quartet[2], '.R2', 'Value')
-                res += self.set_registry(quartet[3], '.R3', 'Dir')
+                res += self.set_registry(op1, '.R1', 'Value')
+                res += self.set_registry(op2, '.R2', 'Value')
+                res += self.set_registry(res, '.R3', 'Dir')
                 res += [(None, 'AND', '.R1', '.R2', None)]
                 res += [(None, 'MOVE', '.A', '[.R3]', '\n')]
 
