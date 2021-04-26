@@ -45,15 +45,16 @@ class JSParser(Parser):
         'if=goto': 16,
         'paramEL': 17,
         'paramCad': 18,
-        'callValue': 19, #Deberiamos hacer un CallEL y un CallCad
-        'callVoid': 20,
-        'returnVoid': 21,
-        'returnEL': 22,
-        'returnCad': 23,
-        'alertEnt': 24,
-        'alertCad': 25,
-        'inputEnt': 26,
-        'inputCad': 27
+        'callValueEL': 19,
+        'callValueCad': 20,
+        'callVoid': 21,
+        'returnVoid': 22,
+        'returnEL': 23,
+        'returnCad': 24,
+        'alertEnt': 25,
+        'alertCad': 26,
+        'inputEnt': 27,
+        'inputCad': 28
     }
 
     def __init__(self, lista_reglas_, TS_, declaration_scope_, declarando_funcion_, global_shift_):
@@ -770,11 +771,11 @@ class JSParser(Parser):
         match self.return_type:
             case self.STRING_TYPE:
                 size_ret = 64
-            case self.VOID_TYPE:
-                size_ret = 0
-            case _:
+            case self.INT_TYPE | self.LOG_TYPE:
                 size_ret = 1
-        return 1 + self.shift + size_ret
+            case _:  # void
+                size_ret = 0
+        return 1 + self.shift + size_ret  # EM + P + VL + DT + VD
 
     def gen(self, oper, op1=None, op2=None, res=None):
 
@@ -818,6 +819,11 @@ class JSParser(Parser):
                      oper_ = 'paramCad'
                  else:
                      oper_ = 'paramEL'
+             case 'callValue':
+                 if self.TS.get_attribute(res[0], res[1], self.ATTR_TYPE) == self.STRING_TYPE:
+                     oper_ = 'callValueCad'
+                 else:
+                     oper_ = 'callValueEL'
              case 'returnValue':
                  if self.TS.get_attribute(op1[0], op1[1], self.ATTR_TYPE) == self.STRING_TYPE:
                      oper_ = 'returnCad'
