@@ -1,7 +1,6 @@
 import re
 
 class GCO:
-    #TODO: Crear fichero con finales globales
     OPERAND_CODE = {
         'global': 1,
         'local': 2,

@@ -4,7 +4,6 @@ import builtins
 from sly import Parser
 
 from src.analizador_lexico.js_lexer import JSLexer
-from src.generador_codigo_objeto.gco import GCO
 
 ''' Para propagar toda la información del GCI sin dañar a la existente del semántico. Indexamos las cosas del GCI al final
     dentro de una tupla '''
@@ -100,8 +99,7 @@ class JSParser(Parser):
         self.convert_ci(self.ci)
         self.print_ci(self.ci,'CI-Output.txt',self.format_tuple_gco)
 
-        gco = GCO('CO-Output.txt',self.ci,self.size_RAs, self.TS)  # ci and else to shared file
-        gco.print_co(gco.convert_co())
+
         
     @_('D')
     def B(self, p):
