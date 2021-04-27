@@ -187,8 +187,8 @@ class GCO:
                 result += f'{inst}\n'
             else:
                 result += self.format_tuple(inst)
-        with open(self.co_out_fd, 'w') as out_fd:
-            print(result, file=out_fd)
+
+        print(result, file=self.co_out_fd)
 
     def format_tuple(self, tuple_):
         """Formats the tuple given into a printable string
