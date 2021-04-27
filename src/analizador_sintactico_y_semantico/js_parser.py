@@ -85,9 +85,10 @@ class JSParser(Parser):
     # TODO: COMENTAR NUEVOS MÉTODOS AÑADIDOS
     def parse(self, tokens):
         super().parse(tokens)
-        if self.code_function:
-            self.ci = self.gen(oper='comment',res='; ---------- Codigos de las funciones -------------') + self.code_function +\
-                      self.gen(oper='comment',res='; ---------- Fin de codigos de las funciones---------------------\n') + self.ci
+        self.size_RAs['#main'] = self.global_shift[0]
+
+        self.ci = self.gen(oper='comment',res='; ---------- Codigos de las funciones -------------') + self.code_function +\
+                self.gen(oper='comment',res='; ---------- Fin de codigos de las funciones---------------------\n') + self.ci
 
         if self.initialize_global:
             init = [self.gen(oper='=',op1=0,res=i)[0] for i in self.initialize_global]
