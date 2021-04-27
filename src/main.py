@@ -32,8 +32,9 @@ parser.parse(lexer.get_token(data))
 print(f"Ascendente {str(rule_list).strip('[]').replace(',', '')}", file=parse_file)
 symbol_table.write_table(TS_file)
 
-gco = GCO('CO-Output.txt', parser.ci, parser.size_RAs, symbol_table)
+gco = GCO('CO-Output.ens', parser.ci, parser.size_RAs, symbol_table)
 gco.print_co(gco.convert_co())
 
 
-os.system('cd /home/dani/opt/ENS2001-Windows2 ; wine /home/dani/opt/ENS2001-Windows/winens.exe')
+# os.system('cd /home/dani/opt/ENS2001-Windows2 ; wine /home/dani/opt/ENS2001-Windows/winens.exe')
+os.system('wine /home/dani/opt/ENS2001-Windows/winens.exe')
