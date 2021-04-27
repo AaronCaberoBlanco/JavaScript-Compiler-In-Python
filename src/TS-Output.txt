@@ -1,19 +1,24 @@
 CONTENIDO DE LA TABLA # 0 :
 
-*	LEXEMA : 'n'
+*	LEXEMA : 'b'
 	ATRIBUTOS :
-	+ Tipo : 'entero'
+	+ Tipo : 'logico'
 	+ Despl : '0'
 ---------------- ----------------
 *	LEXEMA : '~Temp0'
 	ATRIBUTOS :
 	+ Despl : '1'
-	+ Tipo : 'entero'
----------------- ----------------
-*	LEXEMA : 'b'
-	ATRIBUTOS :
 	+ Tipo : 'logico'
+---------------- ----------------
+*	LEXEMA : '~Temp1'
+	ATRIBUTOS :
 	+ Despl : '2'
+	+ Tipo : 'logico'
+---------------- ----------------
+*	LEXEMA : '~Temp2'
+	ATRIBUTOS :
+	+ Despl : '3'
+	+ Tipo : 'logico'
 ---------------- ----------------
 
 

@@ -38,23 +38,23 @@ class GCO:
         op2 = quartet[2]
         res = quartet[3]
 
-        res = []
+        inst_list = []
 
         match oper:
             case 10:  # (10, (3,1), None, (2,3)) --- (10, (1,1), None
-                res += self.set_registry(op1, '.R1', 'Value')
-                res += self.set_registry(res, '.R3', 'Dir')
-                res += [(None, 'MOVE', '.R1', '[.R3]', '\n')]
+                inst_list += self.set_registry(op1, '.R1', 'Value', '; Carga el valor')
+                inst_list += self.set_registry(res, '.R3', 'Dir', 'Apunta a la dirección')
+                inst_list += [(None, 'MOVE', '.R1', '[.R3]', '\n')]
             case 11:  # (11, (4, "Hola"), None, (1, 2)) --- (11, (2,4), None, (1, 2))
                 ...    #etiq DATA 123
             case 12:  # (12, (1,2), (1,3), (1,4))
-                res += self.set_registry(op1, '.R1', 'Value')
-                res += self.set_registry(op2, '.R2', 'Value')
-                res += self.set_registry(res, '.R3', 'Dir')
-                res += [(None, 'AND', '.R1', '.R2', None)]
-                res += [(None, 'MOVE', '.A', '[.R3]', '\n')]
+                inst_list += self.set_registry(op1, '.R1', 'Value',';Carga true en R1')
+                inst_list += self.set_registry(op2, '.R2', 'Value',';Carga false en R2')
+                inst_list += self.set_registry(res, '.R3', 'Dir',';Dirección donde se almacena el resultado')
+                inst_list += [(None, 'AND', '.R1', '.R2', None)]
+                inst_list += [(None, 'MOVE', '.A', '[.R3]', '\n')]
 
-        return res
+        return inst_list
 
 
     def set_registry(self, oper, reg, mode, comment=None):
@@ -66,7 +66,7 @@ class GCO:
                                 MOVE [.{self.REG_AUX}],.R3
 
         """
-        res = []
+        res = [f'\n\t{comment}\n'] if comment is not None else []
         match oper[0]:
             case 1: # Global
                 desp = oper[1]
@@ -105,8 +105,8 @@ class GCO:
         """
         res = ''
         for inst in co:
-            if len(inst) == 1 and type(inst[0]) is str:  # Comments
-                res += f'{inst[0]}\n'
+            if type(inst) is str:  # Comments
+                res += f'{inst}\n'
             else:
                 res += self.format_tuple(inst)
         with open(self.co_out_fd, 'w') as out_fd:
@@ -122,9 +122,9 @@ class GCO:
         """
         if len(tuple_) > 0:
             res = '\t' if tuple_[0] is None else ''
-            for elem in tuple_:
+            for i, elem in enumerate(tuple_):
                 if elem is not None:
-                    res += f'{elem}, '
+                    res += f'{elem}, ' if i > 1 else f'{elem} '
             return f'{res[:-2]}\n'
         else:
             return ''
