@@ -1,4 +1,5 @@
 import sys
+import os
 
 '''Necessary imports to use the PDL-Procesator'''
 from analizador_lexico.js_lexer import JSLexer
@@ -33,3 +34,6 @@ symbol_table.write_table(TS_file)
 
 gco = GCO('CO-Output.txt', parser.ci, parser.size_RAs, symbol_table)
 gco.print_co(gco.convert_co())
+
+
+os.system('cd /home/dani/opt/ENS2001-Windows2 ; wine /home/dani/opt/ENS2001-Windows/winens.exe')
