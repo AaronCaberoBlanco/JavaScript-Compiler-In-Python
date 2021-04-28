@@ -82,7 +82,7 @@ class GCO:
     def inst_end(self):
         result = [(None, 'HALT', None, None, '\n\t; Fin de código del main')]
         result += [('beginED:', 'RES', self.size_RAs['#main'], None, None)]
-        self.book_space_cad()
+        result += self.book_space_cad()
         result += [('beginStack:', 'NOP', None, None, None)]
         result += [(None, 'END', None, None, None)]
         return result
@@ -100,20 +100,61 @@ class GCO:
         res = quartet[3]
 
         inst_list = []
-
-        match oper:
-            case 10:  # (10, (3,1), None, (2,3)) --- (10, (1,1), None
+        oper_ = self.get_key_from_value(oper, self.OPERATOR_CODE)
+        match oper_:
+            case '=EL':  # (10, (3,1), None, (2,3)) --- (10, (1,1), None
                 inst_list += self.set_registry(op1, '.R1', 'Value', '; Carga el valor')
                 inst_list += self.set_registry(res, '.R3', 'Dir', '; Carga en la dirección')
                 inst_list += [(None, 'MOVE', '.R1', '[.R3]', '\n')]
-            case 11:  # (11, (4, "Hola"), None, (1, 2)) --- (11, (2,4), None, (1, 2))
-                ...    #etiq DATA 123
-            case 12:  # (12, (1,2), (1,3), (1,4))
+            case '=Cad':  # (11, (4, "Hola"), None, (1, 2)) --- (11, (2,4), None, (1, 2))
+                inst_list += self.set_registry(op1, '.R1', 'Dir')
+                inst_list += self.set_registry(res, '.R3', 'Dir')
+                inst_list += self.copy_loop('.R1','.R3')
+            case '=and':  # (12, (1,2), (1,3), (1,4))
                 inst_list += self.set_registry(op1, '.R1', 'Value','; Carga true en R1')
                 inst_list += self.set_registry(op2, '.R2', 'Value','; Carga false en R2')
                 inst_list += self.set_registry(res, '.R3', 'Dir','; Dirección donde se almacena el resultado')
                 inst_list += [(None, 'AND', '.R1', '.R2', None)]
                 inst_list += [(None, 'MOVE', '.A', '[.R3]', '\n')]
+            case '=-':
+                inst_list += self.set_registry(op1, '.R1', 'Value')
+                inst_list += self.set_registry(op2, '.R2', 'Value')
+                inst_list += self.set_registry(res, '.R3', 'Dir')
+                inst_list += [(None, 'ADD', '.R1', '.R2', None)]
+                inst_list += [(None, 'MOVE', '.A', '[.R3]', '\n')]
+            case ':':
+                inst_list += [(f'{op1[1][1:]}:', 'NOP', None, None, None)]
+            case 'goto':
+                inst_list += [(None, 'BR', f'/{res[1][1:]}', None, None)]
+            case 'if=goto':
+                inst_list += self.set_registry(op1, '.R1', 'Value')
+                inst_list += self.set_registry(op2, '.R2', 'Value')
+                inst_list += [(None, 'CMP', '#\0', f'{self.REG_AUX}', None)]
+                inst_list += [(None, 'BZ', f'/{res[1][1:]}:', None, None)]
+            case 'paramEL':
+                pass
+            case 'paramCad':
+                pass
+            case 'callValueEL':
+                pass
+            case 'callValueCad':
+                pass
+            case 'callVoid':
+                pass
+            case 'returnVoid':
+                pass
+            case 'returnEL':
+                pass
+            case 'returnCad':
+                pass
+            case 'alertEnt':
+                pass
+            case 'alertCad':
+                pass
+            case 'inputEnt':
+                pass
+            case 'inputCad':
+                pass
 
         return inst_list
 
@@ -128,8 +169,9 @@ class GCO:
 
         """
         result = [(f'\n\t{comment}\n',)] if comment is not None else []
-        match oper[0]:
-            case 1: # Global
+        oper_ = self.get_key_from_value(oper[0],self.OPERAND_CODE)
+        match oper_:
+            case 'global': # Global
                 desp = oper[1]
                 if mode == 'Value':
                     result += [(None, 'ADD', f'#{desp}', '.IY', None)]
@@ -138,8 +180,8 @@ class GCO:
                 elif mode == 'Dir':
                     result += [(None, 'ADD', f'#{desp}', '.IY', None)]
                     result += [(None, 'MOVE', '.A', reg, None)]
-            case 2: # VL + DT + P
-                desp = oper[1]
+            case 'local': # VL + DT + P
+                desp = oper[1] + 1 #Se suma 1 para pasar por encima del EM
                 if mode == 'Value':
                     result += [(None, 'ADD', f'#{desp}','.IX', None)]
                     result += [(None, 'MOVE', '.A', f'{self.REG_AUX}', None)]
@@ -147,12 +189,12 @@ class GCO:
                 elif mode == 'Dir':
                     result += [(None, 'ADD', f'#{desp}', '.IX', None)]
                     result += [(None, 'MOVE', '.A', reg, None)]
-            case 3:  # Literal (EL)
+            case 'ent':  # Literal (EL)
                 literal = oper[1]
                 result +=  [(None, 'MOVE', f'#{literal}', reg, None)]
-            case 4: # Cad
+            case 'cad': # Cad
                 str_ = oper[1]
-                result += [(None, 'MOVE', f'/cad{len(self.lista_cadenas)}_{str_[0:4]}', reg),None]
+                result += [(None, 'MOVE', f'/cad{len(self.lista_cadenas)}_{str_[0:4]}', reg,None)]
                 self.lista_cadenas.append(str_)
         return result
 
@@ -167,8 +209,14 @@ class GCO:
             [(None, 'MOVE', '.A', r_dest, None)] +\
             [(None, 'CMP', '#\0', f'{self.REG_AUX}', None)] +\
             [(None, 'BZ', f'/copia{self.n_copy}:', None, None)] +\
-            [('; Inicio bucle de copia',)]
+            [('; Fin bucle de copia',)]
+        self.n_copy += 1
         return result
+
+    def get_key_from_value(self, val,dict):
+        for key, value in dict.items():
+            if  val == value:
+                return key
 
 
     # -----------------------------------------Print methods-----------------------------------------
