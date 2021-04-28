@@ -32,12 +32,12 @@ class GCO:
         result = []
         result += [(None, 'ORG', 0, None, None)]
         result += [(None, 'MOVE', 'beginED', '.IY', None)]
-        result += [(None, 'Move', 'beginStack', '.IX', None)] # IX apunta al valor anterior (beforefirst)
+        result += [(None, 'MOVE', 'beginStack', '.IX', None)] # IX apunta al valor anterior (beforefirst)
         result += [(None, 'BR', '/main', None, None)]
         return result
 
     def inst_end(self):
-        result = [(None, 'HALT', None, None, '\n\t; Fin de código del main')]
+        result = [(None, 'HALT', None, None, '\n\t; Fin de código del main\n')]
         result += [('beginED:', 'RES', self.size_RAs['#main'], None, None)]
         result += self.book_space_cad()
         result += [('beginStack:', 'NOP', None, None, None)]
@@ -62,7 +62,7 @@ class GCO:
             case '=EL':  # (10, (3,1), None, (2,3)) --- (10, (1,1), None
                 inst_list += self.set_registry(op1, '.R1', 'Value', '; Carga el valor')
                 inst_list += self.set_registry(res, '.R3', 'Dir', '; Carga en la dirección')
-                inst_list += [(None, 'MOVE', '.R1', '[.R3]', '\n')]
+                inst_list += [(None, 'MOVE', '.R1', '[.R3]', None)]
             case '=Cad':  # (11, (4, "Hola"), None, (1, 2)) --- (11, (2,4), None, (1, 2))
                 inst_list += self.set_registry(op1, '.R1', 'Dir')
                 inst_list += self.set_registry(res, '.R3', 'Dir')
@@ -72,13 +72,13 @@ class GCO:
                 inst_list += self.set_registry(op2, '.R2', 'Value','; Carga false en R2')
                 inst_list += self.set_registry(res, '.R3', 'Dir','; Dirección donde se almacena el resultado')
                 inst_list += [(None, 'AND', '.R1', '.R2', None)]
-                inst_list += [(None, 'MOVE', '.A', '[.R3]', '\n')]
+                inst_list += [(None, 'MOVE', '.A', '[.R3]', None)]
             case '=-':
                 inst_list += self.set_registry(op1, '.R1', 'Value')
                 inst_list += self.set_registry(op2, '.R2', 'Value')
                 inst_list += self.set_registry(res, '.R3', 'Dir')
                 inst_list += [(None, 'ADD', '.R1', '.R2', None)]
-                inst_list += [(None, 'MOVE', '.A', '[.R3]', '\n')]
+                inst_list += [(None, 'MOVE', '.A', '[.R3]', None)]
             case ':':
                 inst_list += [(f'{op1[1][1:]}:', 'NOP', None, None, None)]
             case 'goto':
@@ -125,7 +125,7 @@ class GCO:
                                 MOVE [.{self.REG_AUX}],.R3
 
         """
-        result = [(f'\n\t{comment}\n',)] if comment is not None else []
+        result = [(f'\n\t\t\t\t{comment}\n',)] if comment is not None else []
         oper_ = self.get_key_from_value(oper[0], JSParser.OPERAND_CODE)
         match oper_:
             case 'global': # Global
@@ -191,25 +191,33 @@ class GCO:
         result = ''
         for inst in co:            
             if len(inst) == 1 and type(inst) is str:
-                result += f'{inst}\n'
+                result += f' \n\t\t {inst}\n'
             else:
-                result += self.format_tuple(inst)
+                result += self.format_inst(inst)
 
         print(result, file=self.co_out_fd)
 
-    def format_tuple(self, tuple_):
+    def format_inst(self, inst):
         """Formats the tuple given into a printable string
 
            Returns the string formatted
 
         Args:
-           tuple_ (Tuple): A tuple made up of 5 items: etiq, oper, op1, op2, comment. All elements can be null except the second one.
+           inst (Tuple): A tuple made up of 5 items: etiq, oper, op1, op2, comment. All elements can be null except the second one.
         """
-        if len(tuple_) > 0:
-            result = '\t' if tuple_[0] is None else ''
-            for i, elem in enumerate(tuple_):
-                if elem is not None:
-                    result += f'{elem}, ' if i > 1 else f'{elem} '
-            return f'{result[:-2]}\n'
-        else:
-            return ''
+        if len(inst) > 0:
+            res_inst = inst[0] if inst[0] is not None else ''
+            if len(inst) < 2:
+                res_inst += self.get_blank_space(None)
+                return f' \t\t {res_inst} \n\n'
+
+            res_inst +=  f'{self.get_blank_space(inst[0])} {inst[1]} '
+            for count, sub_inst in enumerate(inst[2:],2):
+                res_inst += f' {sub_inst},' if sub_inst is not None else ''
+            return f'{res_inst[:-1]}\n'
+        return ''
+
+    def get_blank_space(self, etiq):
+        if etiq is None:
+            return ' '*20
+        return ' '*(20-len(etiq))
