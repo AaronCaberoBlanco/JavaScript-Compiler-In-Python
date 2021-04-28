@@ -1,50 +1,7 @@
 import re
+from src.analizador_sintactico_y_semantico.js_parser import JSParser
 
 class GCO:
-    OPERAND_CODE = {
-        'global': 1,
-        'local': 2,
-        'valor': 2,
-        'tmp': 2,
-        'ent': 3,
-        'cad': 4,
-        'etiq': 5
-    }
-    OPERATOR_CODE = {
-        '=EL': 10,
-        '=Cad': 11,
-        '=and': 12,
-        '=-': 13,
-        ':': 14,
-        'goto': 15,
-        'if=goto': 16,
-        'paramEL': 17,
-        'paramCad': 18,
-        'callValueEL': 19,
-        'callValueCad': 20,
-        'callVoid': 21,
-        'returnVoid': 22,
-        'returnEL': 23,
-        'returnCad': 24,
-        'alertEnt': 25,
-        'alertCad': 26,
-        'inputEnt': 27,
-        'inputCad': 28
-    }
-
-    ATTR_TYPE = 'Tipo'
-    ATTR_LEXEM = 'LEXEMA'
-    ATTR_DESP = 'Despl'
-    ATTR_LABEL = 'EtiqFuncion'
-    ATTR_NUM_PARAMS = 'NumParam'
-    ATTR_TYPE_PARAMS = 'TipoParam'
-    ATTR_RETURN_VALUE = 'TipoRetorno'
-
-    FUNCTION_TYPE = 'funcion'
-    LOG_TYPE = 'logico'
-    INT_TYPE = 'entero'
-    STRING_TYPE = 'cadena'
-    VOID_TYPE = 'void'
 
     REG_AUX = '.R9'
 
@@ -100,7 +57,7 @@ class GCO:
         res = quartet[3]
 
         inst_list = []
-        oper_ = self.get_key_from_value(oper, self.OPERATOR_CODE)
+        oper_ = self.get_key_from_value(oper, JSParser.OPERATOR_CODE)
         match oper_:
             case '=EL':  # (10, (3,1), None, (2,3)) --- (10, (1,1), None
                 inst_list += self.set_registry(op1, '.R1', 'Value', '; Carga el valor')
@@ -169,7 +126,7 @@ class GCO:
 
         """
         result = [(f'\n\t{comment}\n',)] if comment is not None else []
-        oper_ = self.get_key_from_value(oper[0],self.OPERAND_CODE)
+        oper_ = self.get_key_from_value(oper[0], JSParser.OPERAND_CODE)
         match oper_:
             case 'global': # Global
                 desp = oper[1]
