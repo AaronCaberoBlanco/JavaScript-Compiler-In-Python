@@ -1,8 +1,8 @@
 import re
 from src.analizador_sintactico_y_semantico.js_parser import JSParser
 
-class GCO:
 
+class GCO:
     REG_AUX = '.R9'
 
     def __init__(self, co_out_fd, ci, size_RAs_, TS_):
@@ -21,27 +21,26 @@ class GCO:
             if len(quartet) == 1 and type(quartet[0]) is str:
                 res += quartet,
                 if re.match('.*fin.*funcion.*', quartet[0], re.IGNORECASE):
-                    res += [('\n\t; Inicio de código del main',)]
-                    res += [('main:', 'NOP', None, None, None)]
+                    res += [('\n\t; Inicio de código del main',)] + \
+                           [('main:', 'NOP', None, None, None)]
             else:
                 res += self.convert_quartet(quartet)
         res += self.inst_end()
         return res
 
     def inst_init(self):
-        result = []
-        result += [(None, 'ORG', 0, None, None)]
-        result += [(None, 'MOVE', '#beginED', '.IY', None)]
-        result += [(None, 'MOVE', '#beginStack', '.IX', None)] # IX apunta al valor anterior (beforefirst)
-        result += [(None, 'BR', '/main', None, None)]
+        result = [(None, 'ORG', 0, None, None)] + \
+                 [(None, 'MOVE', '#beginED', '.IY', None)] + \
+                 [(None, 'MOVE', '#beginStack', '.IX', None)] + \
+                 [(None, 'BR', '/main', None, None)]  # IX apunta al valor anterior (beforefirst)
         return result
 
     def inst_end(self):
-        result = [(None, 'HALT', None, None, '\n\t; Fin de código del main\n')]
-        result += [('beginED:', 'RES', self.size_RAs['#EtiqMain'], None, None)]
-        result += self.book_space_cad()
-        result += [('beginStack:', 'NOP', None, None, None)]
-        result += [(None, 'END', None, None, None)]
+        result = [(None, 'HALT', None, None, '\n\t; Fin de código del main\n')] + \
+                 [('beginED:', 'RES', self.size_RAs['#EtiqMain'], None, None)] + \
+                 self.book_space_cad() + \
+                 [('beginStack:', 'NOP', None, None, None)] + \
+                 [(None, 'END', None, None, None)]
         return result
 
     def book_space_cad(self):
@@ -60,34 +59,34 @@ class GCO:
         oper_ = self.get_key_from_value(oper, JSParser.OPERATOR_CODE)
         match oper_:
             case '=EL':  # (10, (3,1), None, (2,3)) --- (10, (1,1), None
-                inst_list += self.set_registry(op1, '.R1', 'Value', '; Carga el valor')
-                inst_list += self.set_registry(res, '.R3', 'Dir', '; Carga en la dirección')
-                inst_list += [(None, 'MOVE', '.R1', '[.R3]', None)]
+                inst_list += self.set_registry(op1, '.R1', 'Value', '; Carga el valor') +\
+                 self.set_registry(res, '.R3', 'Dir', '; Carga en la dirección') +\
+                 [(None, 'MOVE', '.R1', '[.R3]', None)]
             case '=Cad':  # (11, (4, "Hola"), None, (1, 2)) --- (11, (2,4), None, (1, 2))
-                inst_list += self.set_registry(op1, '.R1', 'Dir')
-                inst_list += self.set_registry(res, '.R3', 'Dir')
-                inst_list += self.copy_loop('.R1','.R3')
+                inst_list += self.set_registry(op1, '.R1', 'Dir')+\
+                 self.set_registry(res, '.R3', 'Dir')+\
+                 self.copy_loop('.R1','.R3')
             case '=and':  # (12, (1,2), (1,3), (1,4))
-                inst_list += self.set_registry(op1, '.R1', 'Value','; Carga true en R1')
-                inst_list += self.set_registry(op2, '.R2', 'Value','; Carga false en R2')
-                inst_list += self.set_registry(res, '.R3', 'Dir','; Dirección donde se almacena el resultado')
-                inst_list += [(None, 'AND', '.R1', '.R2', None)]
-                inst_list += [(None, 'MOVE', '.A', '[.R3]', None)]
+                inst_list += self.set_registry(op1, '.R1', 'Value','; Carga true en R1') +\
+                             self.set_registry(op2, '.R2', 'Value','; Carga false en R2') +\
+                             self.set_registry(res, '.R3', 'Dir','; Dirección donde se almacena el resultado') +\
+                             [(None, 'AND', '.R1', '.R2', None)] +\
+                             [(None, 'MOVE', '.A', '[.R3]', None)]
             case '=-':
-                inst_list += self.set_registry(op1, '.R1', 'Value')
-                inst_list += self.set_registry(op2, '.R2', 'Value')
-                inst_list += self.set_registry(res, '.R3', 'Dir')
-                inst_list += [(None, 'ADD', '.R1', '.R2', None)]
-                inst_list += [(None, 'MOVE', '.A', '[.R3]', None)]
+                inst_list += self.set_registry(op1, '.R1', 'Value') +\
+                             self.set_registry(op2, '.R2', 'Value') +\
+                             self.set_registry(res, '.R3', 'Dir') +\
+                             [(None, 'ADD', '.R1', '.R2', None)] +\
+                             [(None, 'MOVE', '.A', '[.R3]', None)]
             case ':':
                 inst_list += [(f'{op1[1][1:]}:', 'NOP', None, None, None)]
             case 'goto':
                 inst_list += [(None, 'BR', f'/{res[1][1:]}', None, None)]
             case 'if=goto':
-                inst_list += self.set_registry(op1, '.R1', 'Value')
-                inst_list += self.set_registry(op2, '.R2', 'Value')
-                inst_list += [(None, 'CMP', '.R1', '.R2' None)]
-                inst_list += [(None, 'BZ', f'/{res[1][1:]}:', None, None)]
+                inst_list += self.set_registry(op1, '.R1', 'Value') +\
+                             self.set_registry(op2, '.R2', 'Value') +\
+                             [(None, 'CMP', '.R1', '.R2', None)] +\
+                             [(None, 'BZ', f'/{res[1][1:]}:', None, None)]
             case 'paramEL':
                 pass
             case 'paramCad':
@@ -114,7 +113,6 @@ class GCO:
                 pass
         return inst_list
 
-
     def set_registry(self, oper, reg, mode, comment=None):
         """
         [10, (3, 2), , (1, 1)]
@@ -130,21 +128,21 @@ class GCO:
             case 'global': # Global
                 desp = oper[1]
                 if mode == 'Value':
-                    result += [(None, 'ADD', f'#{desp}', '.IY', None)]
-                    result += [(None, 'MOVE', '.A', f'{self.REG_AUX}', None)]
-                    result += [(None, 'MOVE', f'[{self.REG_AUX}]', reg, None)]
+                    result += [(None, 'ADD', f'#{desp}', '.IY', None)] +\
+                              [(None, 'MOVE', '.A', f'{self.REG_AUX}', None)] +\
+                              [(None, 'MOVE', f'[{self.REG_AUX}]', reg, None)]
                 elif mode == 'Dir':
-                    result += [(None, 'ADD', f'#{desp}', '.IY', None)]
-                    result += [(None, 'MOVE', '.A', reg, None)]
+                    result += [(None, 'ADD', f'#{desp}', '.IY', None)] +\
+                              [(None, 'MOVE', '.A', reg, None)]
             case 'local': # VL + DT + P
                 desp = oper[1] + 1 #Se suma 1 para pasar por encima del EM
                 if mode == 'Value':
-                    result += [(None, 'ADD', f'#{desp}','.IX', None)]
-                    result += [(None, 'MOVE', '.A', f'{self.REG_AUX}', None)]
-                    result += [(None, 'MOVE', f'[{self.REG_AUX}]', reg, None)]
+                    result += [(None, 'ADD', f'#{desp}','.IX', None)] +\
+                              [(None, 'MOVE', '.A', f'{self.REG_AUX}', None)] +\
+                              [(None, 'MOVE', f'[{self.REG_AUX}]', reg, None)]
                 elif mode == 'Dir':
-                    result += [(None, 'ADD', f'#{desp}', '.IX', None)]
-                    result += [(None, 'MOVE', '.A', reg, None)]
+                    result += [(None, 'ADD', f'#{desp}', '.IX', None)] +\
+                              [(None, 'MOVE', '.A', reg, None)]
             case 'ent':  # Literal (EL)
                 if mode == 'Value':
                     literal = oper[1]
@@ -157,25 +155,24 @@ class GCO:
         return result
 
     def copy_loop(self, r_sour, r_dest):
-        result = [('; Inicio bucle de copia',)] +\
-            [(f'copia{self.n_copy}:' ,'NOP', None, None, None)] +\
-            [(None, 'MOVE', f'[{r_sour}]', self.REG_AUX, None)] +\
-            [(None, 'MOVE', f'{self.REG_AUX}', f'[{r_dest}]', None)] +\
-            [(None, 'ADD', '#1', r_sour, None)] +\
-            [(None, 'MOVE', '.A', r_sour, None)] +\
-            [(None, 'ADD', '#1', r_dest, None)] +\
-            [(None, 'MOVE', '.A', r_dest, None)] +\
-            [(None, 'CMP', '#0', f'{self.REG_AUX}', None)] +\
-            [(None, 'BNZ', f'/copia{self.n_copy}', None, None)] +\
-            [('; Fin bucle de copia',)]
+        result = [('; Inicio bucle de copia',)] + \
+                 [(f'copia{self.n_copy}:', 'NOP', None, None, None)] + \
+                 [(None, 'MOVE', f'[{r_sour}]', self.REG_AUX, None)] + \
+                 [(None, 'MOVE', f'{self.REG_AUX}', f'[{r_dest}]', None)] + \
+                 [(None, 'ADD', '#1', r_sour, None)] + \
+                 [(None, 'MOVE', '.A', r_sour, None)] + \
+                 [(None, 'ADD', '#1', r_dest, None)] + \
+                 [(None, 'MOVE', '.A', r_dest, None)] + \
+                 [(None, 'CMP', '#0', f'{self.REG_AUX}', None)] + \
+                 [(None, 'BNZ', f'/copia{self.n_copy}', None, None)] + \
+                 [('; Fin bucle de copia',)]
         self.n_copy += 1
         return result
 
-    def get_key_from_value(self, val,dict):
+    def get_key_from_value(self, val, dict):
         for key, value in dict.items():
-            if  val == value:
+            if val == value:
                 return key
-
 
     # -----------------------------------------Print methods-----------------------------------------
 
@@ -188,7 +185,7 @@ class GCO:
             co (List): A list containing tuples like (etiq_ens, add, .R2, .R3, ;comm). None not allowed
         """
         result = ''
-        for inst in co:            
+        for inst in co:
             if len(inst) == 1 and type(inst) is str:
                 result += f' \n\t\t {inst}\n'
             else:
@@ -210,13 +207,13 @@ class GCO:
                 res_inst += self.get_blank_space(None)
                 return f' \t\t {res_inst} \n\n'
 
-            res_inst +=  f'{self.get_blank_space(inst[0])} {inst[1]} '
-            for count, sub_inst in enumerate(inst[2:],2):
+            res_inst += f'{self.get_blank_space(inst[0])} {inst[1]} '
+            for count, sub_inst in enumerate(inst[2:], 2):
                 res_inst += f' {sub_inst},' if sub_inst is not None else ''
             return f'{res_inst[:-1]}\n'
         return ''
 
     def get_blank_space(self, etiq):
         if etiq is None:
-            return ' '*20
-        return ' '*(20-len(etiq))
+            return ' ' * 20
+        return ' ' * (20 - len(etiq))
