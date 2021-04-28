@@ -322,7 +322,7 @@ class JSParser(Parser):
         self.lista_reglas.append(17)
 
         l_cod = p.L[-1][1]
-        if l_cod is not None:
+        if l_cod is not None and l_cod[0] is not None:
             l_lugar = p.L[-1][0]
             s_cod = l_cod + self.gen(oper='returnValue', op1=l_lugar)
         else:

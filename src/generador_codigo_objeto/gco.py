@@ -31,8 +31,8 @@ class GCO:
     def inst_init(self):
         result = []
         result += [(None, 'ORG', 0, None, None)]
-        result += [(None, 'MOVE', 'beginED', '.IY', None)]
-        result += [(None, 'MOVE', 'beginStack', '.IX', None)] # IX apunta al valor anterior (beforefirst)
+        result += [(None, 'MOVE', '#beginED', '.IY', None)]
+        result += [(None, 'MOVE', '#beginStack', '.IX', None)] # IX apunta al valor anterior (beforefirst)
         result += [(None, 'BR', '/main', None, None)]
         return result
 
@@ -47,7 +47,7 @@ class GCO:
     def book_space_cad(self):
         result = []
         for i, str_ in enumerate(self.lista_cadenas):
-            result += [(f'cad{i}_{str_[0:4]}:', 'DATA', str_)]
+            result += [(f'cad{i}_{str_[1:-1][0:4]}:', 'DATA', str_)]
         return result
 
     def convert_quartet(self, quartet):
@@ -86,7 +86,7 @@ class GCO:
             case 'if=goto':
                 inst_list += self.set_registry(op1, '.R1', 'Value')
                 inst_list += self.set_registry(op2, '.R2', 'Value')
-                inst_list += [(None, 'CMP', '#\0', f'{self.REG_AUX}', None)]
+                inst_list += [(None, 'CMP', '.R1', '.R2' None)]
                 inst_list += [(None, 'BZ', f'/{res[1][1:]}:', None, None)]
             case 'paramEL':
                 pass
@@ -153,21 +153,21 @@ class GCO:
             case 'cad': # Cad
                 if mode == 'Dir':
                     str_ = oper[1]
-                    result += [(None, 'MOVE', f'/cad{len(self.lista_cadenas)}_{str_[0:4]}', reg, None)]
+                    result += [(None, 'MOVE', f'#cad{len(self.lista_cadenas)}_{str_[1:-1][0:4]}', reg, None)]
                     self.lista_cadenas.append(str_)
         return result
 
     def copy_loop(self, r_sour, r_dest):
         result = [('; Inicio bucle de copia',)] +\
-            [(f'copia{self.n_copy}:' 'NOP', None, None, None)] +\
+            [(f'copia{self.n_copy}:' ,'NOP', None, None, None)] +\
             [(None, 'MOVE', f'[{r_sour}]', self.REG_AUX, None)] +\
-            [(None, 'MOVE', f'[{self.REG_AUX}]', f'[{r_dest}]', None)] +\
+            [(None, 'MOVE', f'{self.REG_AUX}', f'[{r_dest}]', None)] +\
             [(None, 'ADD', '#1', r_sour, None)] +\
             [(None, 'MOVE', '.A', r_sour, None)] +\
             [(None, 'ADD', '#1', r_dest, None)] +\
             [(None, 'MOVE', '.A', r_dest, None)] +\
-            [(None, 'CMP', '#\0', f'{self.REG_AUX}', None)] +\
-            [(None, 'BZ', f'/copia{self.n_copy}:', None, None)] +\
+            [(None, 'CMP', '#0', f'{self.REG_AUX}', None)] +\
+            [(None, 'BNZ', f'/copia{self.n_copy}', None, None)] +\
             [('; Fin bucle de copia',)]
         self.n_copy += 1
         return result
