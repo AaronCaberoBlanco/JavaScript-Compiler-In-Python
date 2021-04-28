@@ -22,7 +22,7 @@ class GCO:
                 res += quartet,
                 if re.match('.*fin.*funcion.*', quartet[0], re.IGNORECASE):
                     res += [('\n\t; Inicio de código del main',)]
-                    res += [('main:', 'NOP', None, None,None)]
+                    res += [('main:', 'NOP', None, None, None)]
             else:
                 res += self.convert_quartet(quartet)
         res += self.inst_end()
@@ -38,7 +38,7 @@ class GCO:
 
     def inst_end(self):
         result = [(None, 'HALT', None, None, '\n\t; Fin de código del main\n')]
-        result += [('beginED:', 'RES', self.size_RAs['#main'], None, None)]
+        result += [('beginED:', 'RES', self.size_RAs['#EtiqMain'], None, None)]
         result += self.book_space_cad()
         result += [('beginStack:', 'NOP', None, None, None)]
         result += [(None, 'END', None, None, None)]
@@ -112,7 +112,6 @@ class GCO:
                 pass
             case 'inputCad':
                 pass
-
         return inst_list
 
 

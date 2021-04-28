@@ -85,7 +85,7 @@ class JSParser(Parser):
     def parse(self, tokens):
         super().parse(tokens)
 
-        self.size_RAs['#main'] = self.global_shift[0]
+        self.size_RAs['#EtiqMain'] = self.global_shift[0]
 
         self.ci = self.gen(oper='comment',res='; ---------- Codigo de las funciones -------------') + self.code_function +\
                 self.gen(oper='comment',res='; ---------- Fin de codigo de las funciones---------------------\n') + self.ci
@@ -96,7 +96,7 @@ class JSParser(Parser):
                       self.gen(oper='comment',res='; ---------- Fin de inicializacion de variables globales no inicianilizadas -------------\n') + self.ci
 
         self.print_ci(self.ci,'CI-Memoria.txt',self.format_tuple_memoria)
-        
+        print(self.size_RAs)
         self.convert_ci(self.ci)
         self.print_ci(self.ci,'CI-Output.txt',self.format_tuple_gco)
 
@@ -484,7 +484,7 @@ class JSParser(Parser):
         self.TS.destroy_table(len(self.TS.tables) - 1)
         self.function_scope = False
         self.return_type = None
-        self.size_RAs[self.TS.get_attribute(self.pos_id_fun[0],self.pos_id_fun[1],self.ATTR_LEXEM)] = self.calc_size_RA()
+        self.size_RAs[self.TS.get_attribute(self.pos_id_fun[0],self.pos_id_fun[1],self.ATTR_LABEL)] = self.calc_size_RA()
         self.shift = self.global_shift[0]
 
         self.lista_reglas.append(33)
