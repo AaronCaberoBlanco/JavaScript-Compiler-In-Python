@@ -181,7 +181,7 @@ class JSParser(Parser):
 
         if any(cod is not None for cod in i_cod_e):
             i_cod_e = self.gen(oper='comment',
-                           res='\n; Inicio de asignación de literales en temporales') + i_cod_e + \
+                           res='; Inicio de asignación de literales en temporales') + i_cod_e + \
                            self.gen(oper='comment', res='; Fin de asignación de literales en temporales\n')
 
         if any(cod_p is not None for cod_p in i_cod_p):
@@ -277,7 +277,7 @@ class JSParser(Parser):
         self.initialize(p.ID)
         e_cod = p.E[-1][1]
         e_lugar = p.E[-1][0]
-        k_cod = self.gen(oper='comment', res='\n; Inicio de asignación') + \
+        k_cod = self.gen(oper='comment', res='; Inicio de asignación') + \
                 e_cod + self.gen(oper='=', res=(p.ID[0], p.ID[1]), op1=e_lugar) + \
                 self.gen(oper='comment', res='; Fin de asignación\n')
         return (None, k_cod, [None]),
@@ -620,7 +620,7 @@ class JSParser(Parser):
         e1_cod = p.E[-1][1]
         r_lugar = p.R[-1][0]
         r_cod = p.R[-1][1]
-        e_cod = self.gen(oper='comment', res='\n; Inicio de conjuncion logica') + e1_cod + r_cod + \
+        e_cod = self.gen(oper='comment', res='; Inicio de conjuncion logica') + e1_cod + r_cod + \
                 self.gen(res=e_lugar, oper='=and', op1=e1_lugar, op2=r_lugar) + \
                 self.gen(oper='comment', res='; Fin de conjuncion logica\n')
         return self.LOG_TYPE, (e_lugar, e_cod, [None])
