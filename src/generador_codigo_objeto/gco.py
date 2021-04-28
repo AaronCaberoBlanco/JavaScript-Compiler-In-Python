@@ -190,12 +190,14 @@ class GCO:
                     result += [(None, 'ADD', f'#{desp}', '.IX', None)]
                     result += [(None, 'MOVE', '.A', reg, None)]
             case 'ent':  # Literal (EL)
-                literal = oper[1]
-                result +=  [(None, 'MOVE', f'#{literal}', reg, None)]
+                if mode == 'Value':
+                    literal = oper[1]
+                    result +=  [(None, 'MOVE', f'#{literal}', reg, None)]
             case 'cad': # Cad
-                str_ = oper[1]
-                result += [(None, 'MOVE', f'/cad{len(self.lista_cadenas)}_{str_[0:4]}', reg,None)]
-                self.lista_cadenas.append(str_)
+                if mode == 'Dir':
+                    str_ = oper[1]
+                    result += [(None, 'MOVE', f'/cad{len(self.lista_cadenas)}_{str_[0:4]}', reg, None)]
+                    self.lista_cadenas.append(str_)
         return result
 
     def copy_loop(self, r_sour, r_dest):
