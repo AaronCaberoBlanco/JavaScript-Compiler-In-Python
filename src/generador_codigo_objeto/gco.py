@@ -16,18 +16,18 @@ class GCO:
 
     # Después de llamar a generate_co se inician todas las globales con RES XXX y se apunta IY al primer elemento
     def convert_co(self):
-        res = []
-        res += self.inst_init()
+        result = []
+        result += self.inst_init()
         for quartet in self.ci:
             if len(quartet) == 1 and type(quartet[0]) is str:
-                res += quartet,
+                result += quartet,
                 if re.match('.*fin.*funcion.*', quartet[0], re.IGNORECASE):
-                    res += [('\n\t; Inicio de código del main',)] + \
-                           [('main:', 'NOP', None, None, None)]
+                    result += [('\n\t; Inicio de código del main',)] + \
+                              [('main:', 'NOP', None, None, None)]
             else:
-                res += self.convert_quartet(quartet)
-        res += self.inst_end()
-        return res
+                result += self.convert_quartet(quartet)
+        result += self.inst_end()
+        return result
 
     def inst_init(self):
         result = [(None, 'ORG', 0, None, None)] + \
@@ -59,34 +59,34 @@ class GCO:
         inst_list = []
         oper_ = self.get_key_from_value(oper, JSParser.OPERATOR_CODE)
         match oper_:
-            case '=EL':  # (10, (3,1), None, (2,3)) --- (10, (1,1), None
-                inst_list += self.set_registry(op1, '.R1', 'Value', '; Valor de Oper1 en R1') +\
-                             self.set_registry(res, '.R3', 'Dir', '; Direccion de Res en R3') +\
+            case '=EL':  # (10, (3,1), None, (2,3))
+                inst_list += self.store_in_reg(op1, '.R1', 'Value', '; Valor de Oper1 en R1') +\
+                             self.store_in_reg(res, '.R3', 'Dir', '; Direccion de Res en R3') +\
                              [(None, 'MOVE', '.R1', '[.R3]', '; Valor de Oper1(R1) a Res(direccion a donde apunta R3)')]
             case '=Cad':  # (11, (4, "Hola"), None, (1, 2)) --- (11, (2,4), None, (1, 2))
-                inst_list += self.set_registry(op1, '.R1', 'Dir')+\
-                             self.set_registry(res, '.R3', 'Dir')+\
-                             self.copy_loop('.R1','.R3')
+                inst_list += self.store_in_reg(op1, '.R1', 'Dir') + \
+                             self.store_in_reg(res, '.R3', 'Dir') + \
+                             self.copy_str('.R1', '.R3')
             case '=and':  # (12, (1,2), (1,3), (1,4))
-                inst_list += self.set_registry(op1, '.R1', 'Value','; Valor de Oper1 en R1') +\
-                             self.set_registry(op2, '.R2', 'Value','; Valor de Oper2 en R2') +\
-                             self.set_registry(res, '.R3', 'Dir','; Dirección de Res en R3') +\
-                             [(None, 'AND', '.R1', '.R2', None)] +\
+                inst_list += self.store_in_reg(op1, '.R1', 'Value', '; Valor de Oper1 en R1') + \
+                             self.store_in_reg(op2, '.R2', 'Value', '; Valor de Oper2 en R2') + \
+                             self.store_in_reg(res, '.R3', 'Dir', '; Dirección de Res en R3') + \
+                             [(None, 'AND', '.R1', '.R2', None)] + \
                              [(None, 'MOVE', '.A', '[.R3]', None)]
             case '=-':
-                inst_list += self.set_registry(op1, '.R1', 'Value') +\
-                             self.set_registry(op2, '.R2', 'Value') +\
-                             self.set_registry(res, '.R3', 'Dir') +\
-                             [(None, 'ADD', '.R1', '.R2', None)] +\
+                inst_list += self.store_in_reg(op1, '.R1', 'Value') + \
+                             self.store_in_reg(op2, '.R2', 'Value') + \
+                             self.store_in_reg(res, '.R3', 'Dir') + \
+                             [(None, 'SUB', '.R1', '.R2', None)] + \
                              [(None, 'MOVE', '.A', '[.R3]', None)]
             case ':':
                 inst_list += [(f'{op1[1][1:]}:', 'NOP', None, None, None)]
             case 'goto':
                 inst_list += [(None, 'BR', f'/{res[1][1:]}', None, None)]
             case 'if=goto':
-                inst_list += self.set_registry(op1, '.R1', 'Value') +\
-                             self.set_registry(op2, '.R2', 'Value') +\
-                             [(None, 'CMP', '.R1', '.R2', None)] +\
+                inst_list += self.store_in_reg(op1, '.R1', 'Value') + \
+                             self.store_in_reg(op2, '.R2', 'Value') + \
+                             [(None, 'CMP', '.R1', '.R2', None)] + \
                              [(None, 'BZ', f'/{res[1][1:]}:', None, None)]
             case 'paramEL':
                 pass
@@ -101,10 +101,10 @@ class GCO:
             case 'returnVoid':
                 inst_list += [(None, 'BR', '[.IX]', None, None)]
             case 'returnEL':
-                inst_list += self.set_registry(op1, self.REG_RET, 'Value',';Valor a devolver en R8') + \
+                inst_list += self.store_in_reg(op1, self.REG_RET, 'Value', f';Valor a devolver en {self.REG_RET}') + \
                              [(None, 'BR', '[.IX]', None, None)]
             case 'returnCad':
-                inst_list += self.set_registry(op1, self.REG_RET, 'Dir', ';Direccion de la cadena a devolver en R8') + \
+                inst_list += self.store_in_reg(op1, self.REG_RET, 'Dir', f';Direccion de la cadena a devolver en {self.REG_RET}') + \
                              [(None, 'BR', '[.IX]', None, None)]
             case 'alertEnt':
                 pass
@@ -114,9 +114,10 @@ class GCO:
                 pass
             case 'inputCad':
                 pass
+
         return inst_list
 
-    def set_registry(self, oper, reg, mode, comment=None):
+    def store_in_reg(self, oper, reg, mode, comment=None):
         """
         [10, (3, 2), , (1, 1)]
         get_operand((3, 2)) --> MOVE #2,.R1
@@ -155,10 +156,11 @@ class GCO:
                     str_ = oper[1]
                     result += [(None, 'MOVE', f'#cad{len(self.lista_cadenas)}_{str_[1:-1][0:4]}', reg, None)]
                     self.lista_cadenas.append(str_)
+
         return result
 
-    def copy_loop(self, r_sour, r_dest):
-        result = [('; Inicio bucle de copia',)] + \
+    def copy_str(self, r_sour, r_dest):
+        result = [('; Inicio bucle de copia de cadena',)] + \
                  [(f'copia{self.n_copy}:', 'NOP', None, None, None)] + \
                  [(None, 'MOVE', f'[{r_sour}]', self.REG_AUX, None)] + \
                  [(None, 'MOVE', f'{self.REG_AUX}', f'[{r_dest}]', None)] + \
@@ -168,12 +170,12 @@ class GCO:
                  [(None, 'MOVE', '.A', r_dest, None)] + \
                  [(None, 'CMP', '#0', f'{self.REG_AUX}', None)] + \
                  [(None, 'BNZ', f'/copia{self.n_copy}', None, None)] + \
-                 [('; Fin bucle de copia',)]
+                 [('; Fin bucle de copia de cadena',)]
         self.n_copy += 1
         return result
 
-    def get_key_from_value(self, val, dict):
-        for key, value in dict.items():
+    def get_key_from_value(self, val, dict_):
+        for key, value in dict_.items():
             if val == value:
                 return key
 
