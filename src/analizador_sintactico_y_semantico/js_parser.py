@@ -483,8 +483,9 @@ class JSParser(Parser):
     def F(self, p):
         self.TS.destroy_table(len(self.TS.tables) - 1)
         self.function_scope = False
+        self.size_RAs[
+        self.TS.get_attribute(self.pos_id_fun[0], self.pos_id_fun[1], self.ATTR_LABEL)] = self.calc_size_RA()
         self.return_type = None
-        self.size_RAs[self.TS.get_attribute(self.pos_id_fun[0],self.pos_id_fun[1],self.ATTR_LABEL)] = self.calc_size_RA()
         self.shift = self.global_shift[0]
 
         self.lista_reglas.append(33)
