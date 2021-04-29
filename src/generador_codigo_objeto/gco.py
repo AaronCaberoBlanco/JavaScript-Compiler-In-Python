@@ -4,6 +4,7 @@ from src.analizador_sintactico_y_semantico.js_parser import JSParser
 
 class GCO:
     REG_AUX = '.R9'
+    REG_RET = '.R8'
 
     def __init__(self, co_out_fd, ci, size_RAs_, TS_):
         self.ci = ci
@@ -59,17 +60,17 @@ class GCO:
         oper_ = self.get_key_from_value(oper, JSParser.OPERATOR_CODE)
         match oper_:
             case '=EL':  # (10, (3,1), None, (2,3)) --- (10, (1,1), None
-                inst_list += self.set_registry(op1, '.R1', 'Value', '; Carga el valor') +\
-                 self.set_registry(res, '.R3', 'Dir', '; Carga en la dirección') +\
-                 [(None, 'MOVE', '.R1', '[.R3]', None)]
+                inst_list += self.set_registry(op1, '.R1', 'Value', '; Valor de Oper1 en R1') +\
+                             self.set_registry(res, '.R3', 'Dir', '; Direccion de Res en R3') +\
+                             [(None, 'MOVE', '.R1', '[.R3]', '; Valor de Oper1(R1) a Res(direccion a donde apunta R3)')]
             case '=Cad':  # (11, (4, "Hola"), None, (1, 2)) --- (11, (2,4), None, (1, 2))
                 inst_list += self.set_registry(op1, '.R1', 'Dir')+\
-                 self.set_registry(res, '.R3', 'Dir')+\
-                 self.copy_loop('.R1','.R3')
+                             self.set_registry(res, '.R3', 'Dir')+\
+                             self.copy_loop('.R1','.R3')
             case '=and':  # (12, (1,2), (1,3), (1,4))
-                inst_list += self.set_registry(op1, '.R1', 'Value','; Carga true en R1') +\
-                             self.set_registry(op2, '.R2', 'Value','; Carga false en R2') +\
-                             self.set_registry(res, '.R3', 'Dir','; Dirección donde se almacena el resultado') +\
+                inst_list += self.set_registry(op1, '.R1', 'Value','; Valor de Oper1 en R1') +\
+                             self.set_registry(op2, '.R2', 'Value','; Valor de Oper2 en R2') +\
+                             self.set_registry(res, '.R3', 'Dir','; Dirección de Res en R3') +\
                              [(None, 'AND', '.R1', '.R2', None)] +\
                              [(None, 'MOVE', '.A', '[.R3]', None)]
             case '=-':
@@ -98,11 +99,13 @@ class GCO:
             case 'callVoid':
                 pass
             case 'returnVoid':
-                pass
+                inst_list += [(None, 'BR', '[.IX]', None, None)]
             case 'returnEL':
-                pass
+                inst_list += self.set_registry(op1, self.REG_RET, 'Value',';Valor a devolver en R8') + \
+                             [(None, 'BR', '[.IX]', None, None)]
             case 'returnCad':
-                pass
+                inst_list += self.set_registry(op1, self.REG_RET, 'Dir', ';Direccion de la cadena a devolver en R8') + \
+                             [(None, 'BR', '[.IX]', None, None)]
             case 'alertEnt':
                 pass
             case 'alertCad':
