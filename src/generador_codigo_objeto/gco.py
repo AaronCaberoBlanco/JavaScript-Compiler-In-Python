@@ -25,7 +25,7 @@ class GCO:
                     result += [('\n\t; Inicio de código del main',)] + \
                               [('main:', 'NOP', None, None, None)]
             else:
-                result += self.convert_quartet(quartet)
+                result += self.quartet_CI_to_CO(quartet)
         result += self.inst_end()
         return result
 
@@ -44,13 +44,17 @@ class GCO:
                  [(None, 'END', None, None, None)]
         return result
 
+    def str_to_label(self, str_):
+        str_removed_symbols=re.sub('[^a-zA-Z]', '', str_[1:-1])
+        return str_removed_symbols[0:4]
+
     def book_space_cad(self):
         result = []
         for i, str_ in enumerate(self.lista_cadenas):
-            result += [(f'cad{i}_{str_[1:-1][0:4]}:', 'DATA', str_)]
+            result += [(f'cad{i}_{self.str_to_label(str_)}:', 'DATA', str_)]
         return result
 
-    def convert_quartet(self, quartet):
+    def quartet_CI_to_CO(self, quartet):
         oper = quartet[0]
         op1 = quartet[1]
         op2 = quartet[2]
@@ -107,9 +111,11 @@ class GCO:
                 inst_list += self.store_in_reg(op1, self.REG_RET, 'Dir', f';Direccion de la cadena a devolver en {self.REG_RET}') + \
                              [(None, 'BR', '[.IX]', None, None)]
             case 'alertEnt':
-                pass
+                inst_list += self.store_in_reg(op1, self.REG_AUX, 'Value') +\
+                             [(None, 'WRINT', self.REG_AUX, None, None)]
             case 'alertCad':
-                pass
+                inst_list += self.store_in_reg(op1, self.REG_AUX, 'Dir') + \
+                             [(None, 'WRSTR', f'[{self.REG_AUX}]', None, None)]
             case 'inputEnt':
                 pass
             case 'inputCad':
@@ -154,7 +160,7 @@ class GCO:
             case 'cad': # Cad
                 if mode == 'Dir':
                     str_ = oper[1]
-                    result += [(None, 'MOVE', f'#cad{len(self.lista_cadenas)}_{str_[1:-1][0:4]}', reg, None)]
+                    result += [(None, 'MOVE', f'#cad{len(self.lista_cadenas)}_{self.str_to_label(str_)}', reg, None)]
                     self.lista_cadenas.append(str_)
 
         return result

@@ -41,7 +41,7 @@ with open(CO_file_, 'w') as CO_file:
     gco.print_co(gco.convert_co())
 
 # os.system('cd /home/dani/opt/ENS2001-Windows2 ; wine /home/dani/opt/ENS2001-Windows/winens.exe')
-path_exe = '../ENS2001-Windows/winens.exe'
 execute_cmd = 'wine'
+path_exe = '../ENS2001-Windows/winens.exe'
 execute_simulator_cmd = f'{execute_cmd} {path_exe}'
 os.system(execute_simulator_cmd)
