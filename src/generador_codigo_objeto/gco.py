@@ -219,9 +219,11 @@ class GCO:
                 return f' \t\t {res_inst} \n\n'
 
             res_inst += f'{self.get_blank_space(inst[0])} {inst[1]} '
-            for count, sub_inst in enumerate(inst[2:], 2):
+            for count, sub_inst in enumerate(inst[2:4], 2):
                 res_inst += f' {sub_inst},' if sub_inst is not None else ''
-            return f'{res_inst[:-1]}\n'
+            res_inst = res_inst[:-1]
+            res_inst += f' {inst[4]}' if len(inst) > 4 and inst[4] is not None else ''
+            return f'{res_inst}\n'
         return ''
 
     def get_blank_space(self, etiq):
