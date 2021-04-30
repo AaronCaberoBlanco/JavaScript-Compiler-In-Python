@@ -37,7 +37,7 @@ class GCO:
         return result
 
     def inst_end(self):
-        result = [(None, 'HALT', None, None, '\n\t; Fin de código del main\n')] + \
+        result = [(None, 'HALT', None, None, '\n\n\t; Fin de código del main\n')] + \
                  [('beginED:', 'RES', self.size_RAs['#EtiqMain'], None, None)] + \
                  self.book_space_cad() + \
                  [('beginStack:', 'NOP', None, None, None)] + \
@@ -117,9 +117,11 @@ class GCO:
                 inst_list += self.store_in_reg(op1, self.REG_AUX, 'Dir') + \
                              [(None, 'WRSTR', f'[{self.REG_AUX}]', None, None)]
             case 'inputEnt':
-                pass
+                inst_list += self.store_in_reg(res, self.REG_AUX, 'Dir') + \
+                             [(None, 'ININT', f'[{self.REG_AUX}]', None, None)]
             case 'inputCad':
-                pass
+                inst_list += self.store_in_reg(res, self.REG_AUX, 'Dir') + \
+                            [(None, 'INSTR', f'[{self.REG_AUX}]', None, None)]
 
         return inst_list
 
@@ -198,6 +200,7 @@ class GCO:
         result = ''
         for inst in co:
             if len(inst) == 1 and type(inst) is str:
+                inst = inst[(1 if inst[0] == '\n' else 0):]
                 result += f' \n\t\t {inst}\n'
             else:
                 result += self.format_inst(inst)
@@ -215,8 +218,9 @@ class GCO:
         if len(inst) > 0:
             res_inst = inst[0] if inst[0] is not None else ''
             if len(inst) < 2:
+                res_inst = res_inst[(1 if res_inst[0] == '\n' else 0):]
                 res_inst += self.get_blank_space(None)
-                return f' \t\t {res_inst} \n\n'
+                return f' \n\t\t {res_inst} \n'
 
             res_inst += f'{self.get_blank_space(inst[0])} {inst[1]} '
             for count, sub_inst in enumerate(inst[2:4], 2):
