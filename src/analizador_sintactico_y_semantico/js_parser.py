@@ -1,3 +1,4 @@
+import re
 import sys
 import builtins
 
@@ -85,7 +86,7 @@ class JSParser(Parser):
     def parse(self, tokens):
         super().parse(tokens)
 
-        self.size_RAs['#EtiqMain'] = self.global_shift[0]
+        self.size_RAs['tamRAFunMain'] = self.global_shift[0]
 
         self.ci = self.gen(oper='comment',res='; ---------- Codigo de las funciones -------------') + self.code_function +\
                 self.gen(oper='comment',res='; ---------- Fin de codigo de las funciones---------------------\n') + self.ci
@@ -483,8 +484,8 @@ class JSParser(Parser):
     def F(self, p):
         self.TS.destroy_table(len(self.TS.tables) - 1)
         self.function_scope = False
-        self.size_RAs[
-        self.TS.get_attribute(self.pos_id_fun[0], self.pos_id_fun[1], self.ATTR_LABEL)] = self.calc_size_RA()
+        etiq_tam_RA = self.TS.get_attribute(self.pos_id_fun[0], self.pos_id_fun[1], self.ATTR_LABEL).replace('#Etiq', 'tamRA',1)
+        self.size_RAs[etiq_tam_RA] = self.calc_size_RA()
         self.return_type = None
         self.shift = self.global_shift[0]
 
@@ -498,6 +499,10 @@ class JSParser(Parser):
                 self.gen(oper='returnVoid') + self.gen(oper='comment', res='; -------- Fin de funcion\n')
         self.code_function += f_cod
         return (None, [None], [None]),
+
+    def str_to_label(self, str_):
+        str_removed_symbols=re.sub('[^a-zA-Z]', '', str_)
+        return str_removed_symbols[:4]
 
     @_('FUNCTION P Q ID')
     def F1(self, p):
@@ -515,7 +520,7 @@ class JSParser(Parser):
             self.return_type = p.Q[0]
             self.TS.add_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE, p.Q[0])
         self.TS.add_attribute(p.ID[0], p.ID[1], self.ATTR_LABEL,
-                              '#EtiqFun' + str(self.number_function))
+                              f'#EtiqFun{self.number_function}_{self.str_to_label(self.TS.get_lex_entry(p.ID[0], p.ID[1])[self.ATTR_LEXEM])}' )
 
         self.lista_reglas.append(34)
 

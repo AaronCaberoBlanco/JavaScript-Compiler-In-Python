@@ -13,6 +13,8 @@ class GCO:
         self.TS = TS_
         self.n_copy = 0
         self.lista_cadenas = []
+        self.current_function = 'tamRAFunMain'  # falta actualizarlo
+        self.ret_addr_counter = 0
 
     # Después de llamar a generate_co se inician todas las globales con RES XXX y se apunta IY al primer elemento
     def convert_co(self):
@@ -21,7 +23,7 @@ class GCO:
         for quartet in self.ci:
             if len(quartet) == 1 and type(quartet[0]) is str:
                 result += quartet,
-                if re.match('.*fin.*funcion.*', quartet[0], re.IGNORECASE):
+                if re.match('.*fin.*funciones.*', quartet[0], re.IGNORECASE):
                     result += [('\n\t; Inicio de código del main',)] + \
                               [('main:', 'NOP', None, None, None)]
             else:
@@ -38,20 +40,28 @@ class GCO:
 
     def inst_end(self):
         result = [(None, 'HALT', None, None, '\n\n\t; Fin de código del main\n')] + \
-                 [('beginED:', 'RES', self.size_RAs['#EtiqMain'], None, None)] + \
+                 self.book_space_size_RA() +\
+                 [('beginED:', 'RES', self.size_RAs['tamRAFunMain'], None, None)] + \
                  self.book_space_cad() + \
                  [('beginStack:', 'NOP', None, None, None)] + \
                  [(None, 'END', None, None, None)]
         return result
 
+    def book_space_size_RA(self):
+        result = []
+        for etiq_fun, size_RA_fun in self.size_RAs.items():
+            result +=[(f'{etiq_fun}:', 'EQU', size_RA_fun , None, None)]
+
+        return result
+
     def str_to_label(self, str_):
         str_removed_symbols=re.sub('[^a-zA-Z]', '', str_[1:-1])
-        return str_removed_symbols[0:4]
+        return str_removed_symbols[:4]
 
     def book_space_cad(self):
         result = []
         for i, str_ in enumerate(self.lista_cadenas):
-            result += [(f'cad{i}_{self.str_to_label(str_)}:', 'DATA', str_)]
+            result += [(f'cad{i}_{self.str_to_label(str_)}:', 'DATA', str_, None, None)]
         return result
 
     def quartet_CI_to_CO(self, quartet):
@@ -101,7 +111,17 @@ class GCO:
             case 'callValueCad':
                 pass
             case 'callVoid':
-                pass
+                ret_addr = {op1[1].replace('#Etiq', f'dirRet{self.ret_addr_counter}_', 1)}
+                self.ret_addr_counter += 1
+                size_RA = {op1[1].replace('#Etiq', 'tamRA', 1)}
+                inst_list += [(None, 'MOVE', f'#{ret_addr}', f'#{size_RA}[.IX]', '; Secuencia de llamada')] + \
+                             [(None, 'ADD', f'#{size_RA}', '.IX', None)] + \
+                             [(None, 'MOVE', '.A', '.IX', None)] + \
+                             [(None, 'BR', f'/{op1[1][1:]}', None, None)] + \
+                             [(f'{ret_addr}:', 'NOP', None, None, '; Secuencia de retorno')]
+                inst_list += [(None, 'SUB', '.IX', f'#{size_RA}', None)] + \
+                             [(None, 'MOVE', '.A', '.IX', None)]
+
             case 'returnVoid':
                 inst_list += [(None, 'BR', '[.IX]', None, None)]
             case 'returnEL':
@@ -217,7 +237,9 @@ class GCO:
         """
         if len(inst) > 0:
             res_inst = inst[0] if inst[0] is not None else ''
-            if len(inst) < 2:
+            if len(inst) < 2 :
+                if  len(res_inst) == 0:
+                    return ''
                 res_inst = res_inst[(1 if res_inst[0] == '\n' else 0):]
                 res_inst += self.get_blank_space(None)
                 return f' \n\t\t {res_inst} \n'
