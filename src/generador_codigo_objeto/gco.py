@@ -102,7 +102,7 @@ class GCO:
                 inst_list += self.store_in_reg(op1, '.R1', 'Value') + \
                              self.store_in_reg(op2, '.R2', 'Value') + \
                              [(None, 'CMP', '.R1', '.R2', None)] + \
-                             [(None, 'BZ', f'/{res[1][1:]}:', None, None)]
+                             [(None, 'BZ', f'/{res[1][1:]}', None, None)]
             case 'paramEL':
                 inst_list += self.store_in_reg(op1, '.R1', 'Value') + \
                              [(None, 'MOVE', '.IX', '.R2', '; .R2 contiene la dirección de IX (inicio de RA)')] +\
@@ -116,13 +116,8 @@ class GCO:
                              [(None, 'MOVE', '.A', '.R3', None)] +\
                              self.copy_str('.R1','.R3')
                 self.param_counter += 64
-            case 'callValueEL':
-                self.param_counter = 1
-                pass
-            case 'callValueCad':
-                self.param_counter = 1
-                pass
-            case 'callVoid':
+
+            case call_matched if re.search('call.*', call_matched):
                 self.param_counter = 1
                 ret_addr = f"{op1[1].replace('#Etiq', f'dirRet{self.ret_addr_counter}_', 1)}"
                 size_RA = f"{op1[1].replace('#Etiq', 'tamRA', 1)}"
@@ -132,9 +127,17 @@ class GCO:
                              [(None, 'ADD', f'#{size_RA}', '.IX', None)] + \
                              [(None, 'MOVE', '.A', '.IX', None)] + \
                              [(None, 'BR', f'/{etiq_fun}', None, None)] + \
-                             [(f'{ret_addr}:', 'NOP', None, None, '; Secuencia de retorno')]
-                inst_list += [(None, 'SUB', '.IX', f'#{size_RA}', None)] + \
+                             [(f'{ret_addr}:', 'NOP', None, None, '; Secuencia de retorno')] + \
+                             [(None, 'SUB', '.IX', f'#{size_RA}', None)] + \
                              [(None, 'MOVE', '.A', '.IX', None)]
+
+                if call_matched != 'callVoid':
+                    if call_matched == 'callValueCad':
+                        inst_list += self.store_in_reg(res, '.R3', 'Dir') + \
+                                     self.copy_str(self.REG_RET, '.R3')
+                    elif call_matched == 'callValueEL':
+                        inst_list += self.store_in_reg(res, '.R3', 'Dir') + \
+                                     [(None, 'MOVE', self.REG_RET, '[.R3]', None)]
 
                 self.ret_addr_counter += 1
             case 'returnVoid':

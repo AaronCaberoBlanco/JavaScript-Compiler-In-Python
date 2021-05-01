@@ -167,9 +167,13 @@ class JSParser(Parser):
     @_('H PUNTOYCOMA')
     def S(self, p):
         self.lista_reglas.append(7)
-        g_cod = p.H[-1][1]
-        h_cod = g_cod
-        return (None, h_cod, [None]),
+
+        h_lugar = p.H[-1][0]
+        s_lugar = h_lugar
+
+        h_cod = p.H[-1][1]
+        s_cod = h_cod
+        return (s_lugar, s_cod, [None]),
 
     @_('ID ABPAREN I CEPAREN')
     def H(self, p):
@@ -182,8 +186,8 @@ class JSParser(Parser):
 
         if any(cod is not None for cod in i_cod_e):
             i_cod_e = self.gen(oper='comment',
-                           res='\n; Inicio de asignación de literales en temporales') + i_cod_e + \
-                           self.gen(oper='comment', res='; Fin de asignación de literales en temporales\n')
+                           res='\n; Inicio de asignacion de literales en temporales') + i_cod_e + \
+                           self.gen(oper='comment', res='; Fin de asignacion de literales en temporales\n')
 
         if any(cod_p is not None for cod_p in i_cod_p):
             i_cod_p = self.gen(oper='comment', res='\n; Inicio de paso de parámetros') + i_cod_p + \
@@ -203,7 +207,7 @@ class JSParser(Parser):
             self.error_id = p.ID
             self.semantic_error(15, p.lineno)
         elif self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_NUM_PARAMS) == 0 and p.I[0] == self.VOID_TYPE:
-            return self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE), (None, h_cod, [None])
+            return self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE), (h_lugar, h_cod, [None]) #TODO: alex que coño es esto xD , esto hace falta?  sobra?
         elif self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_NUM_PARAMS) != len(p.I[0]):
             self.error_id = p.ID
             self.semantic_error(2, p.lineno)
@@ -278,9 +282,9 @@ class JSParser(Parser):
         self.initialize(p.ID)
         e_cod = p.E[-1][1]
         e_lugar = p.E[-1][0]
-        k_cod = self.gen(oper='comment', res='\n; Inicio de asignación') + \
+        k_cod = self.gen(oper='comment', res='\n; Inicio de asignacion') + \
                 e_cod + self.gen(oper='=', res=(p.ID[0], p.ID[1]), op1=e_lugar) + \
-                self.gen(oper='comment', res='; Fin de asignación\n')
+                self.gen(oper='comment', res='; Fin de asignacion\n')
         return (None, k_cod, [None]),
 
     @_('ALERT ABPAREN E CEPAREN PUNTOYCOMA')
@@ -778,14 +782,16 @@ class JSParser(Parser):
         return res
 
     def calc_size_RA(self):
-        match self.return_type:
-            case self.STRING_TYPE:
-                size_ret = 64
-            case self.INT_TYPE | self.LOG_TYPE:
-                size_ret = 1
-            case _:  # void
-                size_ret = 0
-        return 1 + self.shift + size_ret  # EM + P + VL + DT + VD
+        # match self.return_type:
+        #     case self.STRING_TYPE:
+        #         size_ret = 64
+        #     case self.INT_TYPE | self.LOG_TYPE:
+        #         size_ret = 1
+        #     case _:  # void
+        #         size_ret = 0
+        # return 1 + self.shift + size_ret  # EM + P + VL + DT + VD
+
+        return 1 + self.shift # EM + P + VL + DT
 
     def gen(self, oper, op1=None, op2=None, res=None):
 
