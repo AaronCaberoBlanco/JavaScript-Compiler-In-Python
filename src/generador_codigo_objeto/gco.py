@@ -111,17 +111,19 @@ class GCO:
             case 'callValueCad':
                 pass
             case 'callVoid':
-                ret_addr = {op1[1].replace('#Etiq', f'dirRet{self.ret_addr_counter}_', 1)}
-                self.ret_addr_counter += 1
-                size_RA = {op1[1].replace('#Etiq', 'tamRA', 1)}
-                inst_list += [(None, 'MOVE', f'#{ret_addr}', f'#{size_RA}[.IX]', '; Secuencia de llamada')] + \
+                ret_addr = f"{op1[1].replace('#Etiq', f'dirRet{self.ret_addr_counter}_', 1)}"
+                size_RA = f"{op1[1].replace('#Etiq', 'tamRA', 1)}"
+                etiq_fun = op1[1][1:]
+                inst_list += [(None, 'ADD', f'#{size_RA}', '.IX', '; Secuencia de llamada')] + \
+                             [(None, 'MOVE', f'#{ret_addr}', '[.A]', None)] + \
                              [(None, 'ADD', f'#{size_RA}', '.IX', None)] + \
                              [(None, 'MOVE', '.A', '.IX', None)] + \
-                             [(None, 'BR', f'/{op1[1][1:]}', None, None)] + \
+                             [(None, 'BR', f'/{etiq_fun}', None, None)] + \
                              [(f'{ret_addr}:', 'NOP', None, None, '; Secuencia de retorno')]
                 inst_list += [(None, 'SUB', '.IX', f'#{size_RA}', None)] + \
                              [(None, 'MOVE', '.A', '.IX', None)]
 
+                self.ret_addr_counter += 1
             case 'returnVoid':
                 inst_list += [(None, 'BR', '[.IX]', None, None)]
             case 'returnEL':
