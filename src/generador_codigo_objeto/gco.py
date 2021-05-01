@@ -8,6 +8,7 @@ class GCO:
 
     def __init__(self, co_out_fd, ci, size_RAs_, TS_):
         self.ci = ci
+        self.param_counter = 1                          #param_counter is reset everytime oper=call because it implies all the params have been already copied
         self.co_out_fd = co_out_fd
         self.size_RAs = size_RAs_
         self.TS = TS_
@@ -103,14 +104,26 @@ class GCO:
                              [(None, 'CMP', '.R1', '.R2', None)] + \
                              [(None, 'BZ', f'/{res[1][1:]}:', None, None)]
             case 'paramEL':
-                pass
+                inst_list += self.store_in_reg(op1, '.R1', 'Value') + \
+                             [(None, 'MOVE', '.IX', '.R2', '; .R2 contiene la dirección de IX (inicio de RA)')] +\
+                             [(None, 'ADD', f'#{self.param_counter}', '.R2', '; .A contiene la dirección del parametro alojado en el RA')] +\
+                             [(None, 'MOVE', '.R1', '[.A]', None)]
+                self.param_counter += 1
             case 'paramCad':
-                pass
+                inst_list += self.store_in_reg(op1, '.R1', 'Dir') + \
+                             [(None, 'MOVE', '.IX', '.R3', '; .R3 contiene la dirección de IX (inicio de RA)')] +\
+                             [(None, 'ADD', f'#{self.param_counter}', '.R3', '; .A contiene la dirección del parametro alojado en el RA')] +\
+                             [(None, 'MOVE', '.A', '.R3', None)] +\
+                             self.copy_str('.R1','.R3')
+                self.param_counter += 64
             case 'callValueEL':
+                self.param_counter = 1
                 pass
             case 'callValueCad':
+                self.param_counter = 1
                 pass
             case 'callVoid':
+                self.param_counter = 1
                 ret_addr = f"{op1[1].replace('#Etiq', f'dirRet{self.ret_addr_counter}_', 1)}"
                 size_RA = f"{op1[1].replace('#Etiq', 'tamRA', 1)}"
                 etiq_fun = op1[1][1:]
