@@ -55,14 +55,14 @@ class GCO:
 
         return result
 
-    def str_to_label(self, str_):
-        str_removed_symbols=re.sub('[^a-zA-Z]', '', str_[1:-1])
+    def string_to_label(self, str_):
+        str_removed_symbols=re.sub('[^a-zA-Z0-9]', '', str_[1:-1])
         return str_removed_symbols[:4]
 
     def book_space_cad(self):
         result = []
         for i, str_ in enumerate(self.lista_cadenas):
-            result += [(f'cad{i}_{self.str_to_label(str_)}:', 'DATA', str_, None, None)]
+            result += [(f'cad{i}_{self.string_to_label(str_)}:', 'DATA', str_, None, None)]
         return result
 
     def quartet_CI_to_CO(self, quartet):
@@ -119,6 +119,7 @@ class GCO:
 
             case call_matched if re.search('call.*', call_matched):
                 self.param_counter = 1
+
                 ret_addr = f"{op1[1].replace('#Etiq', f'dirRet{self.ret_addr_counter}_', 1)}"
                 size_RA = f"{op1[1].replace('#Etiq', 'tamRA', 1)}"
                 etiq_fun = op1[1][1:]
@@ -200,7 +201,7 @@ class GCO:
             case 'cad': # Cad
                 if mode == 'Dir':
                     str_ = oper[1]
-                    result += [(None, 'MOVE', f'#cad{len(self.lista_cadenas)}_{self.str_to_label(str_)}', reg, None)]
+                    result += [(None, 'MOVE', f'#cad{len(self.lista_cadenas)}_{self.string_to_label(str_)}', reg, None)]
                     self.lista_cadenas.append(str_)
 
         return result
@@ -272,5 +273,5 @@ class GCO:
 
     def get_blank_space(self, etiq):
         if etiq is None:
-            return ' ' * 20
+            return ' ' *20
         return ' ' * (20 - len(etiq))

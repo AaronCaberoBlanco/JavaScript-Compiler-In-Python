@@ -504,9 +504,9 @@ class JSParser(Parser):
         self.code_function += f_cod
         return (None, [None], [None]),
 
-    def str_to_label(self, str_):
-        str_removed_symbols=re.sub('[^a-zA-Z]', '', str_)
-        return str_removed_symbols[:4]
+    # def str_to_label(self, str_):
+        # str_removed_symbols=re.sub('[^a-zA-Z]', '', str_)  #  ID (in this case, function ID) is already checked in lexer
+        # return str_removed_symbols[:4]
 
     @_('FUNCTION P Q ID')
     def F1(self, p):
@@ -524,7 +524,7 @@ class JSParser(Parser):
             self.return_type = p.Q[0]
             self.TS.add_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE, p.Q[0])
         self.TS.add_attribute(p.ID[0], p.ID[1], self.ATTR_LABEL,
-                              f'#EtiqFun{self.number_function}_{self.str_to_label(self.TS.get_lex_entry(p.ID[0], p.ID[1])[self.ATTR_LEXEM])}' )
+                              f'#EtiqFun{self.number_function}_{self.TS.get_lex_entry(p.ID[0], p.ID[1])[self.ATTR_LEXEM][:4]}' )
 
         self.lista_reglas.append(34)
 
