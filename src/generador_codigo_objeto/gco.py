@@ -105,19 +105,18 @@ class GCO:
                              self.store_in_reg(op2, '.R2', 'Value') + \
                              [(None, 'CMP', '.R1', '.R2', None)] + \
                              [(None, 'BZ', f'/{res[1][1:]}', None, None)]
-            case 'paramEL': #Actualiza con variable de etq_func para calcular tamaño RA y hacer .IX + tam_RA_func_act
-                inst_list += self.store_in_reg(op1, '.R1', 'Value') + \
-                             [(None, 'MOVE', '.IX', '.R2', '; .R2 contiene la dirección de IX (inicio de RA)')] +\
-                             [(None, 'ADD', f'#{self.param_counter}', '.R2', '; .A contiene la dirección del parametro alojado en el RA')] +\
-                             [(None, 'MOVE', '.R1', '[.A]', None)]
-                self.param_counter += 1
-            case 'paramCad':
+
+            case param_matched if re.search('param.*', param_matched):
                 inst_list += self.store_in_reg(op1, '.R1', 'Dir') + \
-                             [(None, 'MOVE', '.IX', '.R3', '; .R3 contiene la dirección de IX (inicio de RA)')] +\
-                             [(None, 'ADD', f'#{self.param_counter}', '.R3', '; .A contiene la dirección del parametro alojado en el RA')] +\
-                             [(None, 'MOVE', '.A', '.R3', None)] +\
-                             self.copy_str('.R1','.R3')
-                self.param_counter += 64
+                             [(None, 'ADD', f'#{self.size_RAs[self.curr_func_size_RA]}', '.IX', None)] +\
+                             [(None, 'ADD', f'#{self.param_counter}', '.A', '; .A contiene la dirección del parametro alojado en el RA')]
+
+                if param_matched == 'paramEL':
+                    inst_list += [(None, 'MOVE', '[.R1]', '[.A]', None)]
+                    self.param_counter += 1
+                elif param_matched == 'paramCad':
+                    inst_list += [(None, 'MOVE', '.A', '.R3', None)] + self.copy_str('.R1','.R3')
+                    self.param_counter += 64
 
             case call_matched if re.search('call.*', call_matched):
                 self.param_counter = 1
