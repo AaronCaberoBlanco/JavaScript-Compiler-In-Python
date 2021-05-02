@@ -1,0 +1,18 @@
+function boolean f(number n, boolean b){
+
+    b = true;
+    return b;
+
+}
+function number h(){
+
+    return 23-2;
+
+}
+function number g(string s, boolean b){
+
+    if(f(21,b))
+        return h();
+    return 0;
+}
+alert(g("hola",false));
