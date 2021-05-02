@@ -5,24 +5,18 @@ CONTENIDO DE LA TABLA # 0 :
 	+ Tipo : 'funcion'
 	+ TipoRetorno : 'void'
 	+ EtiqFuncion : '#EtiqFun0_rest'
-	+ NumParam : '1'
-	+ TipoParam1 : 'entero'
-
----------------- ----------------
-*	LEXEMA : '~Temp0'
-	ATRIBUTOS :
-	+ Despl : '0'
-	+ Tipo : 'entero'
+	+ NumParam : '0'
+	+ TipoParam : 'void'
 ---------------- ----------------
 
 
 
 CONTENIDO DE LA TABLA # 1 :
 
-*	LEXEMA : 'n'
+*	LEXEMA : '~Temp0'
 	ATRIBUTOS :
-	+ Tipo : 'entero'
 	+ Despl : '0'
+	+ Tipo : 'entero'
 ---------------- ----------------
 
 

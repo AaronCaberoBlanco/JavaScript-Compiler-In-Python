@@ -1,6 +1,6 @@
-function restario(number n){
+function restario(){
 
-    /*alert(n);*/
+    alert(23);
 
 }
-restario(2);
+restario();

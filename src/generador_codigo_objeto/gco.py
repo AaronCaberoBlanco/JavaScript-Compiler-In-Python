@@ -40,10 +40,11 @@ class GCO:
                  [(None, 'BR', '/main', None, None)]  # IX apunta al valor anterior (beforefirst)
         return result
 
-    def inst_end(self):
+    def inst_end(self): #RES 0 causes other instruction to override HALT when size_main_RA is 0.
+        size_main_RA = self.size_RAs['tamRAFunMain'] + (1 if self.size_RAs['tamRAFunMain'] == 0 else 0)
         result = [(None, 'HALT', None, None, '\n\n\t; Fin de código del main\n')] + \
                  self.book_space_size_RA() +\
-                 [('beginED:', 'RES', self.size_RAs['tamRAFunMain'], None, None)] + \
+                 [('beginED:', 'RES', size_main_RA, None, None)] + \
                  self.book_space_cad() + \
                  [('beginStack:', 'NOP', None, None, None)] + \
                  [(None, 'END', None, None, None)]
