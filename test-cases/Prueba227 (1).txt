@@ -24,3 +24,38 @@ function boolean ff(boolean ss)
 		
 		
 if (ff(l2)) alert (varglobal);
+//----------------------------------
+let number n;let number n1;
+let string s; let string w;
+n1 = 25;
+function number f(boolean b1){
+    if(b1) return 0;
+    return 1;
+    }
+
+function number g(number n1){
+    let boolean b;
+    b = true&&true&&false;
+    if(25 == n1)
+        b = true;
+    if(f(b) == 0)
+        return 25;
+    b = false;
+    return 80;
+}
+
+function string h(){
+    let number n2;
+    n2 = g(g(g(g(g(25)))));
+    b = 12;
+    for(;n2==25;--n2){
+        alert(n2);
+    }
+    if(n2 == 24)
+        return "\nViva Espanna";
+    return "Viva Portugal";
+}
+n = g(25);
+h();
+if(b == 12)
+    alert(h());

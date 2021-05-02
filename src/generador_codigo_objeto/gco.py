@@ -109,7 +109,7 @@ class GCO:
                              [(None, 'BZ', f'/{res[1][1:]}', None, None)]
 
             case param_matched if re.search('param.*', param_matched):
-                inst_list += self.store_in_reg(op1, '.R1', 'Dir') + \
+                inst_list += self.store_in_reg(op1, '.R1', 'Dir') +\
                              [(None, 'ADD', f'#{self.size_RAs[self.curr_func_size_RA]}', '.IX', None)] +\
                              [(None, 'ADD', f'#{self.param_counter}', '.A', '; .A contiene la dirección del parametro alojado en el RA')]
 
