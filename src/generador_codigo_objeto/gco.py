@@ -14,7 +14,7 @@ class GCO:
         self.TS = TS_
         self.n_copy = 0
         self.lista_cadenas = []
-        self.current_function = 'tamRAFunMain'  # falta actualizarlo
+        self.curr_func_size_RA = ''
         self.ret_addr_counter = 0
 
     # Después de llamar a generate_co se inician todas las globales con RES XXX y se apunta IY al primer elemento
@@ -27,6 +27,7 @@ class GCO:
                 if re.match('.*fin.*funciones.*', quartet[0], re.IGNORECASE):
                     result += [('\n\t; Inicio de código del main',)] + \
                               [('main:', 'NOP', None, None, None)]
+                    self.curr_func_size_RA = 'tamRAFunMain'
             else:
                 result += self.quartet_CI_to_CO(quartet)
         result += self.inst_end()
@@ -95,7 +96,8 @@ class GCO:
                              [(None, 'SUB', '.R1', '.R2', None)] + \
                              [(None, 'MOVE', '.A', '[.R3]', None)]
             case ':':
-                inst_list += [(f'{op1[1][1:]}:', 'NOP', None, None, None)]  #Actualizar variable de etq_func
+                inst_list += [(f'{op1[1][1:]}:', 'NOP', None, None, None)]
+                self.curr_func_size_RA = op1[1].replace('#Etiq', 'tamRA', 1)
             case 'goto':
                 inst_list += [(None, 'BR', f'/{res[1][1:]}', None, None)]
             case 'if=goto':
@@ -121,7 +123,7 @@ class GCO:
                 self.param_counter = 1
 
                 ret_addr = f"{op1[1].replace('#Etiq', f'dirRet{self.ret_addr_counter}_', 1)}"
-                size_RA = f"{op1[1].replace('#Etiq', 'tamRA', 1)}"
+                size_RA = self.curr_func_size_RA
                 etiq_fun = op1[1][1:]
                 inst_list += [(None, 'ADD', f'#{size_RA}', '.IX', '; Secuencia de llamada')] + \
                              [(None, 'MOVE', f'#{ret_addr}', '[.A]', None)] + \
