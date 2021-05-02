@@ -1,69 +1,18 @@
 CONTENIDO DE LA TABLA # 0 :
 
-*	LEXEMA : 'n'
+*	LEXEMA : 'restario'
 	ATRIBUTOS :
-	+ Tipo : 'entero'
-	+ Despl : '0'
+	+ Tipo : 'funcion'
+	+ TipoRetorno : 'void'
+	+ EtiqFuncion : '#EtiqFun0_rest'
+	+ NumParam : '1'
+	+ TipoParam1 : 'entero'
+
 ---------------- ----------------
 *	LEXEMA : '~Temp0'
 	ATRIBUTOS :
-	+ Despl : '1'
+	+ Despl : '0'
 	+ Tipo : 'entero'
----------------- ----------------
-*	LEXEMA : 'f'
-	ATRIBUTOS :
-	+ Tipo : 'funcion'
-	+ TipoRetorno : 'void'
-	+ EtiqFuncion : '#EtiqFun0_f'
-	+ NumParam : '3'
-	+ TipoParam1 : 'entero'
-	+ TipoParam2 : 'logico'
-	+ TipoParam3 : 'cadena'
-
----------------- ----------------
-*	LEXEMA : 'g'
-	ATRIBUTOS :
-	+ Tipo : 'funcion'
-	+ TipoRetorno : 'void'
-	+ EtiqFuncion : '#EtiqFun1_g'
-	+ NumParam : '0'
-	+ TipoParam : 'void'
----------------- ----------------
-*	LEXEMA : 'h'
-	ATRIBUTOS :
-	+ Tipo : 'funcion'
-	+ TipoRetorno : 'void'
-	+ EtiqFuncion : '#EtiqFun2_h'
-	+ NumParam : '3'
-	+ TipoParam1 : 'entero'
-	+ TipoParam2 : 'logico'
-	+ TipoParam3 : 'logico'
-
----------------- ----------------
-*	LEXEMA : '~Temp1'
-	ATRIBUTOS :
-	+ Despl : '2'
-	+ Tipo : 'logico'
----------------- ----------------
-*	LEXEMA : '~Temp2'
-	ATRIBUTOS :
-	+ Despl : '3'
-	+ Tipo : 'cadena'
----------------- ----------------
-*	LEXEMA : '~Temp3'
-	ATRIBUTOS :
-	+ Despl : '67'
-	+ Tipo : 'entero'
----------------- ----------------
-*	LEXEMA : '~Temp4'
-	ATRIBUTOS :
-	+ Despl : '68'
-	+ Tipo : 'logico'
----------------- ----------------
-*	LEXEMA : '~Temp5'
-	ATRIBUTOS :
-	+ Despl : '69'
-	+ Tipo : 'cadena'
 ---------------- ----------------
 
 
@@ -74,41 +23,6 @@ CONTENIDO DE LA TABLA # 1 :
 	ATRIBUTOS :
 	+ Tipo : 'entero'
 	+ Despl : '0'
----------------- ----------------
-*	LEXEMA : 'b'
-	ATRIBUTOS :
-	+ Tipo : 'logico'
-	+ Despl : '1'
----------------- ----------------
-*	LEXEMA : 's'
-	ATRIBUTOS :
-	+ Tipo : 'cadena'
-	+ Despl : '2'
----------------- ----------------
-
-
-
-CONTENIDO DE LA TABLA # 2 :
-
-
-
-
-CONTENIDO DE LA TABLA # 3 :
-
-*	LEXEMA : 'n'
-	ATRIBUTOS :
-	+ Tipo : 'entero'
-	+ Despl : '0'
----------------- ----------------
-*	LEXEMA : 'b'
-	ATRIBUTOS :
-	+ Tipo : 'logico'
-	+ Despl : '1'
----------------- ----------------
-*	LEXEMA : 'v'
-	ATRIBUTOS :
-	+ Tipo : 'logico'
-	+ Despl : '2'
 ---------------- ----------------
 
 

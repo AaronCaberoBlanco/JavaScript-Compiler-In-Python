@@ -1,7 +1,6 @@
-let number n;
-n = 2;
-function f(number n, boolean b, string s){}
-function g(){}
-function h(number n, boolean b, boolean v){}
-f(n, true, "holaaaaa");
-f(543, false, "n");
+function restario(number n){
+
+    /*alert(n);*/
+
+}
+restario(2);

@@ -95,7 +95,7 @@ class GCO:
                              [(None, 'SUB', '.R1', '.R2', None)] + \
                              [(None, 'MOVE', '.A', '[.R3]', None)]
             case ':':
-                inst_list += [(f'{op1[1][1:]}:', 'NOP', None, None, None)]
+                inst_list += [(f'{op1[1][1:]}:', 'NOP', None, None, None)]  #Actualizar variable de etq_func
             case 'goto':
                 inst_list += [(None, 'BR', f'/{res[1][1:]}', None, None)]
             case 'if=goto':
@@ -103,7 +103,7 @@ class GCO:
                              self.store_in_reg(op2, '.R2', 'Value') + \
                              [(None, 'CMP', '.R1', '.R2', None)] + \
                              [(None, 'BZ', f'/{res[1][1:]}', None, None)]
-            case 'paramEL':
+            case 'paramEL': #Actualiza con variable de etq_func para calcular tamaño RA y hacer .IX + tam_RA_func_act
                 inst_list += self.store_in_reg(op1, '.R1', 'Value') + \
                              [(None, 'MOVE', '.IX', '.R2', '; .R2 contiene la dirección de IX (inicio de RA)')] +\
                              [(None, 'ADD', f'#{self.param_counter}', '.R2', '; .A contiene la dirección del parametro alojado en el RA')] +\
@@ -262,7 +262,8 @@ class GCO:
                 res_inst = res_inst[(1 if res_inst[0] == '\n' else 0):]
                 res_inst += self.get_blank_space(None)
                 return f' \n\t\t {res_inst} \n'
-
+            elif len(inst) != 5:
+                return f' \n\t\t {res_inst} \n'
             res_inst += f'{self.get_blank_space(inst[0])} {inst[1]} '
             for count, sub_inst in enumerate(inst[2:4], 2):
                 res_inst += f' {sub_inst},' if sub_inst is not None else ''

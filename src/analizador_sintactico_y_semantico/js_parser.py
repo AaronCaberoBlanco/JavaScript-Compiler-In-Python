@@ -207,7 +207,10 @@ class JSParser(Parser):
             self.error_id = p.ID
             self.semantic_error(15, p.lineno)
         elif self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_NUM_PARAMS) == 0 and p.I[0] == self.VOID_TYPE:
-            return self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE), (h_lugar, h_cod, [None]) #TODO: alex que coño es esto xD , esto hace falta?  sobra?
+            pass
+            #TODO: alex que coño es esto xD , esto hace falta?  sobra?
+            #return self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_RETURN_VALUE), (h_lugar, h_cod, [None])
+
         elif self.TS.get_attribute(p.ID[0], p.ID[1], self.ATTR_NUM_PARAMS) != len(p.I[0]):
             self.error_id = p.ID
             self.semantic_error(2, p.lineno)
@@ -782,15 +785,6 @@ class JSParser(Parser):
         return res
 
     def calc_size_RA(self):
-        # match self.return_type:
-        #     case self.STRING_TYPE:
-        #         size_ret = 64
-        #     case self.INT_TYPE | self.LOG_TYPE:
-        #         size_ret = 1
-        #     case _:  # void
-        #         size_ret = 0
-        # return 1 + self.shift + size_ret  # EM + P + VL + DT + VD
-
         return 1 + self.shift # EM + P + VL + DT
 
     def gen(self, oper, op1=None, op2=None, res=None):
