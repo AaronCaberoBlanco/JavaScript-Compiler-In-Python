@@ -24,7 +24,7 @@ class GCO:
         for quartet in self.ci:
             if len(quartet) == 1 and type(quartet[0]) is str:
                 result += quartet,
-                if re.match('.*fin.*funciones.*', quartet[0], re.IGNORECASE):
+                if re.search('.*fin.*funciones.*', quartet[0], re.IGNORECASE):
                     result += [('\n\t; Inicio de código del main',)] + \
                               [('main:', 'NOP', None, None, None)]
                     self.curr_func_size_RA = 'tamRAFunMain'
@@ -96,8 +96,10 @@ class GCO:
                              [(None, 'SUB', '.R1', '.R2', None)] + \
                              [(None, 'MOVE', '.A', '[.R3]', None)]
             case ':':
-                inst_list += [(f'{op1[1][1:]}:', 'NOP', None, None, None)]
-                self.curr_func_size_RA = op1[1].replace('#Etiq', 'tamRA', 1)
+                label = op1[1]
+                inst_list += [(f'{label[1:]}:', 'NOP', None, None, None)]
+                if re.search('.*EtiqFun.*', label, re.IGNORECASE):
+                    self.curr_func_size_RA = label.replace('#Etiq', 'tamRA', 1)
             case 'goto':
                 inst_list += [(None, 'BR', f'/{res[1][1:]}', None, None)]
             case 'if=goto':
@@ -125,12 +127,14 @@ class GCO:
                 ret_addr = f"{op1[1].replace('#Etiq', f'dirRet{self.ret_addr_counter}_', 1)}"
                 size_RA = self.curr_func_size_RA
                 etiq_fun = op1[1][1:]
-                inst_list += [(None, 'ADD', f'#{size_RA}', '.IX', '; Secuencia de llamada')] + \
+                inst_list += [('; Secuencia de llamada',)] + \
+                             [(None, 'ADD', f'#{size_RA}', '.IX',None)] + \
                              [(None, 'MOVE', f'#{ret_addr}', '[.A]', None)] + \
                              [(None, 'ADD', f'#{size_RA}', '.IX', None)] + \
                              [(None, 'MOVE', '.A', '.IX', None)] + \
                              [(None, 'BR', f'/{etiq_fun}', None, None)] + \
-                             [(f'{ret_addr}:', 'NOP', None, None, '; Secuencia de retorno')] + \
+                             [('; Secuencia de retorno',)] + \
+                             [(f'{ret_addr}:', 'NOP', None, None, None)] + \
                              [(None, 'SUB', '.IX', f'#{size_RA}', None)] + \
                              [(None, 'MOVE', '.A', '.IX', None)]
 

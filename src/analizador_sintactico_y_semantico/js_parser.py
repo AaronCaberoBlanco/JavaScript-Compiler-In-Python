@@ -330,11 +330,13 @@ class JSParser(Parser):
         self.lista_reglas.append(17)
 
         l_cod = p.L[-1][1]
-        if l_cod is not None and l_cod[0] is not None:
+        # if l_cod is not None and l_cod[0] is not None:  # first condition never is true
+        # if l_cod is not None:  # condition is not relevant (it can be true in the two cases)
+        if p.L[0] == self.VOID_TYPE:
+            s_cod = self.gen(oper='returnVoid')
+        else:
             l_lugar = p.L[-1][0]
             s_cod = l_cod + self.gen(oper='returnValue', op1=l_lugar)
-        else:
-            s_cod = self.gen(oper='returnVoid')
         return (None, s_cod, [None]),
 
     @_('E')
