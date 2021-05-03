@@ -1,0 +1,516 @@
+                     ORG  0
+                     MOVE  #beginED, .IY
+                     MOVE  #beginStack, .IX
+                     BR  /main
+
+		 ; ---------- Inicializacion variables globales no inicializadas -------------
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #0, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #130, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 ; ---------- Fin de inicializacion de variables globales no inicianilizadas -------------
+
+
+		 ; ---------- Codigo de las funciones -------------
+
+		 ; -------- Inicio de funcion
+EtiqFun0_f:          NOP
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #0, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #66, .IX
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 ; Inicio de asignacion
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #1, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #67, .IX
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 				; Valor de Oper1 en R1
+
+                     ADD  #67, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #66, .IX
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 ; Fin de asignacion
+
+
+		 ; ---- Inicio de for
+
+		 ;  Inicio de inicializacion
+
+		 ; Inicio de asignacion
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #0, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #68, .IX
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 				; Valor de Oper1 en R1
+
+                     ADD  #68, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #130, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 ; Fin de asignacion
+
+
+		 ;  Fin de inicializacion
+
+Etiq3:               NOP
+
+		 ;  Inicio de condicion
+
+		 ;  Fin de condicion
+
+                     ADD  #66, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+                     MOVE  #0, .R2
+                     CMP  .R1, .R2
+                     BZ  /Etiq4
+
+		 ;  Inicio del cuerpo
+
+		 ; Inicio de llamada a alert
+                     ADD  #2, .IX
+                     MOVE  .A, .R9
+                     WRSTR  [.R9]
+
+		 ; Fin de llamada a alert
+
+
+		 ; Inicio de llamada a alert
+                     ADD  #1, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R9
+                     WRINT  .R9
+
+		 ; Fin de llamada a alert
+
+
+		 ; Inicio de llamada a alert
+                     MOVE  #cad0_n, .R1
+                     ADD  #69, .IX
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia0:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia0
+
+		 ; Fin bucle de copia de cadena
+                     ADD  #69, .IX
+                     MOVE  .A, .R9
+                     WRSTR  [.R9]
+
+		 ; Fin de llamada a alert
+
+
+		 ; ---- Inicio de if simple
+
+		 ; Inicio de condicion
+
+		 ; Inicio de operador de igualdad
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #0, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #133, .IX
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+                     ADD  #1, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+                     ADD  #133, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R2
+                     CMP  .R1, .R2
+                     BZ  /Etiq0
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #0, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #134, .IX
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+                     BR  /Etiq1
+Etiq0:               NOP
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #1, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #134, .IX
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+Etiq1:               NOP
+
+		 ; Inicio de operador de igualdad
+
+
+		 ; Fin de condicion
+
+                     ADD  #134, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+                     MOVE  #0, .R2
+                     CMP  .R1, .R2
+                     BZ  /Etiq2
+
+		 ; Inicio de sentencia
+
+		 ; Inicio de asignacion
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #0, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #135, .IX
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 				; Valor de Oper1 en R1
+
+                     ADD  #135, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #66, .IX
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 ; Fin de asignacion
+
+
+		 ; Fin de sentencia
+
+Etiq2:               NOP
+
+		 ; ---- Fin de if simple
+
+
+		 ;  Fin del cuerpo
+
+
+		 ;  Inicio de actualización
+
+		 ; Inicio de --id sin asignacion
+                     ADD  #1, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+                     MOVE  #1, .R2
+                     ADD  #1, .IX
+                     MOVE  .A, .R3
+                     SUB  .R1, .R2
+                     MOVE  .A, [.R3]
+
+		 ; Fin de --id sin asignacion
+
+
+		 ;  Fin de actualizacion
+
+                     BR  /Etiq3
+Etiq4:               NOP
+
+		 ; ---- Fin de for
+
+
+		 				;Valor a devolver en .R8
+
+                     ADD  #1, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R8
+                     BR  [.IX]
+                     BR  [.IX]
+
+		 ; -------- Fin de funcion
+
+
+		 ; ---------- Fin de codigo de las funciones---------------------
+
+
+		 	; Inicio de código del main
+main:                NOP
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #0, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #0, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+                     MOVE  #cad1_, .R1
+                     ADD  #1, .IY
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia1:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia1
+
+		 ; Fin bucle de copia de cadena
+
+		 ; Inicio de asignacion
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #5, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #65, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 				; Valor de Oper1 en R1
+
+                     ADD  #65, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #0, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 ; Fin de asignacion
+
+
+		 ; Inicio de asignacion
+                     MOVE  #cad2_hola, .R1
+                     ADD  #66, .IY
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia2:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia2
+
+		 ; Fin bucle de copia de cadena
+                     ADD  #66, .IY
+                     MOVE  .A, .R1
+                     ADD  #1, .IY
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia3:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia3
+
+		 ; Fin bucle de copia de cadena
+
+		 ; Fin de asignacion
+
+
+		 ; Inicio de llamada a alert
+                     MOVE  #cad3_Elul, .R1
+                     ADD  #131, .IY
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia4:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia4
+
+		 ; Fin bucle de copia de cadena
+                     ADD  #131, .IY
+                     MOVE  .A, .R9
+                     WRSTR  [.R9]
+
+		 ; Fin de llamada a alert
+
+
+		 ; Inicio de asignacion
+
+		 ; ---- Inicio de llamada a funcion
+
+		 ; Inicio de paso de parámetros
+                     ADD  #0, .IY
+                     MOVE  .A, .R1
+                     ADD  #260, .IX
+                     ADD  #1, .A ; .A contiene la dirección del parametro alojado en el RA
+                     MOVE  [.R1], [.A]
+                     ADD  #1, .IY
+                     MOVE  .A, .R1
+                     ADD  #260, .IX
+                     ADD  #2, .A ; .A contiene la dirección del parametro alojado en el RA
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia5:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia5
+
+		 ; Fin bucle de copia de cadena
+
+		 ; Fin de paso de parámetros
+
+
+		 ; Secuencia de llamada
+                     ADD  #tamRAFunMain, .IX
+                     MOVE  #dirRet0_Fun0_f, [.A]
+                     ADD  #tamRAFunMain, .IX
+                     MOVE  .A, .IX
+                     BR  /EtiqFun0_f
+
+		 ; Secuencia de retorno
+dirRet0_Fun0_f:      NOP
+                     SUB  .IX, #tamRAFunMain
+                     MOVE  .A, .IX
+                     ADD  #195, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R8, [.R3]
+
+		 ; ---- Fin de llamada a funcion
+
+
+		 				; Valor de Oper1 en R1
+
+                     ADD  #195, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #0, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 ; Fin de asignacion
+
+
+		 ; Inicio de llamada a alert
+                     MOVE  #cad4_Elul, .R1
+                     ADD  #196, .IY
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia6:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia6
+
+		 ; Fin bucle de copia de cadena
+                     ADD  #196, .IY
+                     MOVE  .A, .R9
+                     WRSTR  [.R9]
+
+		 ; Fin de llamada a alert
+
+
+		 ; Inicio de llamada a alert
+                     ADD  #0, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R9
+                     WRINT  .R9
+
+		 ; Fin de llamada a alert
+
+                     HALT
+
+	; Fin de código del main
+
+tamRAFun0_f:         EQU  136
+tamRAFunMain:        EQU  260
+beginED:             RES  260
+cad0_n:              DATA  "\n"
+cad1_:               DATA  ""
+cad2_hola:           DATA  "hola\n"
+cad3_Elul:           DATA  "El ultimo valor de numero deberia ser -1\n"
+cad4_Elul:           DATA  "El ultimo valor de numero es:\n"
+beginStack:          NOP
+                     END
+
