@@ -96,7 +96,7 @@ class JSParser(Parser):
             self.ci = self.gen(oper='comment',res='; ---------- Inicializacion variables globales no inicializadas -------------') + init +\
                       self.gen(oper='comment',res='; ---------- Fin de inicializacion de variables globales no inicianilizadas -------------\n') + self.ci
 
-        self.print_ci(self.ci,'CI-Memoria.txt',self.format_tuple_memoria)
+        self.print_ci(self.ci,'test-nested-functions.ci',self.format_tuple_memoria)
         print(self.size_RAs)
         self.convert_ci(self.ci)
         self.print_ci(self.ci,'CI-Output.txt',self.format_tuple_gco)

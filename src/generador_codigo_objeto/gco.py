@@ -16,6 +16,7 @@ class GCO:
         self.lista_cadenas = []
         self.curr_func_size_RA = ''
         self.ret_addr_counter = 0
+        self.last_inst = ''
 
     # Después de llamar a generate_co se inician todas las globales con RES XXX y se apunta IY al primer elemento
     def convert_co(self):
@@ -25,7 +26,7 @@ class GCO:
             if len(quartet) == 1 and type(quartet[0]) is str:
                 result += quartet,
                 if re.search('.*fin.*funciones.*', quartet[0], re.IGNORECASE):
-                    result += [('\n\t; Inicio de código del main',)] + \
+                    result += [('; Inicio de código del main',)] + \
                               [('main:', 'NOP', None, None, None)]
                     self.curr_func_size_RA = 'tamRAFunMain'
             else:
@@ -42,7 +43,8 @@ class GCO:
 
     def inst_end(self): #RES 0 causes other instruction to override HALT when size_main_RA is 0.
         size_main_RA = self.size_RAs['tamRAFunMain'] + (1 if self.size_RAs['tamRAFunMain'] == 0 else 0)
-        result = [(None, 'HALT', None, None, '\n\n\t; Fin de código del main\n')] + \
+        result = [(None, 'HALT', None, None, None)] + \
+                 [('; Fin de código del main',)] + \
                  self.book_space_size_RA() +\
                  [('beginED:', 'RES', size_main_RA, None, None)] + \
                  self.book_space_cad() + \
@@ -179,7 +181,7 @@ class GCO:
                                 MOVE [.{self.REG_AUX}],.R3
 
         """
-        result = [(f'\n\t\t\t\t{comment}\n',)] if comment is not None else []
+        result = [f'{comment}'] if comment is not None else []
         oper_ = self.get_key_from_value(oper[0], JSParser.OPERAND_CODE)
         match oper_:
             case 'global': # Global
@@ -233,7 +235,12 @@ class GCO:
                 return key
 
     # -----------------------------------------Print methods-----------------------------------------
-
+    #   Standard procedure to generate comments in .ens file
+    #   There are 3 type of comments:
+    #       (";-------- I'm a section comment") -> \t\t indentation and \n\n top or bottom
+    #       [("; I'm a block comment")] -> \t\t\t indentation and \n
+    #       ['Etiq','ADD', '.R0', '.R5', '; I'm a in-line comment'] -> No indentation nor \n
+    # -----------------------------------------------------------------------------------------------
     def print_co(self, co):
         """Prints object code to a file.
 
@@ -244,11 +251,14 @@ class GCO:
         """
         result = ''
         for inst in co:
-            if len(inst) == 1 and type(inst) is str:
-                inst = inst[(1 if inst[0] == '\n' else 0):]
-                result += f' \n\t\t {inst}\n'
+            if type(inst) and len(inst) < 2:
+                result += self.get_processed_comment(inst[0], 'section')
+            elif type(inst) is str:
+                result += self.get_processed_comment(inst,'block')
             else:
-                result += self.format_inst(inst)
+                self.last_inst = self.format_inst(inst)
+                result += self.last_inst
+
 
         print(result, file=self.co_out_fd)
 
@@ -262,23 +272,31 @@ class GCO:
         """
         if len(inst) > 0:
             res_inst = inst[0] if inst[0] is not None else ''
-            if len(inst) < 2 :
-                if  len(res_inst) == 0:
-                    return ''
-                res_inst = res_inst[(1 if res_inst[0] == '\n' else 0):]
-                res_inst += self.get_blank_space(None)
-                return f' \n\t\t {res_inst} \n'
-            elif len(inst) != 5:
-                return f' \n\t\t {res_inst} \n'
             res_inst += f'{self.get_blank_space(inst[0])} {inst[1]} '
             for count, sub_inst in enumerate(inst[2:4], 2):
                 res_inst += f' {sub_inst},' if sub_inst is not None else ''
             res_inst = res_inst[:-1]
             res_inst += f' {inst[4]}' if len(inst) > 4 and inst[4] is not None else ''
-            return f'{res_inst}\n'
+            return f'{res_inst}\n' if self.last_inst != f'{res_inst}\n' else ''
         return ''
 
     def get_blank_space(self, etiq):
         if etiq is None:
             return ' ' *20
         return ' ' * (20 - len(etiq))
+
+    def get_processed_comment(self, comment_, type):
+        comment = comment_.replace('\n','').replace('\t','')
+        if type == 'section':
+            match comment:
+                case comment if re.search('Inicio.* funcion.*', comment):
+                    comment = f'\n\n\t{comment}'
+                case comment if re.search('Inicio.*', comment):
+                    comment = f'\n\n\t\t{comment}'
+                case comment if re.search('Fin.*', comment):
+                    comment = f'\t\t{comment}\n'
+                case comment if re.search('Secuencia.*', comment):
+                    comment = f'\n\t\t{comment}'
+        elif type == 'block':
+            comment = f'\t\t\t{comment}'
+        return f'{comment}\n'
