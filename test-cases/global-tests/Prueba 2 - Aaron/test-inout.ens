@@ -1,0 +1,353 @@
+                     ORG  0
+                     MOVE  #beginED, .IY
+                     MOVE  #beginStack, .IX
+                     BR  /main
+
+		 ; ---------- Codigo de las funciones -------------
+
+		 ; -------- Inicio de funcion
+EtiqFun0_pide:       NOP
+                     MOVE  #cad0_, .R1
+                     ADD  #1, .IX
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia0:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia0
+
+		 ; Fin bucle de copia de cadena
+
+		 ; Inicio de llamada a alert
+                     MOVE  #cad1_Intr, .R1
+                     ADD  #65, .IX
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia1:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia1
+
+		 ; Fin bucle de copia de cadena
+                     ADD  #65, .IX
+                     MOVE  .A, .R9
+                     WRSTR  [.R9]
+
+		 ; Fin de llamada a alert
+
+
+		 ; Inicio de llamada a input
+                     ADD  #1, .IX
+                     MOVE  .A, .R9
+                     INSTR  [.R9]
+
+		 ; Fin de llamada a input
+
+
+		 				;Direccion de la cadena a devolver en .R8
+
+                     ADD  #1, .IX
+                     MOVE  .A, .R8
+                     BR  [.IX]
+                     BR  [.IX]
+
+		 ; -------- Fin de funcion
+
+
+		 ; -------- Inicio de funcion
+EtiqFun1_pide:       NOP
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #0, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #1, .IX
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 ; Inicio de llamada a alert
+                     MOVE  #cad2_Intr, .R1
+                     ADD  #2, .IX
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia2:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia2
+
+		 ; Fin bucle de copia de cadena
+                     ADD  #2, .IX
+                     MOVE  .A, .R9
+                     WRSTR  [.R9]
+
+		 ; Fin de llamada a alert
+
+
+		 ; Inicio de llamada a input
+                     ADD  #1, .IX
+                     MOVE  .A, .R9
+                     ININT  [.R9]
+
+		 ; Fin de llamada a input
+
+
+		 				;Valor a devolver en .R8
+
+                     ADD  #1, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R8
+                     BR  [.IX]
+                     BR  [.IX]
+
+		 ; -------- Fin de funcion
+
+
+		 ; ---------- Fin de codigo de las funciones---------------------
+
+
+		 	; Inicio de código del main
+main:                NOP
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #0, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #0, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+                     MOVE  #cad3_, .R1
+                     ADD  #1, .IY
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia3:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia3
+
+		 ; Fin bucle de copia de cadena
+
+		 ; Inicio de asignacion
+
+		 ; ---- Inicio de llamada a funcion
+
+		 ; Secuencia de llamada
+                     ADD  #tamRAFunMain, .IX
+                     MOVE  #dirRet0_Fun0_pide, [.A]
+                     ADD  #tamRAFunMain, .IX
+                     MOVE  .A, .IX
+                     BR  /EtiqFun0_pide
+
+		 ; Secuencia de retorno
+dirRet0_Fun0_pide:   NOP
+                     SUB  .IX, #tamRAFunMain
+                     MOVE  .A, .IX
+                     ADD  #65, .IY
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia4:              NOP
+                     MOVE  [.R8], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R8
+                     MOVE  .A, .R8
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia4
+
+		 ; Fin bucle de copia de cadena
+
+		 ; ---- Fin de llamada a funcion
+
+                     ADD  #65, .IY
+                     MOVE  .A, .R1
+                     ADD  #1, .IY
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia5:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia5
+
+		 ; Fin bucle de copia de cadena
+
+		 ; Fin de asignacion
+
+
+		 ; Inicio de llamada a alert
+                     MOVE  #cad4_Laca, .R1
+                     ADD  #129, .IY
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia6:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia6
+
+		 ; Fin bucle de copia de cadena
+                     ADD  #129, .IY
+                     MOVE  .A, .R9
+                     WRSTR  [.R9]
+
+		 ; Fin de llamada a alert
+
+
+		 ; Inicio de llamada a alert
+                     ADD  #1, .IY
+                     MOVE  .A, .R9
+                     WRSTR  [.R9]
+
+		 ; Fin de llamada a alert
+
+
+		 ; Inicio de llamada a alert
+                     MOVE  #cad5_n, .R1
+                     ADD  #193, .IY
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia7:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia7
+
+		 ; Fin bucle de copia de cadena
+                     ADD  #193, .IY
+                     MOVE  .A, .R9
+                     WRSTR  [.R9]
+
+		 ; Fin de llamada a alert
+
+
+		 ; Inicio de asignacion
+
+		 ; ---- Inicio de llamada a funcion
+
+		 ; Secuencia de llamada
+                     ADD  #tamRAFunMain, .IX
+                     MOVE  #dirRet1_Fun1_pide, [.A]
+                     ADD  #tamRAFunMain, .IX
+                     MOVE  .A, .IX
+                     BR  /EtiqFun1_pide
+
+		 ; Secuencia de retorno
+dirRet1_Fun1_pide:   NOP
+                     SUB  .IX, #tamRAFunMain
+                     MOVE  .A, .IX
+                     ADD  #257, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R8, [.R3]
+
+		 ; ---- Fin de llamada a funcion
+
+
+		 				; Valor de Oper1 en R1
+
+                     ADD  #257, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #0, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 ; Fin de asignacion
+
+
+		 ; Inicio de llamada a alert
+                     MOVE  #cad6_Elnu, .R1
+                     ADD  #258, .IY
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia8:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia8
+
+		 ; Fin bucle de copia de cadena
+                     ADD  #258, .IY
+                     MOVE  .A, .R9
+                     WRSTR  [.R9]
+
+		 ; Fin de llamada a alert
+
+
+		 ; Inicio de llamada a alert
+                     ADD  #0, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R9
+                     WRINT  .R9
+
+		 ; Fin de llamada a alert
+
+                     HALT
+
+	; Fin de código del main
+
+tamRAFun0_pide:      EQU  129
+tamRAFun1_pide:      EQU  66
+tamRAFunMain:        EQU  322
+beginED:             RES  322
+cad0_:               DATA  ""
+cad1_Intr:           DATA  "Introduce la cadena:\n"
+cad2_Intr:           DATA  "Introduce el numero:\n"
+cad3_:               DATA  ""
+cad4_Laca:           DATA  "La cadena leida fue:\n"
+cad5_n:              DATA  "\n"
+cad6_Elnu:           DATA  "El numero leido fue:\n"
+beginStack:          NOP
+                     END
+
