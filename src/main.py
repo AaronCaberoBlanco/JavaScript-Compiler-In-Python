@@ -38,7 +38,7 @@ with open(parse_file_, 'w') as parse_file, open(TS_file_, "w") as TS_file:
 
 with open(CO_file_, 'w') as CO_file:
     gco = GCO(CO_file, parser.ci, parser.size_RAs, symbol_table)
-    gco.print_co(gco.convert_co())
+    gco.print_co()
 
 # os.system('cd /home/dani/opt/ENS2001-Windows2 ; wine /home/dani/opt/ENS2001-Windows/winens.exe')
 execute_cmd = 'wine'
