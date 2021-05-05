@@ -38,6 +38,7 @@ class GCO:
         result = [(None, 'ORG', 0, None, None)] + \
                  [(None, 'MOVE', '#beginED', '.IY', None)] + \
                  [(None, 'MOVE', '#beginStack', '.IX', None)] + \
+                 ['\n'] + \
                  [(None, 'BR', '/main', None, None)]  # IX apunta al valor anterior (beforefirst)
         return result
 
@@ -45,9 +46,11 @@ class GCO:
         size_main_RA = self.size_RAs['tamRAFunMain'] + (1 if self.size_RAs['tamRAFunMain'] == 0 else 0)
         result = [(None, 'HALT', None, None, None)] + \
                  [('; Fin de código del main',)] + \
-                 self.book_space_size_RA() +\
+                 self.book_space_size_RA() + \
+                 ['\n'] + \
                  [('beginED:', 'RES', size_main_RA, None, None)] + \
                  self.book_space_cad() + \
+                 ['\n'] + \
                  [('beginStack:', 'NOP', None, None, None)] + \
                  [(None, 'END', None, None, None)]
         return result
@@ -130,45 +133,54 @@ class GCO:
                 size_RA = self.curr_func_size_RA
                 etiq_fun = op1[1][1:]   #Comentario de sección -> [('; Secuencia de llamada',)]
                 inst_list += [('; Secuencia de llamada',)] + \
+                             ['; Almacenamiento de dir. retorno'] + \
                              [(None, 'ADD', f'#{size_RA}', '.IX',None)] + \
                              [(None, 'MOVE', f'#{ret_addr}', '[.A]', None)] + \
+                             ['; Actualizacion de puntero de pila'] + \
                              [(None, 'ADD', f'#{size_RA}', '.IX', None)] + \
                              [(None, 'MOVE', '.A', '.IX', None)] + \
                              [(None, 'BR', f'/{etiq_fun}', None, None)] + \
                              [('; Secuencia de retorno',)] + \
                              [(f'{ret_addr}:', 'NOP', None, None, None)] + \
+                             ['; Restauracion de puntero de pila'] + \
                              [(None, 'SUB', '.IX', f'#{size_RA}', None)] + \
                              [(None, 'MOVE', '.A', '.IX', None)]
 
                 if call_matched != 'callVoid':
                     if call_matched == 'callValueCad':
-                        inst_list += self.store_in_reg(res, '.R3', 'Dir') + \
+                        inst_list += self.store_in_reg(res, '.R3', 'Dir','; Copia de valor devuelto') + \
                                      self.copy_str(self.REG_RET, '.R3')
                     elif call_matched == 'callValueEL':
-                        inst_list += self.store_in_reg(res, '.R3', 'Dir') + \
+                        inst_list += self.store_in_reg(res, '.R3', 'Dir','; Copia de valor devuelto') + \
                                      [(None, 'MOVE', self.REG_RET, '[.R3]', None)]
 
                 self.ret_addr_counter += 1
             case 'returnVoid':
                 inst_list += [(None, 'BR', '[.IX]', None, None)]
             case 'returnEL':
-                inst_list += self.store_in_reg(op1, self.REG_RET, 'Value', f';Valor a devolver en {self.REG_RET}') + \
+                inst_list += self.store_in_reg(op1, self.REG_RET, 'Value', f'; Valor a devolver en {self.REG_RET}') + \
+                             ['\n'] + \
                              [(None, 'BR', '[.IX]', None, None)]
             case 'returnCad':
-                inst_list += self.store_in_reg(op1, self.REG_RET, 'Dir', f';Direccion de la cadena a devolver en {self.REG_RET}') + \
+                inst_list += self.store_in_reg(op1, self.REG_RET, 'Dir', f'; Direccion de la cadena a devolver en {self.REG_RET}') + \
+                             ['\n'] + \
                              [(None, 'BR', '[.IX]', None, None)]
             case 'alertEnt':
                 inst_list += self.store_in_reg(op1, self.REG_AUX, 'Value') +\
+                             ['\n'] + \
                              [(None, 'WRINT', self.REG_AUX, None, None)]
             case 'alertCad':
                 inst_list += self.store_in_reg(op1, self.REG_AUX, 'Dir') + \
+                             ['\n'] + \
                              [(None, 'WRSTR', f'[{self.REG_AUX}]', None, None)]
             case 'inputEnt':
                 inst_list += self.store_in_reg(res, self.REG_AUX, 'Dir') + \
+                             ['\n'] + \
                              [(None, 'ININT', f'[{self.REG_AUX}]', None, None)]
             case 'inputCad':
                 inst_list += self.store_in_reg(res, self.REG_AUX, 'Dir') + \
-                            [(None, 'INSTR', f'[{self.REG_AUX}]', None, None)]
+                             ['\n'] + \
+                             [(None, 'INSTR', f'[{self.REG_AUX}]', None, None)]
 
         return inst_list
 
@@ -237,10 +249,11 @@ class GCO:
     # -----------------------------------------Print methods-----------------------------------------
     #   Standard procedure to generate comments in .ens file
     #   There are 3 type of comments:
-    #       (";-------- I'm a section comment",) -> \t\t indentation and \n(\n(?)) top or bottom
-    #       [("; I'm a block comment")] -> \t\t\t indentation and \n
+    #       [(";-------- I'm a section comment",)] -> \t\t indentation and \n(\n(?)) top or bottom
+    #       ["; I'm a block comment"] -> \t\t\t indentation and \n
     #       ['Etiq','ADD', '.R0', '.R5', '; I'm a in-line comment'] -> No indentation nor \n
     # -----------------------------------------------------------------------------------------------
+
     def print_co(self):
         """Prints object code to a file.
 
