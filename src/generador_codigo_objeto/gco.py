@@ -78,7 +78,7 @@ class GCO:
         inst_list = []
         oper_ = self.get_key_from_value(oper, JSParser.OPERATOR_CODE)
         match oper_:
-            case '=EL':  # (10, (3,1), None, (2,3))
+            case '=EL':
                 inst_list += self.store_in_reg(op1, '.R1', 'Value', '; Valor de Oper1 en R1') +\
                              self.store_in_reg(res, '.R3', 'Dir', '; Direccion de Res en R3') +\
                              [(None, 'MOVE', '.R1', '[.R3]', '; Valor de Oper1(R1) a Res(direccion a donde apunta R3)')]
@@ -128,7 +128,7 @@ class GCO:
 
                 ret_addr = f"{op1[1].replace('#Etiq', f'dirRet{self.ret_addr_counter}_', 1)}"
                 size_RA = self.curr_func_size_RA
-                etiq_fun = op1[1][1:]
+                etiq_fun = op1[1][1:]   #Comentario de sección -> [('; Secuencia de llamada',)]
                 inst_list += [('; Secuencia de llamada',)] + \
                              [(None, 'ADD', f'#{size_RA}', '.IX',None)] + \
                              [(None, 'MOVE', f'#{ret_addr}', '[.A]', None)] + \
@@ -181,7 +181,7 @@ class GCO:
                                 MOVE [.{self.REG_AUX}],.R3
 
         """
-        result = [f'{comment}'] if comment is not None else []
+        result = [f'{comment}'] if comment is not None else []      #Comentario de bloque
         oper_ = self.get_key_from_value(oper[0], JSParser.OPERAND_CODE)
         match oper_:
             case 'global': # Global
@@ -237,7 +237,7 @@ class GCO:
     # -----------------------------------------Print methods-----------------------------------------
     #   Standard procedure to generate comments in .ens file
     #   There are 3 type of comments:
-    #       (";-------- I'm a section comment") -> \t\t indentation and \n\n top or bottom
+    #       (";-------- I'm a section comment",) -> \t\t indentation and \n(\n(?)) top or bottom
     #       [("; I'm a block comment")] -> \t\t\t indentation and \n
     #       ['Etiq','ADD', '.R0', '.R5', '; I'm a in-line comment'] -> No indentation nor \n
     # -----------------------------------------------------------------------------------------------
@@ -277,7 +277,7 @@ class GCO:
                 res_inst += f' {sub_inst},' if sub_inst is not None else ''
             res_inst = res_inst[:-1]
             res_inst += f' {inst[4]}' if len(inst) > 4 and inst[4] is not None else ''
-            return f'{res_inst}\n' if self.last_inst != f'{res_inst}\n' else ''
+            return f'{res_inst}\n' if self.last_inst != f'{res_inst}\n' else '' #TODO: Only BR [.IX]
         return ''
 
     def get_blank_space(self, etiq):
@@ -288,7 +288,7 @@ class GCO:
     def get_processed_comment(self, comment_, type):
         comment = comment_.replace('\n','').replace('\t','')
         if type == 'section':
-            match comment:
+            match comment:      #TODO: IF
                 case comment if re.search('Inicio.* funcion.*', comment):
                     comment = f'\n\n\t{comment}'
                 case comment if re.search('Inicio.*', comment):

@@ -1,21 +1,147 @@
 CONTENIDO DE LA TABLA # 0 :
 
-*	LEXEMA : 'restario'
+*	LEXEMA : 'f'
 	ATRIBUTOS :
 	+ Tipo : 'funcion'
-	+ TipoRetorno : 'void'
-	+ EtiqFuncion : '#EtiqFun0_rest'
-	+ NumParam : '0'
-	+ TipoParam : 'void'
+	+ TipoRetorno : 'logico'
+	+ EtiqFuncion : '#EtiqFun0_f'
+	+ NumParam : '2'
+	+ TipoParam1 : 'entero'
+	+ TipoParam2 : 'logico'
+
+---------------- ----------------
+*	LEXEMA : 'h'
+	ATRIBUTOS :
+	+ Tipo : 'funcion'
+	+ TipoRetorno : 'entero'
+	+ EtiqFuncion : '#EtiqFun1_h'
+	+ NumParam : '1'
+	+ TipoParam1 : 'cadena'
+
+---------------- ----------------
+*	LEXEMA : 'dameNum'
+	ATRIBUTOS :
+	+ Tipo : 'funcion'
+	+ TipoRetorno : 'entero'
+	+ EtiqFuncion : '#EtiqFun2_dame'
+	+ NumParam : '2'
+	+ TipoParam1 : 'cadena'
+	+ TipoParam2 : 'logico'
+
+---------------- ----------------
+*	LEXEMA : 'in'
+	ATRIBUTOS :
+	+ Tipo : 'cadena'
+	+ Despl : '0'
+---------------- ----------------
+*	LEXEMA : '~Temp10'
+	ATRIBUTOS :
+	+ Despl : '64'
+	+ Tipo : 'cadena'
+---------------- ----------------
+*	LEXEMA : '~Temp11'
+	ATRIBUTOS :
+	+ Despl : '128'
+	+ Tipo : 'cadena'
+---------------- ----------------
+*	LEXEMA : '~Temp12'
+	ATRIBUTOS :
+	+ Despl : '192'
+	+ Tipo : 'logico'
+---------------- ----------------
+*	LEXEMA : '~Temp13'
+	ATRIBUTOS :
+	+ Despl : '193'
+	+ Tipo : 'entero'
 ---------------- ----------------
 
 
 
 CONTENIDO DE LA TABLA # 1 :
 
+*	LEXEMA : 'n'
+	ATRIBUTOS :
+	+ Tipo : 'entero'
+	+ Despl : '0'
+---------------- ----------------
+*	LEXEMA : 'b'
+	ATRIBUTOS :
+	+ Tipo : 'logico'
+	+ Despl : '1'
+---------------- ----------------
 *	LEXEMA : '~Temp0'
 	ATRIBUTOS :
+	+ Despl : '2'
+	+ Tipo : 'logico'
+---------------- ----------------
+
+
+
+CONTENIDO DE LA TABLA # 2 :
+
+*	LEXEMA : 's'
+	ATRIBUTOS :
+	+ Tipo : 'cadena'
 	+ Despl : '0'
+---------------- ----------------
+*	LEXEMA : '~Temp1'
+	ATRIBUTOS :
+	+ Despl : '64'
+	+ Tipo : 'cadena'
+---------------- ----------------
+*	LEXEMA : '~Temp2'
+	ATRIBUTOS :
+	+ Despl : '128'
+	+ Tipo : 'cadena'
+---------------- ----------------
+*	LEXEMA : '~Temp3'
+	ATRIBUTOS :
+	+ Despl : '192'
+	+ Tipo : 'entero'
+---------------- ----------------
+*	LEXEMA : '~Temp4'
+	ATRIBUTOS :
+	+ Despl : '193'
+	+ Tipo : 'entero'
+---------------- ----------------
+*	LEXEMA : '~Temp5'
+	ATRIBUTOS :
+	+ Despl : '194'
+	+ Tipo : 'entero'
+---------------- ----------------
+
+
+
+CONTENIDO DE LA TABLA # 3 :
+
+*	LEXEMA : 's'
+	ATRIBUTOS :
+	+ Tipo : 'cadena'
+	+ Despl : '0'
+---------------- ----------------
+*	LEXEMA : 'b'
+	ATRIBUTOS :
+	+ Tipo : 'logico'
+	+ Despl : '64'
+---------------- ----------------
+*	LEXEMA : '~Temp6'
+	ATRIBUTOS :
+	+ Despl : '65'
+	+ Tipo : 'entero'
+---------------- ----------------
+*	LEXEMA : '~Temp7'
+	ATRIBUTOS :
+	+ Despl : '66'
+	+ Tipo : 'logico'
+---------------- ----------------
+*	LEXEMA : '~Temp8'
+	ATRIBUTOS :
+	+ Despl : '67'
+	+ Tipo : 'entero'
+---------------- ----------------
+*	LEXEMA : '~Temp9'
+	ATRIBUTOS :
+	+ Despl : '68'
 	+ Tipo : 'entero'
 ---------------- ----------------
 
