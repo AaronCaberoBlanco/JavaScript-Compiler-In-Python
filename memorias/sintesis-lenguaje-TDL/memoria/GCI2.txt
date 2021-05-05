@@ -1,0 +1,202 @@
+{ generar etiqueta alert/input ¿? }
+
+
+Axioma = B
+NoTerminales = { A AA B C D E F F1 F2 F3 G H I J K L M N O P Q R S T U V }
+Terminales = { && == - -- ( ) = ; , { } id ent cad log let alert input return for if 
+                     number boolean string function }
+
+B $#rightarrow$ D { 
+    B.cod = D.cod
+    }
+D $#rightarrow$ F D { 
+    D.cod = F.cod || D.cod 
+    }
+D $#rightarrow$ G D { 
+    D.cod = G.cod || D.cod
+    }
+D $#rightarrow$ lambda {
+    D.cod = vacio
+    }
+  
+G $#rightarrow$ if ( E ) S {
+    G.desp = nuevaetiq()
+    G.cod = E.cod || gen(if, E.lugar, =, 0, goto, G.desp) || S.cod || gen(:, G.desp)
+    }
+G $#rightarrow$ S {
+    G.cod = S.cod
+    }
+
+S $#rightarrow$ H ; {
+    S.cod = H.cod
+    }
+H $#rightarrow$ id ( I ) {
+    H.lugar = nuevatemp()
+    H.cod = I.codE || I.codP || gen(H.lugar, =, call, buscaEtiquetaTS(id.pos))
+    }    
+I $#rightarrow$ E J {
+    I.codE = E.cod || J.codE
+    I.codP = gen(param, E.lugar) || J.codP
+    }
+J $#rightarrow$ , E J {
+    J.codE = E.cod || J1.codE
+    J.codP = gen(param, E.lugar) || J1.codP
+    }
+J $#rightarrow$ lambda {
+    L.codE = vacio
+    L.codP = vacio
+  }
+I $#rightarrow$ lambda {
+    J.codE = vacio
+    J.codP = vacio
+    }
+  
+S $#rightarrow$ K ; {
+    S.cod = K.cod
+    }
+K $#rightarrow$ id = E {
+    K.cod = E.cod || gen(buscaLugarTS(id.pos), =, E.lugar)
+    }
+  
+S $#rightarrow$ alert ( E ) ; {
+    S.cod = E.cod || gen(param, E.lugar) || gen(call, alert.etiq)         ---------¿?
+    }
+S $#rightarrow$ input ( id ) ; {
+    S.cod = gen(param, buscaLugarTS(id.pos)) || gen(call, input.etiq)         ---------¿?
+    }
+  
+S $#rightarrow$ return L ; {
+    if( L.cod = vacio )
+    S.cod = gen(return)
+  else
+    S.cod = L.cod || gen(return, L.lugar)
+    }
+L $#rightarrow$ E {
+    L.cod = E.cod
+    L.lugar = E.lugar
+    }
+L $#rightarrow$ lambda {
+    L.cod = vacio
+    }
+  
+  
+G $#rightarrow$ let M T id ; {
+    B.cod = vacio
+    }
+M $#rightarrow$ lambda { }
+T $#rightarrow$ number { }
+T $#rightarrow$ boolean { }
+T $#rightarrow$ string { }
+
+
+G $#rightarrow$ for ( N ; E ; O ) { C } {
+    G.inicio = nuevaetiq()
+    G.desp = nuevaetiq()
+    G.cod = N.cod || gen(:, G.inicio) || E.cod || gen(if, E.lugar, =, 0, goto, G.desp) || C.cod || O.cod || gen(goto, G.inicio) || gen(:, G.desp)
+    }
+N $#rightarrow$ K {
+    N.cod = K.cod
+    }
+N $#rightarrow$ lambda {
+    N.cod = vacio
+    }
+  
+O $#rightarrow$ K {
+    O.cod = K.cod
+    }
+O $#rightarrow$ -- id {
+    O.lugar = nuevatemp()
+    id.lugar = buscaLugarTS(id.pos)
+    O.cod = gen(id.lugar, =, id.lugar, -, 1) || gen(O.lugar, =, id.lugar)
+    }
+O $#rightarrow$ lambda {
+    O.cod = vacio
+    }
+  
+C $#rightarrow$ G C1 {
+    C.cod = G.cod || C1.cod
+    }
+C $#rightarrow$ lambda {
+    C.cod = vacio
+    }
+  
+  
+F $#rightarrow$ F1 F2 F3 {
+    F.cod = F1.cod || F2.cod || F3.cod || gen(return)
+    }
+F1 $#rightarrow$ function P Q id {
+    F1.cod = gen(:, buscaEtiquetaTS(id.pos))
+    }
+P $#rightarrow$ lambda  { }
+Q $#rightarrow$ T  { }
+Q $#rightarrow$ lambda  { }
+
+F2 $#rightarrow$ ( A ) {
+    F2.cod = vacio
+    }
+A $#rightarrow$ T id AA { }
+A $#rightarrow$ lambda { }
+AA $#rightarrow$ , T id AA { }
+AA $#rightarrow$ lambda { }
+
+F3 $#rightarrow$ { C } {
+    F3.cod = C.cod
+    }
+  
+  
+E $#rightarrow$ E1 && R {
+    E.lugar =  nuevatemp();
+    E.cod = E1.cod || R.cod || gen(E.lugar, =, E1.lugar, AND, R.lugar)
+    }
+E $#rightarrow$ R {
+    E.lugar = R.lugar
+    E.cod = R.cod
+    }
+  
+R $#rightarrow$ R1 == U {
+    R.cod = R1.cod || U.cod || gen(if, R1.lugar, =, U.lugar, goto, esta + 3) || gen(R.lugar, =, 0) || gen(goto, esta + 2) || gen(R.lugar, =, 1)
+    }
+R $#rightarrow$ U {
+    R.cod = U.cod
+    R.lugar = U.lugar
+    }
+  
+U $#rightarrow$ U1 - V {
+    U.lugar = nuevatemp()
+    U.cod = gen(U.lugar, =, U1.lugar, -, V.lugar)
+    }
+U $#rightarrow$ V {
+    U.lugar = V.lugar
+    U.cod = V.cod
+    }
+  
+V $#rightarrow$ -- id {
+    V.lugar = nuevatemp()
+    id.lugar = buscaLugarTS(id.pos)
+    V.cod = gen(id.lugar, =, id.lugar, -, 1) || gen(V.lugar, =, id.lugar)
+    }
+V $#rightarrow$ id {
+    V.lugar = buscaLugarTS(id.pos)
+    V.cod = vacio
+    }
+V $#rightarrow$ ( E ) { 
+    V.lugar = H.lugar
+    V.cod = H.cod
+    }
+V $#rightarrow$ H {
+    V.lugar = H.lugar
+    V.cod = H.cod
+    }
+
+V $#rightarrow$ ent {
+    V.lugar = nuevatemp()
+    V.cod = gen(V.lugar, =, ent.valor)
+    }
+V $#rightarrow$ cad {
+    V.lugar = nuevatemp()
+    V.cod = gen(V.lugar, =, cad.valor)
+    }
+V $#rightarrow$ log {
+    V-lugar = nuevatmp()
+    V.cod = gen(V.lugar, =, log.valor)
+    }
