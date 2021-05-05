@@ -1,0 +1,151 @@
+                     ORG  0
+                     MOVE  #beginED, .IY
+                     MOVE  #beginStack, .IX
+                     BR  /main
+; ---------- Inicializacion variables globales no inicializadas -------------
+			; Valor de Oper1 en R1
+                     MOVE  #0, .R1
+			; Direccion de Res en R3
+                     ADD  #66, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+		; ---------- Fin de inicializacion de variables globales no inicianilizadas -------------
+
+; ---------- Codigo de las funciones -------------
+		; ---------- Fin de codigo de las funciones---------------------
+
+
+
+		; Inicio de código del main
+main:                NOP
+			; Valor de Oper1 en R1
+                     MOVE  #0, .R1
+			; Direccion de Res en R3
+                     ADD  #0, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+
+		; Inicio de asignacion
+			; Valor de Oper1 en R1
+                     MOVE  #4, .R1
+			; Direccion de Res en R3
+                     ADD  #1, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+			; Valor de Oper1 en R1
+                     ADD  #1, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+			; Direccion de Res en R3
+                     ADD  #0, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+		; Fin de asignacion
+
+
+
+		; Inicio de llamada a alert
+                     MOVE  #cad0_Elva, .R1
+                     ADD  #2, .IY
+                     MOVE  .A, .R3
+
+
+		; Inicio bucle de copia de cadena
+copia0:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia0
+		; Fin bucle de copia de cadena
+
+                     ADD  #2, .IY
+                     MOVE  .A, .R9
+                     WRSTR  [.R9]
+		; Fin de llamada a alert
+
+
+
+		; Inicio de llamada a alert
+                     ADD  #0, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R9
+                     WRINT  .R9
+		; Fin de llamada a alert
+
+
+
+		; Inicio de asignacion
+
+
+		; Inicio de resta aritmetica
+                     ADD  #0, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+                     ADD  #66, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R2
+                     ADD  #66, .IY
+                     MOVE  .A, .R3
+                     SUB  .R1, .R2
+                     MOVE  .A, [.R3]
+		; Fin de resta aritmetica
+
+			; Valor de Oper1 en R1
+                     ADD  #66, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+			; Direccion de Res en R3
+                     ADD  #0, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+		; Fin de asignacion
+
+
+
+		; Inicio de llamada a alert
+                     MOVE  #cad1_nAho, .R1
+                     ADD  #67, .IY
+                     MOVE  .A, .R3
+
+
+		; Inicio bucle de copia de cadena
+copia1:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia1
+		; Fin bucle de copia de cadena
+
+                     ADD  #67, .IY
+                     MOVE  .A, .R9
+                     WRSTR  [.R9]
+		; Fin de llamada a alert
+
+
+
+		; Inicio de llamada a alert
+                     ADD  #0, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R9
+                     WRINT  .R9
+		; Fin de llamada a alert
+
+                     HALT
+		; Fin de código del main
+
+tamRAFunMain:        EQU  131
+beginED:             RES  131
+cad0_Elva:           DATA  "El valor de number es:\n"
+cad1_nAho:           DATA  "\nAhora numero deberia seguir igual debido a la global\n"
+beginStack:          NOP
+                     END
+

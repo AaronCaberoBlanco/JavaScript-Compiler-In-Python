@@ -1,0 +1,47 @@
+; ---------- Inicializacion variables globales no inicializadas -------------
+[10, (3, 0), , (1, 66)]
+; ---------- Fin de inicializacion de variables globales no inicianilizadas -------------
+
+; ---------- Codigo de las funciones -------------
+; ---------- Fin de codigo de las funciones---------------------
+
+[10, (3, 0), , (1, 0)]
+
+; Inicio de asignacion
+[10, (3, 4), , (1, 1)]
+[10, (1, 1), , (1, 0)]
+; Fin de asignacion
+
+
+; Inicio de llamada a alert
+[11, (4, "El valor de number es:\n"), , (1, 2)]
+[26, (1, 2), , ]
+; Fin de llamada a alert
+
+
+; Inicio de llamada a alert
+[25, (1, 0), , ]
+; Fin de llamada a alert
+
+
+; Inicio de asignacion
+
+; Inicio de resta aritmetica
+[13, (1, 0), (1, 66), (1, 66)]
+; Fin de resta aritmetica
+
+[10, (1, 66), , (1, 0)]
+; Fin de asignacion
+
+
+; Inicio de llamada a alert
+[11, (4, "\nAhora numero deberia seguir igual debido a la global\n"), , (1, 67)]
+[26, (1, 67), , ]
+; Fin de llamada a alert
+
+
+; Inicio de llamada a alert
+[25, (1, 0), , ]
+; Fin de llamada a alert
+
+
