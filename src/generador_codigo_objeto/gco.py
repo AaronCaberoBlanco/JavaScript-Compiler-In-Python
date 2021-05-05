@@ -241,7 +241,7 @@ class GCO:
     #       [("; I'm a block comment")] -> \t\t\t indentation and \n
     #       ['Etiq','ADD', '.R0', '.R5', '; I'm a in-line comment'] -> No indentation nor \n
     # -----------------------------------------------------------------------------------------------
-    def print_co(self, co):
+    def print_co(self):
         """Prints object code to a file.
 
         Prints the co to the output fd specified in the class
@@ -249,6 +249,7 @@ class GCO:
         Args:
             co (List): A list containing tuples like (etiq_ens, add, .R2, .R3, ;comm). None not allowed
         """
+        co = self.convert_co()
         result = ''
         for inst in co:
             if type(inst) and len(inst) < 2:
