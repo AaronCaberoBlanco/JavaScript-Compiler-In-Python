@@ -82,6 +82,7 @@ class GCO:
         oper_ = self.get_key_from_value(oper, JSParser.OPERATOR_CODE)
         match oper_:
             case '=EL':
+                # TODO: rehacer/quitar muchos comentarios para que no se dupliquen con los implementados en store_in_reg
                 inst_list += self.store_in_reg(op1, '.R1', 'Value', '; Valor de Oper1 en R1') +\
                              self.store_in_reg(res, '.R3', 'Dir', '; Direccion de Res en R3') +\
                              [(None, 'MOVE', '.R1', '[.R3]', '; Valor de Oper1(R1) a Res(direccion a donde apunta R3)')]
@@ -196,29 +197,33 @@ class GCO:
         result = [f'{comment}'] if comment is not None else []      #Comentario de bloque
         oper_ = self.get_key_from_value(oper[0], JSParser.OPERAND_CODE)
         match oper_:
-            case 'global': # Global
+            case 'global':  # Global
                 desp = oper[1]
                 if mode == 'Value':
-                    result += [(None, 'ADD', f'#{desp}', '.IY', None)] +\
+                    result += [f'\t; Almacenamiento del valor de una variable global en {reg}'] + \
+                              [(None, 'ADD', f'#{desp}', '.IY', None)] +\
                               [(None, 'MOVE', '.A', f'{self.REG_AUX}', None)] +\
                               [(None, 'MOVE', f'[{self.REG_AUX}]', reg, None)]
                 elif mode == 'Dir':
-                    result += [(None, 'ADD', f'#{desp}', '.IY', None)] +\
+                    result += [f'\t; Almacenamiento de la direccion de una variable global en {reg}'] + \
+                              [(None, 'ADD', f'#{desp}', '.IY', None)] +\
                               [(None, 'MOVE', '.A', reg, None)]
             case 'local': # VL + DT + P
                 desp = oper[1] + 1 #Se suma 1 para pasar por encima del EM
                 if mode == 'Value':
-                    result += [(None, 'ADD', f'#{desp}','.IX', None)] +\
+                    result += [f'\t; Almacenamiento del valor de una variable local en {reg}'] + \
+                              [(None, 'ADD', f'#{desp}','.IX', None)] +\
                               [(None, 'MOVE', '.A', f'{self.REG_AUX}', None)] +\
                               [(None, 'MOVE', f'[{self.REG_AUX}]', reg, None)]
                 elif mode == 'Dir':
-                    result += [(None, 'ADD', f'#{desp}', '.IX', None)] +\
+                    result += [f'\t; Almacenamiento del valor de la direccion de una variable local en {reg}'] + \
+                              [(None, 'ADD', f'#{desp}', '.IX', None)] +\
                               [(None, 'MOVE', '.A', reg, None)]
-            case 'ent':  # Literal (EL)
+            case 'ent':
                 if mode == 'Value':
                     literal = oper[1]
                     result +=  [(None, 'MOVE', f'#{literal}', reg, None)]
-            case 'cad': # Cad
+            case 'cad':
                 if mode == 'Dir':
                     str_ = oper[1]
                     result += [(None, 'MOVE', f'#cad{len(self.lista_cadenas)}_{self.string_to_label(str_)}', reg, None)]
@@ -265,7 +270,7 @@ class GCO:
         co = self.convert_co()
         result = ''
         for inst in co:
-            if type(inst) and len(inst) < 2:
+            if type(inst) is tuple and len(inst) < 2:
                 result += self.get_processed_comment(inst[0], 'section')
             elif type(inst) is str:
                 result += self.get_processed_comment(inst,'block')
@@ -300,8 +305,8 @@ class GCO:
         return ' ' * (20 - len(etiq))
 
     def get_processed_comment(self, comment_, type):
-        comment = comment_.replace('\n','').replace('\t','')
         if type == 'section':
+            comment = comment_.replace('\n', '').replace('\t', '')
             match comment:      #TODO: IF
                 case comment if re.search('Inicio.* funcion.*', comment):
                     comment = f'\n\n\t{comment}'
@@ -312,5 +317,6 @@ class GCO:
                 case comment if re.search('Secuencia.*', comment):
                     comment = f'\n\t\t{comment}'
         elif type == 'block':
-            comment = f'\t\t\t{comment}'
+            comment_preprocessed = comment_.replace('\n','')
+            comment = f"\t\t\t{comment_preprocessed}"
         return f'{comment}\n'
