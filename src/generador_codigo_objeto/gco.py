@@ -83,17 +83,17 @@ class GCO:
         match oper_:
             case '=EL':
                 # TODO: rehacer/quitar muchos comentarios para que no se dupliquen con los implementados en store_in_reg
-                inst_list += self.store_in_reg(op1, '.R1', 'Value', '; Valor de Oper1 en R1') +\
-                             self.store_in_reg(res, '.R3', 'Dir', '; Direccion de Res en R3') +\
-                             [(None, 'MOVE', '.R1', '[.R3]', '; Valor de Oper1(R1) a Res(direccion a donde apunta R3)')]
+                inst_list += self.store_in_reg(op1, '.R1', 'Value') +\
+                             self.store_in_reg(res, '.R3', 'Dir') +\
+                             [(None, 'MOVE', '.R1', '[.R3]')]
             case '=Cad':  # (11, (4, "Hola"), None, (1, 2)) --- (11, (2,4), None, (1, 2))
                 inst_list += self.store_in_reg(op1, '.R1', 'Dir') + \
                              self.store_in_reg(res, '.R3', 'Dir') + \
                              self.copy_str('.R1', '.R3')
             case '=and':  # (12, (1,2), (1,3), (1,4))
-                inst_list += self.store_in_reg(op1, '.R1', 'Value', '; Valor de Oper1 en R1') + \
-                             self.store_in_reg(op2, '.R2', 'Value', '; Valor de Oper2 en R2') + \
-                             self.store_in_reg(res, '.R3', 'Dir', '; Dirección de Res en R3') + \
+                inst_list += self.store_in_reg(op1, '.R1', 'Value') + \
+                             self.store_in_reg(op2, '.R2', 'Value') + \
+                             self.store_in_reg(res, '.R3', 'Dir') + \
                              [(None, 'AND', '.R1', '.R2', None)] + \
                              [(None, 'MOVE', '.A', '[.R3]', None)]
             case '=-':
@@ -118,7 +118,7 @@ class GCO:
             case param_matched if re.search('param.*', param_matched):
                 inst_list += self.store_in_reg(op1, '.R1', 'Dir') +\
                              [(None, 'ADD', f'#{self.size_RAs[self.curr_func_size_RA]}', '.IX', None)] +\
-                             [(None, 'ADD', f'#{self.param_counter}', '.A', '; .A contiene la dirección del parametro alojado en el RA')]
+                             [(None, 'ADD', f'#{self.param_counter}', '.A', None)]
 
                 if param_matched == 'paramEL':
                     inst_list += [(None, 'MOVE', '[.R1]', '[.A]', None)]
@@ -254,7 +254,7 @@ class GCO:
     # -----------------------------------------Print methods-----------------------------------------
     #   Standard procedure to generate comments in .ens file
     #   There are 3 type of comments:
-    #       [(";-------- I'm a section comment",)] -> \t\t indentation and \n(\n(?)) top or bottom
+    #       [(";-------- I'm a section comment",)] -> \t\t indentation and \n top or bottom
     #       ["; I'm a block comment"] -> \t\t\t indentation and \n
     #       ['Etiq','ADD', '.R0', '.R5', '; I'm a in-line comment'] -> No indentation nor \n
     # -----------------------------------------------------------------------------------------------
@@ -296,7 +296,7 @@ class GCO:
                 res_inst += f' {sub_inst},' if sub_inst is not None else ''
             res_inst = res_inst[:-1]
             res_inst += f' {inst[4]}' if len(inst) > 4 and inst[4] is not None else ''
-            return f'{res_inst}\n' if self.last_inst != f'{res_inst}\n' else '' #TODO: Only BR [.IX]
+            return f'{res_inst}\n' if self.last_inst != f'{res_inst}\n' and 'BR [.IX]' != res_inst else ''
         return ''
 
     def get_blank_space(self, etiq):
@@ -305,18 +305,18 @@ class GCO:
         return ' ' * (20 - len(etiq))
 
     def get_processed_comment(self, comment_, type):
+        comment = re.sub('[\n]*', '', comment_)
         if type == 'section':
-            comment = comment_.replace('\n', '').replace('\t', '')
-            match comment:      #TODO: IF
+            comment = re.sub('[\t]*', '', comment)
+            match comment:      #TODO: IF No entiendo
                 case comment if re.search('Inicio.* funcion.*', comment):
-                    comment = f'\n\n\t{comment}'
+                    comment = f'\n\t{comment}'
                 case comment if re.search('Inicio.*', comment):
-                    comment = f'\n\n\t\t{comment}'
+                    comment = f'\n\t\t{comment}'
                 case comment if re.search('Fin.*', comment):
                     comment = f'\t\t{comment}\n'
                 case comment if re.search('Secuencia.*', comment):
                     comment = f'\n\t\t{comment}'
         elif type == 'block':
-            comment_preprocessed = comment_.replace('\n','')
-            comment = f"\t\t\t{comment_preprocessed}"
+            comment = f"\t\t\t{comment}"
         return f'{comment}\n'
