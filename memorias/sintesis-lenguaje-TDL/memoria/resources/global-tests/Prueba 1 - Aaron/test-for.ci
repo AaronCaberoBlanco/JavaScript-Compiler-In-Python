@@ -1,0 +1,152 @@
+; ---------- Inicializacion variables globales no inicializadas -------------
+[=EL, 0, , global]
+; ---------- Fin de inicializacion de variables globales no inicianilizadas -------------
+
+; ---------- Codigo de las funciones -------------
+
+; -------- Inicio de funcion
+[:, #EtiqFun0_f, , ]
+[=EL, 0, , seguir]
+
+; Inicio de asignacion
+[=EL, 1, , ~Temp2]
+[=EL, ~Temp2, , seguir]
+; Fin de asignacion
+
+
+; ---- Inicio de for
+
+;  Inicio de inicializacion
+
+; Inicio de asignacion
+[=EL, 0, , ~Temp3]
+[=EL, ~Temp3, , global]
+; Fin de asignacion
+
+;  Fin de inicializacion
+
+[:, #Etiq3, , ]
+
+;  Inicio de condicion
+;  Fin de condicion
+
+[if=goto, seguir, 0, #Etiq4]
+
+;  Inicio del cuerpo
+
+; Inicio de llamada a alert
+[alertCad, saludo, , ]
+; Fin de llamada a alert
+
+
+; Inicio de llamada a alert
+[alertEnt, n, , ]
+; Fin de llamada a alert
+
+
+; Inicio de llamada a alert
+[=Cad, "\n", , ~Temp4]
+[alertCad, ~Temp4, , ]
+; Fin de llamada a alert
+
+
+; ---- Inicio de if simple
+
+; Inicio de condicion
+
+; Inicio de operador de igualdad
+[=EL, 0, , ~Temp5]
+[if=goto, n, ~Temp5, #Etiq0]
+[=EL, 0, , ~Temp6]
+[goto, , , #Etiq1]
+[:, #Etiq0, , ]
+[=EL, 1, , ~Temp6]
+[:, #Etiq1, , ]
+; Inicio de operador de igualdad
+
+; Fin de condicion
+
+[if=goto, ~Temp6, 0, #Etiq2]
+
+; Inicio de sentencia
+
+; Inicio de asignacion
+[=EL, 0, , ~Temp7]
+[=EL, ~Temp7, , seguir]
+; Fin de asignacion
+
+; Fin de sentencia
+
+[:, #Etiq2, , ]
+; ---- Fin de if simple
+
+;  Fin del cuerpo
+
+
+;  Inicio de actualización
+
+; Inicio de --id sin asignacion
+[=-, n, 1, n]
+; Fin de --id sin asignacion
+
+;  Fin de actualizacion
+
+[goto, , , #Etiq3]
+[:, #Etiq4, , ]
+; ---- Fin de for
+
+[returnEL, n, , ]
+
+[returnVoid, , , ]
+; -------- Fin de funcion
+
+; ---------- Fin de codigo de las funciones---------------------
+
+[=EL, 0, , numero]
+[=Cad, "", , s]
+
+; Inicio de asignacion
+[=EL, 5, , ~Temp0]
+[=EL, ~Temp0, , numero]
+; Fin de asignacion
+
+
+; Inicio de asignacion
+[=Cad, "hola\n", , ~Temp1]
+[=Cad, ~Temp1, , s]
+; Fin de asignacion
+
+
+; Inicio de llamada a alert
+[=Cad, "El ultimo valor de numero deberia ser -1\n", , ~Temp8]
+[alertCad, ~Temp8, , ]
+; Fin de llamada a alert
+
+
+; Inicio de asignacion
+
+; ---- Inicio de llamada a funcion
+
+; Inicio de paso de parámetros
+[paramEL, numero, , ]
+[paramCad, s, , ]
+; Fin de paso de parámetros
+
+[callValueEL, #EtiqFun0_f, , ~Temp9]
+; ---- Fin de llamada a funcion
+
+[=EL, ~Temp9, , numero]
+; Fin de asignacion
+
+
+; Inicio de llamada a alert
+[=Cad, "El ultimo valor de numero es:\n", , ~Temp10]
+[alertCad, ~Temp10, , ]
+; Fin de llamada a alert
+
+
+; Inicio de llamada a alert
+[alertEnt, numero, , ]
+; Fin de llamada a alert
+
+

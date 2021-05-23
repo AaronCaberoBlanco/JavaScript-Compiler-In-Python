@@ -1,0 +1,244 @@
+                     ORG  0
+                     MOVE  #beginED, .IY
+                     MOVE  #beginStack, .IX
+                     BR  /main
+
+		 ; ---------- Codigo de las funciones -------------
+
+		 ; -------- Inicio de funcion
+EtiqFun0_prin:       NOP
+
+		 ; Inicio de llamada a alert
+                     ADD  #0, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R9
+                     WRINT  .R9
+
+		 ; Fin de llamada a alert
+
+
+		 ; Inicio de llamada a alert
+                     MOVE  #cad0_n, .R1
+                     ADD  #1, .IX
+                     MOVE  .A, .R3
+
+		 ; Inicio bucle de copia de cadena
+copia0:              NOP
+                     MOVE  [.R1], .R9
+                     MOVE  .R9, [.R3]
+                     ADD  #1, .R1
+                     MOVE  .A, .R1
+                     ADD  #1, .R3
+                     MOVE  .A, .R3
+                     CMP  #0, .R9
+                     BNZ  /copia0
+
+		 ; Fin bucle de copia de cadena
+                     ADD  #1, .IX
+                     MOVE  .A, .R9
+                     WRSTR  [.R9]
+
+		 ; Fin de llamada a alert
+
+
+		 ; Inicio de asignacion
+
+		 ; Inicio de resta aritmetica
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #1, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #65, .IX
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+                     ADD  #0, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+                     ADD  #65, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R2
+                     ADD  #66, .IX
+                     MOVE  .A, .R3
+                     SUB  .R1, .R2
+                     MOVE  .A, [.R3]
+
+		 ; Fin de resta aritmetica
+
+
+		 				; Valor de Oper1 en R1
+
+                     ADD  #66, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #0, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 ; Fin de asignacion
+
+
+		 ; ---- Inicio de if simple
+
+		 ; Inicio de condicion
+
+		 ; Inicio de operador de igualdad
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #0, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #67, .IX
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+                     ADD  #0, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+                     ADD  #67, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R2
+                     CMP  .R1, .R2
+                     BZ  /Etiq0
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #0, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #68, .IX
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+                     BR  /Etiq1
+Etiq0:               NOP
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #1, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #68, .IX
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+Etiq1:               NOP
+
+		 ; Inicio de operador de igualdad
+
+
+		 ; Fin de condicion
+
+                     ADD  #68, .IX
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+                     MOVE  #0, .R2
+                     CMP  .R1, .R2
+                     BZ  /Etiq2
+
+		 ; Inicio de sentencia
+
+		 ; ---- Inicio de llamada a funcion
+
+		 ; Secuencia de llamada
+                     ADD  #tamRAFun0_prin, .IX
+                     MOVE  #dirRet0_Fun0_prin, [.A]
+                     ADD  #tamRAFun0_prin, .IX
+                     MOVE  .A, .IX
+                     BR  /EtiqFun0_prin
+
+		 ; Secuencia de retorno
+dirRet0_Fun0_prin:   NOP
+                     SUB  .IX, #tamRAFun0_prin
+                     MOVE  .A, .IX
+
+		 ; ---- Fin de llamada a funcion
+
+
+		 ; Fin de sentencia
+
+Etiq2:               NOP
+
+		 ; ---- Fin de if simple
+
+                     BR  [.IX]
+
+		 ; -------- Fin de funcion
+
+
+		 ; ---------- Fin de codigo de las funciones---------------------
+
+
+		 	; Inicio de código del main
+main:                NOP
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #0, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #0, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 ; Inicio de asignacion
+
+		 				; Valor de Oper1 en R1
+
+                     MOVE  #1, .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #1, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 				; Valor de Oper1 en R1
+
+                     ADD  #1, .IY
+                     MOVE  .A, .R9
+                     MOVE  [.R9], .R1
+
+		 				; Direccion de Res en R3
+
+                     ADD  #0, .IY
+                     MOVE  .A, .R3
+                     MOVE  .R1, [.R3] ; Valor de Oper1(R1) a Res(direccion a donde apunta R3)
+
+		 ; Fin de asignacion
+
+
+		 ; ---- Inicio de llamada a funcion
+
+		 ; Secuencia de llamada
+                     ADD  #tamRAFunMain, .IX
+                     MOVE  #dirRet1_Fun0_prin, [.A]
+                     ADD  #tamRAFunMain, .IX
+                     MOVE  .A, .IX
+                     BR  /EtiqFun0_prin
+
+		 ; Secuencia de retorno
+dirRet1_Fun0_prin:   NOP
+                     SUB  .IX, #tamRAFunMain
+                     MOVE  .A, .IX
+
+		 ; ---- Fin de llamada a funcion
+
+                     HALT
+
+	; Fin de código del main
+
+tamRAFun0_prin:      EQU  69
+tamRAFunMain:        EQU  2
+beginED:             RES  2
+cad0_n:              DATA  "\n"
+beginStack:          NOP
+                     END
+

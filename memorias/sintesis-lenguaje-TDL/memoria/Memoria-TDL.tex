@@ -1,0 +1,543 @@
+ 
+\documentclass[11pt, , a4paper, titlepage]{article}
+\setlength{\parindent}{0pt} % quitamos indentacion automática en parrafos
+
+% \addtolength{\textwidth}{+100cm}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{float}
+% \usepackage{lmodern}
+\usepackage{blindtext}
+\usepackage{vmargin}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+\usepackage{lipsum}
+\usepackage{adforn} % símbolo lista
+\usepackage{graphicx}
+
+% PA LA PROXIMA, HAY QUE TENERLO EN CUENTA DESDE EL PRINCIPIO 
+% \setmargins{3cm}       % margen izquierdo
+% {1cm}                        % margen superior
+% {16.5cm}                      % anchura del texto
+% {23.42cm}                    % altura del texto
+% {10pt}                           % altura de los encabezados
+% {2cm}                           % espacio entre el texto y los encabezados
+% {0pt}                             % altura del pie de página
+% {1.5cm}                           % espacio entre el texto y el pie de página
+
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage{csquotes}   
+\usepackage[style=numeric-comp, sorting=none, block=par]{biblatex} 
+\addbibresource{references.bib}
+\DeclareFieldFormat{title}{\bfseries\emph{#1}}
+\definecolor{softblack}{RGB}{74, 71, 71} 
+\DeclareFieldFormat{howpublished}{\textcolor{softblack}{\mdseries{#1}}}
+\DeclareFieldFormat{labelnumberwidth}{\mkbibbold{#1\adddot}}
+\setlength\bibitemsep{2.5\itemsep}
+\renewcommand*{\newunitpunct}{\addspace}
+\renewcommand*{\finentrypunct}{\addspace}
+% \renewcommand\mkbibnamefamily[1]{\textbf{#1}}
+
+% \usepackage{xurl} % tiene que estar despues de biblatex
+
+\usepackage{tocloft}
+% \setlength{\cftbeforesecskip}{6pt}
+\setlength{\cftbeforesubsecskip}{6pt}
+\setlength{\cftbeforesubsubsecskip}{3pt}
+
+
+\usepackage{titlesec}
+\definecolor{gray75}{gray}{0.75}
+\newcommand{\hsp}{\hspace{20pt}}
+\titleformat{\section}[hang]{\LARGE\bfseries}{\thesection\hsp\textcolor{gray75}{|}\hsp}{0pt}{\LARGE\bfseries}
+\titlespacing{\section}{0pt}{0pt}{15pt}
+\titleformat{\subsection}[hang]{\Large\bfseries}{\thesubsection\hsp}{0pt}{\Large\bfseries}
+\titlespacing{\subsection}{0pt}{35pt}{15pt}
+\titleformat{\subsubsection}[hang]{\large\bfseries}{\thesubsubsection\hspace{10pt}}{0pt}{\large\bfseries} 
+\titlespacing{\subsubsection}{0pt}{20pt}{0pt}
+
+
+\newenvironment{myitemize}
+{ \begin{itemize}
+    \setlength{\itemsep}{0pt}
+    \setlength{\parskip}{2pt}    }
+{ \end{itemize}                  } 
+    
+\newcommand{\minus}{\scalebox{0.75}[1.0]{$-$}}
+    
+\newenvironment{changemargin}[2]{%
+\begin{list}{}{%
+\setlength{\topsep}{0pt}%
+\setlength{\leftmargin}{#1}%
+\setlength{\rightmargin}{#2}%
+\setlength{\listparindent}{\parindent}%
+\setlength{\itemindent}{\parindent}%
+\setlength{\parsep}{\parskip}%
+}%
+\item[]}{\end{list}}
+
+
+
+\renewcommand*{\ttdefault}{\familydefault}
+
+\usepackage{fancyvrb}
+
+% redefine \VerbatimInput
+\RecustomVerbatimCommand{\VerbatimInput}{VerbatimInput}%
+{fontfamily=cmr, % no hace falta si se cambia ttdefault
+ codes={\catcode`$=3},
+ commandchars=\#\[\] % escape character and argument delimiters for
+                       % commands within the verbatim
+}
+  
+\usepackage{booktabs}
+\usepackage{listings}
+  
+\lstdefinelanguage{JavaScript}{
+  morekeywords=[1]{break, continue, delete, else, for, function, if, in,
+    new, return, this, typeof, var, void, while, with, let},
+  % Literals, primitive types, and reference types.
+  morekeywords=[2]{false, null, true, boolean, number, string, undefined,
+    Array, Boolean, Date, Math, Number, String, Object},
+  % Built-ins. 
+  morekeywords=[3]{eval, parseInt, parseFloat, escape, unescape},
+  sensitive,
+  morecomment=[s]{/*}{*/},
+  morecomment=[l]//,
+  morecomment=[s]{/**}{*/}, % JavaDoc style comments
+  morestring=[b]',
+  morestring=[b]"
+}[keywords, comments, strings]
+
+\definecolor{mediumgray}{rgb}{0.3, 0.4, 0.4}
+\definecolor{mediumblue}{rgb}{0.0, 0.0, 0.8}
+\definecolor{forestgreen}{rgb}{0.13, 0.55, 0.13}
+\definecolor{darkviolet}{rgb}{0.58, 0.0, 0.83}
+\definecolor{royalblue}{rgb}{0.25, 0.41, 0.88}
+\definecolor{crimson}{rgb}{0.86, 0.8, 0.24}
+
+\lstdefinestyle{JSES6Base}{
+    backgroundcolor=\color{white},
+    basicstyle=\ttfamily,
+    breakatwhitespace=false,
+    breaklines=false,
+    captionpos=b,
+    columns=fullflexible,
+    commentstyle=\color{mediumgray}\upshape,
+    emph={},
+    emphstyle=\color{crimson},
+    extendedchars=true,  % requires inputenc
+    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1,
+    fontadjust=true,
+    frame=single,
+    identifierstyle=\color{black},
+    keepspaces=true,
+    keywordstyle=\color{mediumblue},
+    keywordstyle={[2]\color{darkviolet}},
+    keywordstyle={[3]\color{royalblue}},
+    numbers=none,
+    rulecolor=\color{black},
+    showlines=false,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    stringstyle=\color{forestgreen},
+    tabsize=2,
+    upquote=true,  % requires textcomp
+    numbers=left, numberstyle=\scriptsize
+}
+
+\lstdefinestyle{JavaScript}{
+  language=JavaScript,
+  style=JSES6Base
+}
+
+
+% \usepackage{geometry}
+%  \geometry{
+%  a4paper,
+%  total={210mm,297mm},
+%  left=60mm,
+%  right=20mm,
+%  top=40mm,
+%  bottom=20mm,
+%  }
+ 
+% \usepackage{fancyhdr}
+
+% \pagestyle{fancy}
+% \fancyhead[LO,LE]{Curso 2020/2021}
+% \fancyhead[CO,CE]{Grado en Ingeniería Informática}
+% \fancyfoot[CO,CE]{\thepage}
+
+% \renewcommand{\headrulewidth}{0.4pt} % grosor de la línea de la cabecera
+% \renewcommand{\footrulewidth}{0.4pt} % grosor de la línea del pie
+% \usepackage{pdfpages} % to include external pdf's
+
+% \setpapersize{A4}
+% \setmargins{2.5cm}       % margen izquierdo
+% {1cm}                        % margen superior
+% {16.5cm}                      % anchura del texto
+% {23.42cm}                    % altura del texto
+% {10pt}                           % altura de los encabezados
+% {2cm}                           % espacio entre el texto y los encabezados
+% {0pt}                             % altura del pie de página
+% {2cm}                           % espacio entre el texto y el pie de página
+
+% \usepackage{geometry}
+%  \geometry{
+%  a4paper,
+%  total={170mm,257mm},
+%  left=20mm,
+%  top=20mm,
+%  }
+
+% \title{Ejercicio Individual II}
+% \author{Daniel Tomás Sánchez\\ asdas\\ dfsf}
+% \date{Diciembre 2020}
+
+\begin{document}
+% Cuerpo del documento
+\begin{titlepage}
+    \begin{center}
+        \hrulefill
+
+        \vspace{0.5cm}
+        {\bfseries\Huge Traductores de Lenguajes \par}
+        \vspace{3cm}
+
+        {\scshape \LARGE \textbf{Memoria Final}}
+
+        \hrulefill
+
+        \vspace{2.0cm}
+    \end{center}
+
+    \centering
+
+    % {\scshape\Huge\textbf{}\par}
+    % \vspace{1cm}
+    % {\scshape\Huge\textbf{Ejercicio Individual II}\par}
+    % \vspace{3cm}
+
+    \Large{Grupo 55}\\
+    \vspace{0.3cm}
+
+    {\large Daniel Tomás Sánchez\\ Aarón Cabero Blanco\\ Alejandro Cuadrón Lafuente\par}
+
+    \vspace{2cm}
+    {\Large Curso 2020/2021 \par}
+\end{titlepage}
+
+%\maketitle
+
+% \clearpage
+\tableofcontents
+\clearpage
+
+
+\section{Introducción}
+Al ser esta práctica continuación directa de la creada en PDL, nos mantuvimos usando Python y la herramienta externa "SLY" \cite{SLY}. \\
+Sin embargo, la herramienta la mantuvimos por compatibilidad con la parte anterior. Para la realización de esta parte de la práctica no empleamos ninguna herramienta o libería adicional.\\
+
+Opciones de grupo:
+\begin{myitemize}
+    \renewcommand{\labelitemi}{$\circ$}
+    \item Sentencias: Sentencia repetitiva (\textbf{for})
+    \item   Operadores especiales: Post-auto-decremento (\textbf{\minus \minus \hspace{0.1cm} como sufijo})
+    \item     Técnicas de Análisis Sintáctico: \textbf{Ascendente}
+    \item     Comentarios: Comentario de bloque (\textbf{/* */})
+    \item Cadenas: Con comillas dobles (\textbf{" \phantom{} "})
+\end{myitemize}
+\clearpage
+
+\section{Diseño del generador de código intermedio}
+
+% % LO SUYO hubiese sido hacerlo asi
+% \newcommand{\fila}[2]{$\bullet$ & #1 & <#2>\\}
+% \begin{tabular}{cll}
+% \fila{Identificador}{ID, punteroTS}
+% \fila{Palabra reservada Number}{<NUMBER, ->}
+% \end{tabular}
+
+Para diseñar el generador de código intermedio nos basamos en la gramática empleada en la práctica de PDL.
+El diseño resultante es el siguiente: \\ \\
+
+\VerbatimInput{GCI2.txt}
+
+\section{Diseño del registro de activación}
+El registro de activación considerado para la práctica es el siguiente: \\
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ l c }
+    Estado de la máquina & EM \\
+    Parámetros actuales  & P  \\
+    Variables locales    & VL \\
+    Datos temoporales    & DT \\
+    Valor devuelto       & VD
+    \end{tabular}
+\end{table}
+
+Se han suprimido tanto el PC como el PA. El primero se debe a que los diferentes RAs se almacenan
+en pila uno encima del anterior, por lo tanto no es necesario almacenar la dirección del antiguo RA que llamó a este.
+El segundo se ha suprimido porque al no haber funciones anidadas en nuestro lenguaje no hay necesidad de almacenar un PA. \\ \\
+El campo valor devuelto (VD), se ha implementado en la práctica usando un registro. Es decir, en lugar de extraer el resultado de la función
+del campo VD, se almacena en un registro y de este registro se extrae dicho valor. Más adelante mostrará en CO su uso.
+
+\clearpage
+
+\section{Diseño del código objeto}
+
+\subsection{Métodos auxiliares}
+\subsubsection{Store\_in\_reg}
+\subsubsection{Copy\_str}
+
+\subsection{Aritméticas y lógicas}
+
+Operación $"y"$ lógico:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [=and, op1, op2, res] 
+        & store\_in\_reg(op1, .R1, Value) \\
+        & store\_in\_reg(op2, .R2, Value) \\
+        & store\_in\_reg(res, .R3, Dir) \\
+        & AND .R1, .R2 \\
+        & MOVE .A, [.R3]
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Operación post-auto-decremento:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [=and, op1, op2, res] 
+        & store\_in\_reg(op1, .R1, Value) \\
+        & store\_in\_reg(op2, .R2, Value) \\
+        & store\_in\_reg(res, .R3, Dir) \\
+        & SUB .R1, .R2 \\
+        & MOVE .A, [.R3]
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+\subsection{Asignaciones}
+Asignación de un entero o lógico:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [=EL, op1, , res] 
+        & store\_in\_reg(op1, .R1, Value) \\
+        & store\_in\_reg(res, .R3, Dir) \\
+        & MOVE .R1, [.R3]
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Asignación de una cadena:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline & \\[-2mm]
+        [=Cad, op1, , res] 
+        & store\_in\_reg(op1, .R1, Dir) \\
+        & store\_in\_reg(res, .R3, Dir) \\
+        & MOVE .R1, .R3
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+\subsection{Saltos y etiquetas}
+
+Añadir una etiqueta:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline & \\[-2mm]
+        [:, op1, ,] 
+        & op1: NOP
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Salto a una etiqueta:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline & \\[-2mm]
+        [goto, , , etiqueta] 
+        & BR /etiqueta
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Salto en caso de cierto:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [if=goto, op1, op2, etiqueta] 
+        & store\_in\_reg(op1, .R1, Value) \\
+        & store\_in\_reg(op2, .R2, Value) \\
+        & CMP .R1 .R2 \\
+        & BZ .A, /etiqueta
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+\subsection{Paso de parámetros}
+
+\subsection{Llamadas}
+ 
+\subsection{Sentencias de retorno}
+
+\subsection{Alerts e inputs}
+
+\clearpage
+\section{Anexo}
+A continuación se listan las cinco pruebas solicitadas.
+
+
+\subsection{Prueba 1 - test del for}
+\vspace{2mm}
+Contenido de la prueba:
+\vspace{2mm}
+\begin{changemargin}{+3cm}{+2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 1 - Aaron/test-for.js}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CI:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{+0cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 1 - Aaron/test-for.ci}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CO:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{-2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 1 - Aaron/test-for.ens}
+\end{changemargin} 
+
+\clearpage
+
+\subsection{Prueba 2 - test de operaciones entrada y salida}
+\vspace{2mm}
+Contenido de la prueba:
+\vspace{2mm}
+\begin{changemargin}{+3cm}{+2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 2 - Aaron/test-inout.js}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CI:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{+0cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 2 - Aaron/test-inout.ci}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CO:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{-2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 2 - Aaron/test-inout.ens}
+\end{changemargin} 
+
+\clearpage
+
+\subsection{Prueba 3 - test genérico}
+\vspace{2mm}
+Contenido de la prueba:
+\vspace{2mm}
+\begin{changemargin}{+3cm}{+2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 3 - Aaron/test-random.js}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CI:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{+0cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 3 - Aaron/test-random.ci}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CO:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{-2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 3 - Aaron/test-random.ens}
+\end{changemargin} 
+
+\clearpage
+
+\subsection{Prueba 4 - test recursivo}
+\vspace{2mm}
+Contenido de la prueba:
+\vspace{2mm}
+\begin{changemargin}{+3cm}{+2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 4 - Daniel/test-rec.js}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CI:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{+0cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 4 - Daniel/test-rec.ci}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CO:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{-2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 4 - Daniel/test-rec.ens}
+\end{changemargin} 
+
+\clearpage
+
+\subsection{Prueba 5 - test llamadas a funciones}
+\vspace{2mm}
+Contenido de la prueba:
+\vspace{2mm}
+\begin{changemargin}{+3cm}{+2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 5 - Alejandro/test-nested-functions.js}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CI:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{+0cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 5 - Alejandro/test-nested-functions.ci}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CO:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{-2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 5 - Alejandro/test-nested-functions.ens}
+\end{changemargin} 
+
+\clearpage
+
+\printbibliography[heading=bibnumbered]
+
+
+
+\end{document}

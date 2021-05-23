@@ -1,0 +1,94 @@
+; ---------- Codigo de las funciones -------------
+
+; -------- Inicio de funcion
+[:, #EtiqFun0_pide, , ]
+[=Cad, "", , c]
+
+; Inicio de llamada a alert
+[=Cad, "Introduce la cadena:\n", , ~Temp0]
+[alertCad, ~Temp0, , ]
+; Fin de llamada a alert
+
+
+; Inicio de llamada a input
+[inputCad, , , c]
+; Fin de llamada a input
+
+[returnCad, c, , ]
+
+[returnVoid, , , ]
+; -------- Fin de funcion
+
+
+; -------- Inicio de funcion
+[:, #EtiqFun1_pide, , ]
+[=EL, 0, , n]
+
+; Inicio de llamada a alert
+[=Cad, "Introduce el numero:\n", , ~Temp1]
+[alertCad, ~Temp1, , ]
+; Fin de llamada a alert
+
+
+; Inicio de llamada a input
+[inputEnt, , , n]
+; Fin de llamada a input
+
+[returnEL, n, , ]
+
+[returnVoid, , , ]
+; -------- Fin de funcion
+
+; ---------- Fin de codigo de las funciones---------------------
+
+[=EL, 0, , numero]
+[=Cad, "", , cadena]
+
+; Inicio de asignacion
+
+; ---- Inicio de llamada a funcion
+[callValueCad, #EtiqFun0_pide, , ~Temp2]
+; ---- Fin de llamada a funcion
+
+[=Cad, ~Temp2, , cadena]
+; Fin de asignacion
+
+
+; Inicio de llamada a alert
+[=Cad, "La cadena leida fue:\n", , ~Temp3]
+[alertCad, ~Temp3, , ]
+; Fin de llamada a alert
+
+
+; Inicio de llamada a alert
+[alertCad, cadena, , ]
+; Fin de llamada a alert
+
+
+; Inicio de llamada a alert
+[=Cad, "\n", , ~Temp4]
+[alertCad, ~Temp4, , ]
+; Fin de llamada a alert
+
+
+; Inicio de asignacion
+
+; ---- Inicio de llamada a funcion
+[callValueEL, #EtiqFun1_pide, , ~Temp5]
+; ---- Fin de llamada a funcion
+
+[=EL, ~Temp5, , numero]
+; Fin de asignacion
+
+
+; Inicio de llamada a alert
+[=Cad, "El numero leido fue:\n", , ~Temp6]
+[alertCad, ~Temp6, , ]
+; Fin de llamada a alert
+
+
+; Inicio de llamada a alert
+[alertEnt, numero, , ]
+; Fin de llamada a alert
+
+

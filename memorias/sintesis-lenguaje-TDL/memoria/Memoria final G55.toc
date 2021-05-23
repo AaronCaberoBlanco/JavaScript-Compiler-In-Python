@@ -1,52 +1,88 @@
 \boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
 \babel@toc {spanish}{}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1}Introducción}{2}{section.1}%
+\contentsline {section}{\numberline {1}Introducción}{3}{section.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2}Diseño Analizador Léxico}{3}{section.2}%
+\contentsline {section}{\numberline {2}Diseño Analizador Léxico}{4}{section.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.1}Tokens}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.1}Tokens}{4}{subsection.2.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.2}Gramática Regular}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.2}Gramática Regular}{5}{subsection.2.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.3}Autómata Finito Determinista}{4}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.3}Autómata Finito Determinista}{5}{subsection.2.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.4}Acciones Semánticas}{5}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.4}Acciones Semánticas}{6}{subsection.2.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.5}Errores}{6}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.5}Errores}{7}{subsection.2.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3}Diseño Analizador Sintáctico}{7}{section.3}%
+\contentsline {section}{\numberline {3}Diseño Analizador Sintáctico}{8}{section.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.1}Gramática}{7}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.1}Gramática}{8}{subsection.3.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.2}Tabla LR(1) }{8}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.2}Tabla LR(1) }{9}{subsection.3.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {4}Diseño Analizador Semántico}{11}{section.4}%
+\contentsline {section}{\numberline {4}Diseño Analizador Semántico}{12}{section.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {5}Diseño Tabla de Símbolos}{12}{section.5}%
+\contentsline {section}{\numberline {5}Diseño Tabla de Símbolos}{13}{section.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {6}Anexo}{13}{section.6}%
+\contentsline {section}{\numberline {6}Anexo}{14}{section.6}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {6.1}Casos de prueba correctos}{13}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.1}Casos de prueba correctos}{14}{subsection.6.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {6.1.1}Prueba correcta 1}{13}{subsubsection.6.1.1}%
+\contentsline {subsubsection}{\numberline {6.1.1}Prueba correcta 1}{14}{subsubsection.6.1.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {6.1.2}Prueba correcta 2}{16}{subsubsection.6.1.2}%
+\contentsline {subsubsection}{\numberline {6.1.2}Prueba correcta 2}{17}{subsubsection.6.1.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {6.1.3}Prueba correcta 3}{18}{subsubsection.6.1.3}%
+\contentsline {subsubsection}{\numberline {6.1.3}Prueba correcta 3}{19}{subsubsection.6.1.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {6.1.4}Prueba correcta 4}{20}{subsubsection.6.1.4}%
+\contentsline {subsubsection}{\numberline {6.1.4}Prueba correcta 4}{21}{subsubsection.6.1.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {6.1.5}Prueba correcta 5}{23}{subsubsection.6.1.5}%
+\contentsline {subsubsection}{\numberline {6.1.5}Prueba correcta 5}{24}{subsubsection.6.1.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {6.2}Casos de prueba erróneos}{27}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.2}Casos de prueba erróneos}{28}{subsection.6.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {6.2.1}Prueba errónea 1}{27}{subsubsection.6.2.1}%
+\contentsline {subsubsection}{\numberline {6.2.1}Prueba errónea 1}{28}{subsubsection.6.2.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {6.2.2}Prueba errónea 2}{27}{subsubsection.6.2.2}%
+\contentsline {subsubsection}{\numberline {6.2.2}Prueba errónea 2}{28}{subsubsection.6.2.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {6.2.3}Prueba errónea 3}{27}{subsubsection.6.2.3}%
+\contentsline {subsubsection}{\numberline {6.2.3}Prueba errónea 3}{28}{subsubsection.6.2.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {6.2.4}Prueba errónea 4}{27}{subsubsection.6.2.4}%
+\contentsline {subsubsection}{\numberline {6.2.4}Prueba errónea 4}{28}{subsubsection.6.2.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {6.2.5}Prueba errónea 5}{28}{subsubsection.6.2.5}%
+\contentsline {subsubsection}{\numberline {6.2.5}Prueba errónea 5}{29}{subsubsection.6.2.5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {7}Diseño del código objeto}{30}{section.7}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {7.1}Métodos auxiliares}{30}{subsection.7.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {7.1.1}Store\_in\_reg}{30}{subsubsection.7.1.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {7.1.2}Copy\_str}{30}{subsubsection.7.1.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {7.2}Aritméticas y lógicas}{30}{subsection.7.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {7.3}Asignaciones}{30}{subsection.7.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {7.4}Saltos y etiquetas}{31}{subsection.7.4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {7.5}Paso de parámetros}{31}{subsection.7.5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {7.6}Llamadas}{31}{subsection.7.6}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {7.7}Sentencias de retorno}{31}{subsection.7.7}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {7.8}Alerts e inputs}{31}{subsection.7.8}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {8}Anexo}{32}{section.8}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {8.1}Prueba 1 - test del for}{32}{subsection.8.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {8.2}Prueba 2 - test de operaciones entrada y salida}{47}{subsection.8.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {8.3}Prueba 3 - test genérico}{57}{subsection.8.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {8.4}Prueba 4 - test recursivo}{63}{subsection.8.4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {8.5}Prueba 5 - test llamadas a funciones}{70}{subsection.8.5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {9}Referencias}{82}{section.9}%

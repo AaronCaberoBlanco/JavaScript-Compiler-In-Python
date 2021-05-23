@@ -1,0 +1,134 @@
+; ---------- Codigo de las funciones -------------
+
+; -------- Inicio de funcion
+[:, #EtiqFun0_f, , ]
+
+; Inicio de asignacion
+[=EL, 1, , ~Temp0]
+[=EL, ~Temp0, , b]
+; Fin de asignacion
+
+[returnEL, b, , ]
+
+[returnVoid, , , ]
+; -------- Fin de funcion
+
+
+; -------- Inicio de funcion
+[:, #EtiqFun1_h, , ]
+
+; Inicio de llamada a alert
+[=Cad, "Me ha llegado esta cadena: \n", , ~Temp1]
+[alertCad, ~Temp1, , ]
+; Fin de llamada a alert
+
+
+; Inicio de llamada a alert
+[alertCad, s, , ]
+; Fin de llamada a alert
+
+
+; Inicio de llamada a alert
+[=Cad, "\n", , ~Temp2]
+[alertCad, ~Temp2, , ]
+; Fin de llamada a alert
+
+
+; Inicio de resta aritmetica
+[=EL, 23, , ~Temp3]
+[=EL, 2, , ~Temp4]
+[=-, ~Temp3, ~Temp4, ~Temp5]
+; Fin de resta aritmetica
+
+[returnEL, ~Temp5, , ]
+
+[returnVoid, , , ]
+; -------- Fin de funcion
+
+
+; -------- Inicio de funcion
+[:, #EtiqFun2_dame, , ]
+
+; ---- Inicio de if simple
+
+; Inicio de condicion
+
+; ---- Inicio de llamada a funcion
+
+; Inicio de asignacion de literales en temporales
+[=EL, 21, , ~Temp6]
+; Fin de asignacion de literales en temporales
+
+
+; Inicio de paso de parámetros
+[paramEL, ~Temp6, , ]
+[paramEL, b, , ]
+; Fin de paso de parámetros
+
+[callValueEL, #EtiqFun0_f, , ~Temp7]
+; ---- Fin de llamada a funcion
+
+; Fin de condicion
+
+[if=goto, ~Temp7, 0, #Etiq0]
+
+; Inicio de sentencia
+
+; ---- Inicio de llamada a funcion
+
+; Inicio de paso de parámetros
+[paramCad, s, , ]
+; Fin de paso de parámetros
+
+[callValueEL, #EtiqFun1_h, , ~Temp8]
+; ---- Fin de llamada a funcion
+
+[returnEL, ~Temp8, , ]
+; Fin de sentencia
+
+[:, #Etiq0, , ]
+; ---- Fin de if simple
+
+[=EL, 0, , ~Temp9]
+[returnEL, ~Temp9, , ]
+
+[returnVoid, , , ]
+; -------- Fin de funcion
+
+; ---------- Fin de codigo de las funciones---------------------
+
+[=Cad, "", , in]
+
+; Inicio de llamada a alert
+[=Cad, "Introduce una cadena para transmitir a una funcion anidada \n", , ~Temp10]
+[alertCad, ~Temp10, , ]
+; Fin de llamada a alert
+
+
+; Inicio de llamada a input
+[inputCad, , , in]
+; Fin de llamada a input
+
+
+; Inicio de llamada a alert
+[=Cad, "Transmitiendo la cadena... \n", , ~Temp11]
+[alertCad, ~Temp11, , ]
+; Fin de llamada a alert
+
+
+; ---- Inicio de llamada a funcion
+
+; Inicio de asignacion de literales en temporales
+[=EL, 0, , ~Temp12]
+; Fin de asignacion de literales en temporales
+
+
+; Inicio de paso de parámetros
+[paramCad, in, , ]
+[paramEL, ~Temp12, , ]
+; Fin de paso de parámetros
+
+[callValueEL, #EtiqFun2_dame, , ~Temp13]
+; ---- Fin de llamada a funcion
+
+

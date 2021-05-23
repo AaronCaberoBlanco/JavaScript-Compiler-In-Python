@@ -23,3 +23,21 @@
 \BOOKMARK [3][-]{subsubsection.6.2.3}{Prueba err\363nea 3}{subsection.6.2}% 23
 \BOOKMARK [3][-]{subsubsection.6.2.4}{Prueba err\363nea 4}{subsection.6.2}% 24
 \BOOKMARK [3][-]{subsubsection.6.2.5}{Prueba err\363nea 5}{subsection.6.2}% 25
+\BOOKMARK [1][-]{section.7}{Dise\361o del c\363digo objeto}{}% 26
+\BOOKMARK [2][-]{subsection.7.1}{M\351todos auxiliares}{section.7}% 27
+\BOOKMARK [3][-]{subsubsection.7.1.1}{Store\137in\137reg}{subsection.7.1}% 28
+\BOOKMARK [3][-]{subsubsection.7.1.2}{Copy\137str}{subsection.7.1}% 29
+\BOOKMARK [2][-]{subsection.7.2}{Aritm\351ticas y l\363gicas}{section.7}% 30
+\BOOKMARK [2][-]{subsection.7.3}{Asignaciones}{section.7}% 31
+\BOOKMARK [2][-]{subsection.7.4}{Saltos y etiquetas}{section.7}% 32
+\BOOKMARK [2][-]{subsection.7.5}{Paso de par\341metros}{section.7}% 33
+\BOOKMARK [2][-]{subsection.7.6}{Llamadas}{section.7}% 34
+\BOOKMARK [2][-]{subsection.7.7}{Sentencias de retorno}{section.7}% 35
+\BOOKMARK [2][-]{subsection.7.8}{Alerts e inputs}{section.7}% 36
+\BOOKMARK [1][-]{section.8}{Anexo}{}% 37
+\BOOKMARK [2][-]{subsection.8.1}{Prueba 1 - test del for}{section.8}% 38
+\BOOKMARK [2][-]{subsection.8.2}{Prueba 2 - test de operaciones entrada y salida}{section.8}% 39
+\BOOKMARK [2][-]{subsection.8.3}{Prueba 3 - test gen\351rico}{section.8}% 40
+\BOOKMARK [2][-]{subsection.8.4}{Prueba 4 - test recursivo}{section.8}% 41
+\BOOKMARK [2][-]{subsection.8.5}{Prueba 5 - test llamadas a funciones}{section.8}% 42
+\BOOKMARK [1][-]{section.9}{Referencias}{}% 43

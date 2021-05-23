@@ -1,0 +1,75 @@
+; ---------- Codigo de las funciones -------------
+
+; -------- Inicio de funcion
+[:, #EtiqFun0_prin, , ]
+
+; Inicio de llamada a alert
+[alertEnt, x, , ]
+; Fin de llamada a alert
+
+
+; Inicio de llamada a alert
+[=Cad, "\n", , ~Temp1]
+[alertCad, ~Temp1, , ]
+; Fin de llamada a alert
+
+
+; Inicio de asignacion
+
+; Inicio de resta aritmetica
+[=EL, 1, , ~Temp2]
+[=-, x, ~Temp2, ~Temp3]
+; Fin de resta aritmetica
+
+[=EL, ~Temp3, , x]
+; Fin de asignacion
+
+
+; ---- Inicio de if simple
+
+; Inicio de condicion
+
+; Inicio de operador de igualdad
+[=EL, 0, , ~Temp4]
+[if=goto, x, ~Temp4, #Etiq0]
+[=EL, 0, , ~Temp5]
+[goto, , , #Etiq1]
+[:, #Etiq0, , ]
+[=EL, 1, , ~Temp5]
+[:, #Etiq1, , ]
+; Inicio de operador de igualdad
+
+; Fin de condicion
+
+[if=goto, ~Temp5, 0, #Etiq2]
+
+; Inicio de sentencia
+
+; ---- Inicio de llamada a funcion
+[callVoid, #EtiqFun0_prin, , ]
+; ---- Fin de llamada a funcion
+
+; Fin de sentencia
+
+[:, #Etiq2, , ]
+; ---- Fin de if simple
+
+
+[returnVoid, , , ]
+; -------- Fin de funcion
+
+; ---------- Fin de codigo de las funciones---------------------
+
+[=EL, 0, , x]
+
+; Inicio de asignacion
+[=EL, 1, , ~Temp0]
+[=EL, ~Temp0, , x]
+; Fin de asignacion
+
+
+; ---- Inicio de llamada a funcion
+[callVoid, #EtiqFun0_prin, , ]
+; ---- Fin de llamada a funcion
+
+

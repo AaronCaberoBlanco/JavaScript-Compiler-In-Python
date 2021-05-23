@@ -8,6 +8,7 @@
 \usepackage[spanish]{babel}
 % \usepackage{lmodern}
 \usepackage{blindtext}
+\usepackage{float}
 \usepackage{vmargin}
 \usepackage[hidelinks]{hyperref}
 \usepackage{url}
@@ -778,16 +779,250 @@ Un diccionario es un hashmap que tiene como claves la palabra \verb|"lexema"| y 
 
 \clearpage
 
-\section{Diseño Generador de Código Intermedio}
+\section{Diseño del código objeto}
 
-\VerbatimInput{GCI2.txt}
+\subsection{Métodos auxiliares}
+\subsubsection{Store\_in\_reg}
+\subsubsection{Copy\_str}
+
+\subsection{Aritméticas y lógicas}
+
+Operación $"y"$ lógico:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [=and, op1, op2, res] 
+        & store\_in\_reg(op1, .R1, Value) \\
+        & store\_in\_reg(op2, .R2, Value) \\
+        & store\_in\_reg(res, .R3, Dir) \\
+        & AND .R1, .R2 \\
+        & MOVE .A, [.R3]
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Operación post-auto-decremento:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [=and, op1, op2, res] 
+        & store\_in\_reg(op1, .R1, Value) \\
+        & store\_in\_reg(op2, .R2, Value) \\
+        & store\_in\_reg(res, .R3, Dir) \\
+        & SUB .R1, .R2 \\
+        & MOVE .A, [.R3]
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+\subsection{Asignaciones}
+Asignación de un entero o lógico:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [=EL, op1, , res] 
+        & store\_in\_reg(op1, .R1, Value) \\
+        & store\_in\_reg(res, .R3, Dir) \\
+        & MOVE .R1, [.R3]
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Asignación de una cadena:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline & \\[-2mm]
+        [=Cad, op1, , res] 
+        & store\_in\_reg(op1, .R1, Dir) \\
+        & store\_in\_reg(res, .R3, Dir) \\
+        & MOVE .R1, .R3
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+\subsection{Saltos y etiquetas}
+
+Añadir una etiqueta:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline & \\[-2mm]
+        [:, op1, ,] 
+        & op1: NOP
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Salto a una etiqueta:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline & \\[-2mm]
+        [goto, , , etiqueta] 
+        & BR /etiqueta
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Salto en caso de cierto:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [if=goto, op1, op2, etiqueta] 
+        & store\_in\_reg(op1, .R1, Value) \\
+        & store\_in\_reg(op2, .R2, Value) \\
+        & CMP .R1 .R2 \\
+        & BZ .A, /etiqueta
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+\subsection{Paso de parámetros}
+
+\subsection{Llamadas}
+ 
+\subsection{Sentencias de retorno}
+
+\subsection{Alerts e inputs}
+
+\clearpage
+\section{Anexo}
+A continuación se listan las cinco pruebas solicitadas.
+
+
+\subsection{Prueba 1 - test del for}
+\vspace{2mm}
+Contenido de la prueba:
+\vspace{2mm}
+\begin{changemargin}{+3cm}{+2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 1 - Aaron/test-for.js}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CI:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{+0cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 1 - Aaron/test-for.ci}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CO:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{-2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 1 - Aaron/test-for.ens}
+\end{changemargin} 
+
 \clearpage
 
-\section{Diseño Generador de Código Final}
+\subsection{Prueba 2 - test de operaciones entrada y salida}
+\vspace{2mm}
+Contenido de la prueba:
+\vspace{2mm}
+\begin{changemargin}{+3cm}{+2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 2 - Aaron/test-inout.js}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CI:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{+0cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 2 - Aaron/test-inout.ci}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CO:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{-2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 2 - Aaron/test-inout.ens}
+\end{changemargin} 
 
 \clearpage
 
-\section{Diseño Registros de Activación}
+\subsection{Prueba 3 - test genérico}
+\vspace{2mm}
+Contenido de la prueba:
+\vspace{2mm}
+\begin{changemargin}{+3cm}{+2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 3 - Aaron/test-random.js}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CI:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{+0cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 3 - Aaron/test-random.ci}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CO:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{-2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 3 - Aaron/test-random.ens}
+\end{changemargin} 
+
+\clearpage
+
+\subsection{Prueba 4 - test recursivo}
+\vspace{2mm}
+Contenido de la prueba:
+\vspace{2mm}
+\begin{changemargin}{+3cm}{+2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 4 - Daniel/test-rec.js}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CI:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{+0cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 4 - Daniel/test-rec.ci}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CO:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{-2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 4 - Daniel/test-rec.ens}
+\end{changemargin} 
+
+\clearpage
+
+\subsection{Prueba 5 - test llamadas a funciones}
+\vspace{2mm}
+Contenido de la prueba:
+\vspace{2mm}
+\begin{changemargin}{+3cm}{+2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 5 - Alejandro/test-nested-functions.js}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CI:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{+0cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 5 - Alejandro/test-nested-functions.ci}
+\end{changemargin} 
+\vspace{2mm}
+Contenido del CO:
+\vspace{2mm}
+\begin{changemargin}{+1cm}{-2cm}
+    \lstinputlisting[style=JavaScript]{./resources/global-tests/Prueba 5 - Alejandro/test-nested-functions.ens}
+\end{changemargin} 
 
 
 \clearpage

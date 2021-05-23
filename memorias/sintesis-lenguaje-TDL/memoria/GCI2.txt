@@ -1,6 +1,3 @@
-{ generar etiqueta alert/input ¿? }
-
-
 Axioma = B
 NoTerminales = { A AA B C D E F F1 F2 F3 G H I J K L M N O P Q R S T U V }
 Terminales = { && == - -- ( ) = ; , { } id ent cad log let alert input return for if 
@@ -59,10 +56,10 @@ K $#rightarrow$ id = E {
     }
   
 S $#rightarrow$ alert ( E ) ; {
-    S.cod = E.cod || gen(param, E.lugar) || gen(call, alert.etiq)         ---------¿?
+    S.cod = E.cod || gen(param, E.lugar) || gen(alert)
     }
 S $#rightarrow$ input ( id ) ; {
-    S.cod = gen(param, buscaLugarTS(id.pos)) || gen(call, input.etiq)         ---------¿?
+    S.cod = gen(param, buscaLugarTS(id.pos)) || gen(input)
     }
   
 S $#rightarrow$ return L ; {
@@ -81,7 +78,7 @@ L $#rightarrow$ lambda {
   
   
 G $#rightarrow$ let M T id ; {
-    B.cod = vacio
+    G.cod = vacio
     }
 M $#rightarrow$ lambda { }
 T $#rightarrow$ number { }
@@ -92,7 +89,7 @@ T $#rightarrow$ string { }
 G $#rightarrow$ for ( N ; E ; O ) { C } {
     G.inicio = nuevaetiq()
     G.desp = nuevaetiq()
-    G.cod = N.cod || gen(:, G.inicio) || E.cod || gen(if, E.lugar, =, 0, goto, G.desp) || C.cod || O.cod || gen(goto, G.inicio) || gen(:, G.desp)
+    G.cod = N.cod || gen(:, G.inicio) || E.cod || gen(if, E.lugar, !=, 0, goto, G.desp) || C.cod || O.cod || gen(goto, G.inicio) || gen(:, G.desp)
     }
 N $#rightarrow$ K {
     N.cod = K.cod
@@ -145,7 +142,7 @@ F3 $#rightarrow$ { C } {
   
   
 E $#rightarrow$ E1 && R {
-    E.lugar =  nuevatemp();
+    E.lugar =  nuevatemp()
     E.cod = E1.cod || R.cod || gen(E.lugar, =, E1.lugar, AND, R.lugar)
     }
 E $#rightarrow$ R {
@@ -154,7 +151,11 @@ E $#rightarrow$ R {
     }
   
 R $#rightarrow$ R1 == U {
-    R.cod = R1.cod || U.cod || gen(if, R1.lugar, =, U.lugar, goto, esta + 3) || gen(R.lugar, =, 0) || gen(goto, esta + 2) || gen(R.lugar, =, 1)
+    R.true = nuevaetiq()
+    R.lugar = nuevatemp()
+    R.despues = nuevaetiq()
+    R.cod = R1.cod || U.cod || gen(if, R1.lugar, =, U.lugar, goto, R.true) ||
+            gen(R.lugar, =, 0) || gen(goto, R.después) || gen(:, R.true) || gen(R.lugar, =, 1) || gen(:, R.despues)
     }
 R $#rightarrow$ U {
     R.cod = U.cod
@@ -163,7 +164,7 @@ R $#rightarrow$ U {
   
 U $#rightarrow$ U1 - V {
     U.lugar = nuevatemp()
-    U.cod = gen(U.lugar, =, U1.lugar, -, V.lugar)
+    U.cod = U1.cod || V.cod || gen(U.lugar, =, U1.lugar, -, V.lugar)
     }
 U $#rightarrow$ V {
     U.lugar = V.lugar
@@ -180,8 +181,8 @@ V $#rightarrow$ id {
     V.cod = vacio
     }
 V $#rightarrow$ ( E ) { 
-    V.lugar = H.lugar
-    V.cod = H.cod
+    V.lugar = E.lugar
+    V.cod = E.cod
     }
 V $#rightarrow$ H {
     V.lugar = H.lugar
@@ -197,6 +198,6 @@ V $#rightarrow$ cad {
     V.cod = gen(V.lugar, =, cad.valor)
     }
 V $#rightarrow$ log {
-    V-lugar = nuevatmp()
+    V.lugar = nuevatmp()
     V.cod = gen(V.lugar, =, log.valor)
     }
