@@ -819,8 +819,29 @@ del campo VD, se almacena en un registro y de este registro se extrae dicho valo
 \section{Diseño del código objeto}
 
 \subsection{Métodos auxiliares}
-\subsubsection{Store\_in\_reg}
-\subsubsection{Copy\_str}
+% \subsubsection{Store\_in\_reg}
+% \subsubsection{Copy\_str}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Método auxiliar} & \large \textbf{Código objeto} \\
+        \hline  & \\[-2mm]
+        store\_in\_reg(oper, REG, mode)
+        & if oper is global:
+        & hspace*{1cm} if mode is direccion:
+        & hspace*{1cm} hspace*{1cm}  ADD #DESP, .IY
+        & hspace*{1cm} hspace*{1cm}  MOVE .A, REG
+        & hspace*{1cm} if mode is valor:
+        & store\_in\_reg(op1, .R1, Value) \\
+        & store\_in\_reg(op2, .R2, Value) \\
+        & store\_in\_reg(res, .R3, Dir) \\
+        & AND .R1, .R2 \\
+        & MOVE .A, [.R3]
+        \vspace{2mm} \\
+        \hline
+    \end{tabular}
+\end{table}
 
 \subsection{Aritméticas y lógicas}
 
