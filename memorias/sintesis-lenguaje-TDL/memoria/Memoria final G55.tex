@@ -779,6 +779,41 @@ Un diccionario es un hashmap que tiene como claves la palabra \verb|"lexema"| y 
 
 \clearpage
 
+\section{Diseño del generador de código intermedio}
+
+% % LO SUYO hubiese sido hacerlo asi
+% \newcommand{\fila}[2]{$\bullet$ & #1 & <#2>\\}
+% \begin{tabular}{cll}
+% \fila{Identificador}{ID, punteroTS}
+% \fila{Palabra reservada Number}{<NUMBER, ->}
+% \end{tabular}
+
+Para diseñar el generador de código intermedio nos basamos en la gramática empleada en la práctica de PDL.
+El diseño resultante es el siguiente: \\ \\
+
+\VerbatimInput{GCI2.txt}
+
+\section{Diseño del registro de activación}
+El registro de activación considerado para la práctica es el siguiente: \\
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ l c }
+    Estado de la máquina & EM \\
+    Parámetros actuales  & P  \\
+    Variables locales    & VL \\
+    Datos temoporales    & DT \\
+    Valor devuelto       & VD
+    \end{tabular}
+\end{table}
+
+Se han suprimido tanto el PC como el PA. El primero se debe a que los diferentes RAs se almacenan
+en pila uno encima del anterior, por lo tanto no es necesario almacenar la dirección del antiguo RA que llamó a este.
+El segundo se ha suprimido porque al no haber funciones anidadas en nuestro lenguaje no hay necesidad de almacenar un PA. \\ \\
+El campo valor devuelto (VD), se ha implementado en la práctica usando un registro. Es decir, en lugar de extraer el resultado de la función
+del campo VD, se almacena en un registro y de este registro se extrae dicho valor. Más adelante mostrará en CO su uso.
+
+\clearpage
+
 \section{Diseño del código objeto}
 
 \subsection{Métodos auxiliares}
