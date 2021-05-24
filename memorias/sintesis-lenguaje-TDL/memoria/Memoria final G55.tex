@@ -829,15 +829,39 @@ del campo VD, se almacena en un registro y de este registro se extrae dicho valo
         \hline  & \\[-2mm]
         store\_in\_reg(oper, REG, mode) 
         & if oper is global:  \\
-        & \hspace*{1cm} if mode is direccion: \\
-        & \hspace*{1cm} \hspace*{1cm}  ADD \#DESP, .IY \\
-        & \hspace*{1cm} \hspace*{1cm}  MOVE .A, REG \\
-        & \hspace*{1cm} if mode is valor: \\
-        & store\_in\_reg(op1, .R1, Value) \\
-        & store\_in\_reg(op2, .R2, Value) \\
-        & store\_in\_reg(res, .R3, Dir) \\
-        & AND .R1, .R2 \\
-        & MOVE .A, [.R3]
+        & \hspace*{6mm} if mode is direccion: \\
+        & \hspace*{6mm} \hspace*{6mm}  ADD \#DESP, .IY \\
+        & \hspace*{6mm} \hspace*{6mm}  MOVE .A, REG \\
+        & \hspace*{6mm} else if mode is valor: \\
+        & \hspace*{6mm} \hspace*{6mm}  ADD \#DESP, .IY \\
+        & \hspace*{6mm} \hspace*{6mm}  MOVE .A, .R9 \\
+        & \hspace*{6mm} \hspace*{6mm}  MOVE [.R9], REG \\
+        & else if oper is local:  \\
+        & \hspace*{6mm} if mode is direccion: \\
+        & \hspace*{6mm} \hspace*{6mm}  ADD \#DESP, .IX \\
+        & \hspace*{6mm} \hspace*{6mm}  MOVE .A, REG \\
+        & \hspace*{6mm} else if mode is valor: \\
+        & \hspace*{6mm} \hspace*{6mm}  ADD \#DESP, .IX \\
+        & \hspace*{6mm} \hspace*{6mm}  MOVE .A, .R9 \\
+        & \hspace*{6mm} \hspace*{6mm}  MOVE [.R9], REG \\
+        & else if oper is entero:  \\
+        & \hspace*{6mm}  if mode is valor: \\
+        & \hspace*{6mm} \hspace*{6mm}  MOVE \#LITERAL, REG \\
+        & else if oper is cadena:  \\
+        & \hspace*{6mm}  if mode is direccion: \\
+        & \hspace*{6mm} \hspace*{6mm}  MOVE \#etiqCad, REG
+        \vspace{2mm} \\
+        \hline  & \\[-2mm]
+        copy\_str(REG\_ORIGEN, REG\_DESTINO)
+        & copiaN: NOP \\
+        & MOVE [REG\_ORIGEN], .R9 \\
+        & MOVE .R9, [REG\_DESTINO] \\
+        & ADD \#1, REG\_ORIGEN \\
+        & MOVE .A, REG\_ORIGEN \\
+        & ADD \#1, REG\_DESTINO \\
+        & MOVE .A, REG\_DESTINO \\
+        & CMP \#0, .R9 \\
+        & BNZ \/copiaN
         \vspace{2mm} \\
         \hline
     \end{tabular}
