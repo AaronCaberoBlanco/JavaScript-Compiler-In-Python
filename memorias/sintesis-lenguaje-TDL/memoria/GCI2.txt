@@ -35,18 +35,18 @@ I $#rightarrow$ E J {
     I.codE = E.cod || J.codE
     I.codP = gen(param, E.lugar) || J.codP
     }
-J $#rightarrow$ , E J {
+J $#rightarrow$ , E J1 {
     J.codE = E.cod || J1.codE
     J.codP = gen(param, E.lugar) || J1.codP
     }
 
 J $#rightarrow$ lambda {
-    L.codE = vacio
-    L.codP = vacio
-  }
-I $#rightarrow$ lambda {
     J.codE = vacio
     J.codP = vacio
+  }
+I $#rightarrow$ lambda {
+    I.codE = vacio
+    I.codP = vacio
     }
   
 S $#rightarrow$ K ; {
@@ -57,10 +57,10 @@ K $#rightarrow$ id = E {
     }
   
 S $#rightarrow$ alert ( E ) ; {
-    S.cod = E.cod || gen(param, E.lugar) || gen(alert)
+    S.cod = E.cod || gen(alert, E.lugar)
     }
 S $#rightarrow$ input ( id ) ; {
-    S.cod = gen(param, buscaLugarTS(id.pos)) || gen(input)
+    S.cod = gen(input, buscaLugarTS(id.pos))
     }
   
 S $#rightarrow$ return L ; {
@@ -92,7 +92,7 @@ T $#rightarrow$ string { }
 G $#rightarrow$ for ( N ; E ; O ) { C } {
     G.inicio = nuevaetiq()
     G.desp = nuevaetiq()
-    G.cod = N.cod || gen(:, G.inicio) || E.cod || gen(if, E.lugar, !=, 0, goto, G.desp) ||
+    G.cod = N.cod || gen(:, G.inicio) || E.cod || gen(if, E.lugar, =, 1, goto, G.desp) ||
             C.cod || O.cod || gen(goto, G.inicio) || gen(:, G.desp)
     }
 N $#rightarrow$ K {
