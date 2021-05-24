@@ -869,7 +869,7 @@ del campo VD, se almacena en un registro y de este registro se extrae dicho valo
 
 \subsection{Aritméticas y lógicas}
 
-Operación $"y"$ lógico:
+Operación $"AND"$ lógico:
 
 \begin{table}[H]
     \centering
@@ -887,14 +887,14 @@ Operación $"y"$ lógico:
     \end{tabular}
 \end{table}
 
-Operación post-auto-decremento:
+Operación resta aritmética:
 
 \begin{table}[H]
     \centering
     \begin{tabular}{cl}
         \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
         \hline  & \\[-2mm]
-        [=and, op1, op2, res] 
+        [=-, op1, op2, res] 
         & store\_in\_reg(op1, .R1, Value) \\
         & store\_in\_reg(op2, .R2, Value) \\
         & store\_in\_reg(res, .R3, Dir) \\
@@ -932,7 +932,7 @@ Asignación de una cadena:
         [=Cad, op1, , res] 
         & store\_in\_reg(op1, .R1, Dir) \\
         & store\_in\_reg(res, .R3, Dir) \\
-        & MOVE .R1, .R3
+        & copy\_str(.R1, .R3)
         \vspace{2mm} \\
         \hline 
     \end{tabular}
@@ -947,8 +947,8 @@ Añadir una etiqueta:
     \begin{tabular}{cl}
         \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
         \hline & \\[-2mm]
-        [:, op1, ,] 
-        & op1: NOP
+        [:, etiqueta, ,] 
+        & etiqueta: NOP
         \vspace{2mm} \\
         \hline 
     \end{tabular}
@@ -968,7 +968,7 @@ Salto a una etiqueta:
     \end{tabular}
 \end{table}
 
-Salto en caso de cierto:
+Salto en caso de igual:
 
 \begin{table}[H]
     \centering
@@ -979,7 +979,7 @@ Salto en caso de cierto:
         & store\_in\_reg(op1, .R1, Value) \\
         & store\_in\_reg(op2, .R2, Value) \\
         & CMP .R1 .R2 \\
-        & BZ .A, /etiqueta
+        & BZ /etiqueta
         \vspace{2mm} \\
         \hline 
     \end{tabular}
@@ -987,11 +987,214 @@ Salto en caso de cierto:
 
 \subsection{Paso de parámetros}
 
+Paso de un entero o lógico:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [paramEL, op1, , ] 
+        & store\_in\_reg(op1, .R1, Dir) \\
+        & ADD \#Tam\_RA\_Actual, .IX \\
+        & ADD \#X, .A \\
+        & MOVE [.R1], [.A]
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Paso de una cadena:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [paramCAD, op1, , ] 
+        & store\_in\_reg(op1, .R1, Dir) \\
+        & ADD \#Tam\_RA\_Actual, .IX \\
+        & ADD \#X, .A \\
+        & MOVE A, .R3 \\
+        & copy\_str(.R1,.R3)
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
 \subsection{Llamadas}
  
+Llamada a una funcion que no devuelve nada:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [callVoid,etiqueta , , ] 
+        & ADD \#Tam\_RA\_Actual, .IX \\
+        & MOVE \#Dir\_Ret, [.A] \\
+        & MOVE .A, .IX \\
+        & BR /etiqueta \\
+        & Dir\_Ret: NOP\\
+        & SUB .IX, \#Tam\_RA\_Actual\\
+        & MOVE .A, .IX
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Llamada a una funcion devuelve entero o logico:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [callValueEL, etiqueta, , res] 
+        & ADD \#Tam\_RA\_Actual, .IX \\
+        & MOVE \#Dir\_Ret, [.A] \\
+        & MOVE .A, .IX \\
+        & BR /etiqueta \\
+        & Dir\_Ret: NOP\\
+        & SUB .IX, \#Tam\_RA\_Actual\\
+        & MOVE .A, .IX \\
+        & store\_in\_reg(res, .R3, Dir) \\
+        & MOVE .Reg\_Ret, [.R3]
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Llamada a una funcion devuelve una cadena:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [callValueCAD, etiqueta, , res] 
+        & ADD \#Tam\_RA\_Actual, .IX \\
+        & MOVE \#Dir\_Ret, [.A] \\
+        & MOVE .A, .IX \\
+        & BR /etiqueta \\
+        & Dir\_Ret: NOP\\
+        & SUB .IX, \#Tam\_RA\_Actual\\
+        & MOVE .A, .IX \\
+        & store\_in\_reg(res, .R3, Dir) \\
+        & copy\_str(.Reg\_Ret, .R3)
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
 \subsection{Sentencias de retorno}
 
+Return sin valor devuelto:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [returnVoid, , ,] 
+        & BR [.IX]
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Return de entero o lógico:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [returnEL, op1, , ]
+        & store\_in\_reg(op1, .Reg\_Ret, Value)\\ 
+        & BR [.IX]
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Return de una cadena:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [returnCAD, op1, , ]
+        & store\_in\_reg(op1, .Reg\_Ret, Dir)\\ 
+        & BR [.IX]
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
 \subsection{Alerts e inputs}
+
+Alert de un entero:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [alertEnt, op1, , ]
+        & store\_in\_reg(op1, .Reg\_Aux, Value)\\ 
+        & WRINT .Reg\_Aux
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Alert de una cadena:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [alertCad, op1, , ]
+        & store\_in\_reg(op1, .Reg\_Aux, Dir)\\ 
+        & WRSTR .Reg\_Aux
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Input de un entero:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [alertCad, op1, , ]
+        & store\_in\_reg(op1, .Reg\_Aux, Dir)\\ 
+        & ININT .Reg\_Aux
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+Input de una cadena:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{cl}
+        \large \textbf{Código intermedio} & \large \textbf{Código objeto} \\ 
+        \hline  & \\[-2mm]
+        [alertCad, op1, , ]
+        & store\_in\_reg(op1, .Reg\_Aux, Dir)\\ 
+        & INSTR .Reg\_Aux
+        \vspace{2mm} \\
+        \hline 
+    \end{tabular}
+\end{table}
 
 \clearpage
 \section{Anexo}
